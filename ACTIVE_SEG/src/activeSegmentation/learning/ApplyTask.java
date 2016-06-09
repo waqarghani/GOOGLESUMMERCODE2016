@@ -12,7 +12,7 @@ public class ApplyTask extends RecursiveAction{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static int workLoad = 100000;
+	private static int workLoad = 10000;
 	private Instances instances;
 	private double[] classificationResult;
 	private IClassifier iClassifier;
@@ -55,7 +55,8 @@ public class ApplyTask extends RecursiveAction{
 			e.printStackTrace();
 		}
 
-		Instances testInstances= new Instances(instances, mStart, workLoad);
+		System.out.println(mStart+"---"+mLength);
+		Instances testInstances= new Instances(instances, mStart, mLength);
 		for (int index = 0; index < testInstances.size(); index++)
 		{
 			try {

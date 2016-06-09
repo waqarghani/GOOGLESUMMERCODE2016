@@ -44,7 +44,7 @@ public interface IClassifier {
      * @return The evaluation
      */
  
-     public void testModel(IDataSet instances);
+     public double[] testModel(IDataSet instances);
     
     /**
      * @return The copy of the IClassifier used.

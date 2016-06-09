@@ -34,117 +34,118 @@ import weka.core.SerializedObject;
 
 public class WekaClassifier implements IClassifier, Serializable {
 
-    private static final long serialVersionUID = 1765269739169476036L;
+	private static final long serialVersionUID = 1765269739169476036L;
 
-    /**
-     * Classifier from Weka.
-     */
-    private Classifier classifier;
+	/**
+	 * Classifier from Weka.
+	 */
+	private Classifier classifier;
 
-    /**
-     * Constructs the learning model from the dataset.
-     *
-     * @param instances The instances to train the classifier
-     * @throws Exception The exception that will be launched.
-     */
-    @Override
-    public void buildClassifier(IDataSet instances) throws Exception {
+	/**
+	 * Constructs the learning model from the dataset.
+	 *
+	 * @param instances The instances to train the classifier
+	 * @throws Exception The exception that will be launched.
+	 */
+	@Override
+	public void buildClassifier(IDataSet instances) throws Exception {
 
-        classifier.buildClassifier(instances.getDataset());
-    }
+		classifier.buildClassifier(instances.getDataset());
+	}
 
-    /**
-     *
-     * @param instance The instance to classify.
-     * @return The predicted label for the classifier.
-     * @throws Exception The exception that will be launched.
-     */
-    @Override
-    public double classifyInstance(Instance instance) throws Exception {
-        return classifier.classifyInstance(instance);
-    }
+	/**
+	 *
+	 * @param instance The instance to classify.
+	 * @return The predicted label for the classifier.
+	 * @throws Exception The exception that will be launched.
+	 */
+	@Override
+	public double classifyInstance(Instance instance) throws Exception {
+		return classifier.classifyInstance(instance);
+	}
 
-    /**
-     * Returns the probability that has the instance to belong to each class.
-     * every instance of belonging to every class that the dataset contains.
-     *
-     * @param instance The instance to test.
-     * @return The probabilities for each class
-     */
-    @Override
-    public double[] distributionForInstance(Instance instance) {
+	/**
+	 * Returns the probability that has the instance to belong to each class.
+	 * every instance of belonging to every class that the dataset contains.
+	 *
+	 * @param instance The instance to test.
+	 * @return The probabilities for each class
+	 */
+	@Override
+	public double[] distributionForInstance(Instance instance) {
 
-        try {
-            return classifier.distributionForInstance(instance);
-        } catch (Exception e) {
-            Logger.getLogger(WekaClassifier.class.getName()).log(
-                    Level.SEVERE, null, e);
-        }
-        return null;
-    }
+		try {
+			return classifier.distributionForInstance(instance);
+		} catch (Exception e) {
+			Logger.getLogger(WekaClassifier.class.getName()).log(
+					Level.SEVERE, null, e);
+		}
+		return null;
+	}
 
-  
-    /**
-     * The simple name of the class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString() {
-        return classifier.getClass().getSimpleName();
-    }
 
-    /**
-     * Set the classifier to use.
-     *
-     * @param classifier The weka classifier.
-     */
-    public void setClassifier(Classifier classifier) {
-        try {
-           this.classifier = weka.classifiers.AbstractClassifier
-                    .makeCopy(classifier);
-        } catch (Exception e) {
-            Logger.getLogger(WekaClassifier.class.getName()).log(
-                    Level.SEVERE, null, e);
-        }
-    }
-    
-   
-    /**
-     * Evaluates the classifier using the test dataset and stores the evaluation.
-     *
-     * @param instances The instances to test
-     * @return The evaluation
-     */
-    @Override
-    public void testModel(IDataSet instances) {
+	/**
+	 * The simple name of the class.
+	 *
+	 * @return the string
+	 */
+	@Override
+	public String toString() {
+		return classifier.getClass().getSimpleName();
+	}
 
-        try {
+	/**
+	 * Set the classifier to use.
+	 *
+	 * @param classifier The weka classifier.
+	 */
+	public void setClassifier(Classifier classifier) {
+		try {
+			this.classifier = weka.classifiers.AbstractClassifier
+					.makeCopy(classifier);
+		} catch (Exception e) {
+			Logger.getLogger(WekaClassifier.class.getName()).log(
+					Level.SEVERE, null, e);
+		}
+	}
 
-            // test the current classifier with the test set
-            Evaluation evaluator = new Evaluation(new Instances(instances.getDataset(), 0));
 
-            evaluator.evaluateModel(classifier, instances.getDataset());
+	/**
+	 * Evaluates the classifier using the test dataset and stores the evaluation.
+	 *
+	 * @param instances The instances to test
+	 * @return The evaluation
+	 */
+	@Override
+	public double[] testModel(IDataSet instances) {
 
-           System.out.println(evaluator.toSummaryString());
-          
+		try {
 
-        } catch (Exception e) {
-            Logger.getLogger(WekaClassifier.class.getName()).log(
-                    Level.SEVERE, null, e);
-        }
+			// test the current classifier with the test set
+			Evaluation evaluator = new Evaluation(new Instances(instances.getDataset(), 0));
 
- 
-    }
+			double[] predict =evaluator.evaluateModel(classifier, instances.getDataset());
 
-    
+			System.out.println(evaluator.toSummaryString());
+			return predict;
+
+
+		} catch (Exception e) {
+			Logger.getLogger(WekaClassifier.class.getName()).log(
+					Level.SEVERE, null, e);
+		}
+
+		return null;
+	}
+
+
 	@Override
 	public IClassifier makeCopy() throws Exception {
 		// TODO Auto-generated method stub
-		 return (IClassifier) new SerializedObject(this).getObject();
+		return (IClassifier) new SerializedObject(this).getObject();
 	}
 
 
 
- 
+
 }
