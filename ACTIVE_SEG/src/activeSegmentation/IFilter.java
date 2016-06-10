@@ -4,6 +4,7 @@ package activeSegmentation;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
 
+import java.awt.Image;
 import java.util.Map;
 
 public interface IFilter {
@@ -63,6 +64,14 @@ public interface IFilter {
 	 * @return stack width
 	 */
 	public int getWidth();
+	
+	/**
+	 * Get ive image
+	 * @return Image
+	 */
+	public Image getImage();
+	
+	
 
 	
 

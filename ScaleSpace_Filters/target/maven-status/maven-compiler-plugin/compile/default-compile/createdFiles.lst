@@ -1,0 +1,10 @@
+com\scalespace\Gaussian_Derivative_.class
+dsp\kConv.class
+dsp\Conv.class
+com\scalespace\Kalman_Stack_Filter.class
+ijaux\scale\IJLineIteratorIP.class
+ijaux\scale\GScaleSpace.class
+com\scalespace\ALoG_Filter_.class
+ijaux\scale\IJAbstractLineIterator.class
+com\scalespace\Scalometry_.class
+com\scalespace\ALogStack.class

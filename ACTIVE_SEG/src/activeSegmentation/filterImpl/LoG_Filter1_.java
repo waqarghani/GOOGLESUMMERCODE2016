@@ -24,6 +24,13 @@ import java.util.Properties;
 
 
 
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
 import activeSegmentation.IFilter;
 import dsp.Conv;
 
@@ -115,6 +122,36 @@ public class LoG_Filter1_ implements ExtendedPlugInFilter, DialogListener,IFilte
 		return  flags;
 	}
 
+
+	
+	
+
+	private Double log(double x){
+
+		return (x*x-2)* Math.exp(-Math.pow(x, 2)/2) / (2  *Math.sqrt(3.14));
+	}
+	
+	public Image getImage(){
+
+		final XYSeries series = new XYSeries("Data");
+		for(double i=-10;i<=10;i=i+0.5){
+			Double y=log(i);
+			series.add(i, y);
+		}
+		final XYSeriesCollection data = new XYSeriesCollection(series);
+		final JFreeChart chart = ChartFactory.createXYLineChart(
+				"",
+				"", 
+				"", 
+				data,
+				PlotOrientation.VERTICAL,
+				false,
+				false,
+				false
+				);
+
+		return chart.createBufferedImage(200, 200);
+	}
 
 
 	@Override

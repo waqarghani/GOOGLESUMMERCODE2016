@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ij"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/IJ"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ACTIVE_SEG"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/jcommon-1.0.23.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

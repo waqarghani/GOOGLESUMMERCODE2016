@@ -132,6 +132,13 @@ public class FilterManager implements IFilterManager {
 		return filterMap.get(key).getDefaultSettings();
 	}
 
+	public IFilter getFilter(String key){
+
+		return filterMap.get(key);
+	}
+
+	
+	
 	public boolean updateFilterSetting(String key, Map<String,String> settingsMap){
 
 		return filterMap.get(key).updateSettings(settingsMap);

@@ -1,4 +1,4 @@
-package activeSegmentation.filterImpl;
+package scalespace.filter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -12,10 +12,10 @@ import ij.process.ImageProcessor;
 import ijaux.scale.GScaleSpace;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 
 
 
@@ -135,35 +135,6 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 		image.setProcessor(fp);
 		image.updateAndDraw();
 	}
-
-
-	private Double gaussian(double x){
-
-		return Math.exp(-Math.pow(x, 2)/2) / (2  *Math.sqrt(3.14));
-	}
-
-	public Image getImage(){
-
-		final XYSeries series = new XYSeries("Data");
-		for(double i=-10;i<=10;i=i+0.5){
-			Double y=gaussian(i);
-			series.add(i, y);
-		}
-		final XYSeriesCollection data = new XYSeriesCollection(series);
-		final JFreeChart chart = ChartFactory.createXYLineChart(
-				"",
-				"", 
-				"", 
-				data,
-				PlotOrientation.VERTICAL,
-				false,
-				false,
-				false
-				);
-
-		return chart.createBufferedImage(200, 200);
-	}
-
 
 	/**
 	 * Apply filter to input image (in place)
@@ -390,6 +361,36 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	@Override
 	public int getWidth(){
 		return imageStack.getWidth();
+	}
+
+
+	private Double log(double x){
+
+		return (x*x-2)* Math.exp(-Math.pow(x, 2)/2) / (2  *Math.sqrt(3.14));
+	}
+	
+	
+	@Override
+	public Image getImage(){
+
+		final XYSeries series = new XYSeries("Data");
+		for(double i=-10;i<=10;i=i+0.5){
+			Double y=log(i);
+			series.add(i, y);
+		}
+		final XYSeriesCollection data = new XYSeriesCollection(series);
+		final JFreeChart chart = ChartFactory.createXYLineChart(
+				"",
+				"", 
+				"", 
+				data,
+				PlotOrientation.VERTICAL,
+				false,
+				false,
+				false
+				);
+
+		return chart.createBufferedImage(200, 200);
 	}
 
 

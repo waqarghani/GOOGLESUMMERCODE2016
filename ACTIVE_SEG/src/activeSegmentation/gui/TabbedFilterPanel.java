@@ -2,11 +2,12 @@ package activeSegmentation.gui;
 
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Map;
+
 
 
 
@@ -26,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+
 
 
 
@@ -73,7 +75,8 @@ public class TabbedFilterPanel implements Runnable {
 		pane = new JTabbedPane();
 
 		for(String filter: filterManager.getFilters()){
-			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter)),filter);
+			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
+					filterManager.getFilter(filter).getImage()),filter);
 			pane.setFont(FONT);
 
 		}
@@ -86,16 +89,16 @@ public class TabbedFilterPanel implements Runnable {
 	}
 
 
-	private JPanel createTab( Map<String , String> settingsMap) {
+	private JPanel createTab( Map<String , String> settingsMap, Image image) {
 		JPanel p = new JPanel();
 		p.setLayout(null);
-		int x=70, y=10, w=140, h=25;
+		int x=30, y=10, w=140, h=25;
 		addButton( "Previous", PREV_ICON, 10, 90, 28, 38,p,PREVIOUS_BUTTON_PRESSED );
 		addButton( "Next", NEXT_ICON, 480, 90, 28, 38,p ,NEXT_BUTTON_PRESSED );
-		Icon icon = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/LOG.gif" ) );
-
+		//Icon icon = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/LOG.gif" ) );
+		Icon icon = new ImageIcon( image );
 		JLabel imagelabel= new JLabel(icon);
-		imagelabel.setBounds(x, y, w, h+200);
+		imagelabel.setBounds(x, y, w+70, h+200);
 		p.add(imagelabel);
 		for (String key: settingsMap.keySet()){
 
@@ -103,12 +106,12 @@ public class TabbedFilterPanel implements Runnable {
 
 			JLabel label= new JLabel(key);
 			label.setFont(FONT);
-			label.setBounds( x+170, y, w, h );
+			label.setBounds( x+230, y, w, h );
 			JTextArea textArea= new JTextArea();
 			p.add(label);
 			textArea.setText( settingsMap.get(key));
 			textArea.setFont(FONT);
-			textArea.setBounds( x+250, y, w, h );
+			textArea.setBounds( x+300, y, w, h );
 			p.add(textArea);   
 			y=y+50;
 		}
