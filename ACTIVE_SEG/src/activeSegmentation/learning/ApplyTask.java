@@ -2,7 +2,9 @@ package activeSegmentation.learning;
 
 import java.util.concurrent.RecursiveAction;
 
+import activeSegmentation.Common;
 import activeSegmentation.IClassifier;
+import activeSegmentation.IDataSet;
 import weka.core.Instances;
 
 public class ApplyTask extends RecursiveAction{
@@ -12,16 +14,16 @@ public class ApplyTask extends RecursiveAction{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static int workLoad = 10000;
-	private Instances instances;
+
+	private IDataSet dataSet;
 	private double[] classificationResult;
 	private IClassifier iClassifier;
 	private int mStart;
 	private int mLength;
 
-	public ApplyTask(Instances instances,int mStart,int length, double[] classificationResult, 
+	public ApplyTask(IDataSet dataSet,int mStart,int length, double[] classificationResult, 
 			IClassifier classifier) {
-		this.instances = instances;
+		this.dataSet = dataSet;
 		this.classificationResult= classificationResult;
 		this.iClassifier=classifier;
 		this.mStart= mStart;
@@ -33,15 +35,15 @@ public class ApplyTask extends RecursiveAction{
 	@Override
 	protected void compute() {
 		// TODO Auto-generated method stub
-		if (mLength < workLoad) {
+		if (mLength < Common.WORKLOAD) {
 			classifyPixels();
 			return;
 		}
 
 		int split = mLength / 2;
 
-		invokeAll(new ApplyTask(instances, mStart, split, classificationResult,iClassifier),
-				new ApplyTask(instances, mStart + split, mLength - split, 
+		invokeAll(new ApplyTask(dataSet, mStart, split, classificationResult,iClassifier),
+				new ApplyTask(dataSet, mStart + split, mLength - split, 
 						classificationResult,iClassifier));
 
 	}
@@ -56,7 +58,7 @@ public class ApplyTask extends RecursiveAction{
 		}
 
 		System.out.println(mStart+"---"+mLength);
-		Instances testInstances= new Instances(instances, mStart, mLength);
+		Instances testInstances= new Instances(dataSet.getDataset(), mStart, mLength);
 		for (int index = 0; index < testInstances.size(); index++)
 		{
 			try {

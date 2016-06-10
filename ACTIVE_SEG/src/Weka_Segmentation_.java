@@ -4,10 +4,10 @@
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
-
 import ij.plugin.PlugIn;
 
 import java.awt.Panel;
+import java.awt.BufferCapabilities.FlipContents;
 import java.io.File;
 import java.net.URL;
 import java.util.Set;
@@ -97,8 +97,8 @@ public class Weka_Segmentation_ implements PlugIn {
 			System.out.println("-------------- AVAIL FILTERS* --------------------");
 			System.out.println(filterList.size());
 			System.out.println();
-
-			 SwingUtilities.invokeLater(new TabbedFilterPanel(filterManager));
+			TabbedFilterPanel filterPanel=new TabbedFilterPanel(filterManager);
+			 SwingUtilities.invokeLater(filterPanel);
 			
 			IJ.log(String.valueOf(filterList.size()));
 			
