@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Map;
 
 
@@ -18,6 +19,9 @@ import java.util.Map;
 
 
 
+
+import java.util.Set;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -27,6 +31,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+
+
 
 
 
@@ -74,10 +80,14 @@ public class TabbedFilterPanel implements Runnable {
 
 		pane = new JTabbedPane();
 
-		for(String filter: filterManager.getFilters()){
+		Set<String> filters= filterManager.getFilters();  
+		System.out.println(filters.size());
+		int filterSize=1;
+		for(String filter: filters){
 			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
-					filterManager.getFilter(filter).getImage()),filter);
+					filterManager.getFilter(filter).getImage(), filterSize, filters.size()),filter);
 			pane.setFont(FONT);
+			filterSize++;
 
 		}
 
@@ -89,16 +99,18 @@ public class TabbedFilterPanel implements Runnable {
 	}
 
 
-	private JPanel createTab( Map<String , String> settingsMap, Image image) {
+	private JPanel createTab( Map<String , String> settingsMap, Image image, int size, int maxFilters) {
 		JPanel p = new JPanel();
 		p.setLayout(null);
 		int x=30, y=10, w=140, h=25;
+		if(size!=1)
 		addButton( "Previous", PREV_ICON, 10, 90, 28, 38,p,PREVIOUS_BUTTON_PRESSED );
+		if(size != maxFilters)
 		addButton( "Next", NEXT_ICON, 480, 90, 28, 38,p ,NEXT_BUTTON_PRESSED );
 		//Icon icon = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/LOG.gif" ) );
 		Icon icon = new ImageIcon( image );
 		JLabel imagelabel= new JLabel(icon);
-		imagelabel.setBounds(x, y, w+70, h+200);
+		imagelabel.setBounds(x+20, y-10, w+70, h+200);
 		p.add(imagelabel);
 		for (String key: settingsMap.keySet()){
 
