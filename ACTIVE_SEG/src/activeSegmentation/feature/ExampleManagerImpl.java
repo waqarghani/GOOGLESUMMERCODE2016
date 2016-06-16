@@ -165,5 +165,15 @@ public class ExampleManagerImpl implements IExampleManager {
 
 	}
 
+
+	public int getStackSize() {
+		return stackSize;
+	}
+
+
+	public void setStackSize(int stackSize) {
+		this.stackSize = stackSize;
+	}
+
 	
 }

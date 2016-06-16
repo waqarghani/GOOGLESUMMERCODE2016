@@ -7,4 +7,5 @@ public class Common {
 	public static final String CLASS="class";
 	public static final String INSTANCE_NAME="segment";
 	public static int WORKLOAD = 10000;
+	public static int DEFAULT_CLASSES=2;
 }

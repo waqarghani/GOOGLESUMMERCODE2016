@@ -14,4 +14,5 @@ public interface IExampleManager {
 	public void setClassLabel(int classNum, String label);
 	public void setNumOfClasses(int numOfClasses);
 	public int getNumOfClasses();
+	public void addClass();
 }

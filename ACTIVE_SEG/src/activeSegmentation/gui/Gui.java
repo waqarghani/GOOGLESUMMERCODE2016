@@ -1,5 +1,9 @@
 package activeSegmentation.gui;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.WindowManager;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -8,23 +12,39 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
+import activeSegmentation.IExampleManager;
+import activeSegmentation.filterImpl.FilterManager;
+
 public class Gui {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
-	JButton jButtonFeature;
-	JButton jButtonLearning;
-	JButton jButtonEvaluation;
+	private FilterManager filterManager;
+	private IExampleManager exampleManager;
+    private ImagePlus trainingImage;
+
+	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
+	final ActionEvent FEATURE_BUTTON_PRESSED = new ActionEvent( this, 0, "Feature" );
+
+	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
+	final ActionEvent FILTER_BUTTON_PRESSED = new ActionEvent( this, 1, "Filter" );
+	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
+	final ActionEvent LEARNING_BUTTON_PRESSED = new ActionEvent( this, 2, "Learning" );
+
+	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
+	final ActionEvent EVALUATION_BUTTON_PRESSED = new ActionEvent( this, 3, "Evaluation" );
+
+
 	final static String LOOKANDFEEL = "Metal";
 	final static String THEME = "Test";
 	public static final Font FONT = new Font( "Arial", Font.BOLD, 13 );
-	public Gui(){
+	public Gui(FilterManager filterManager, IExampleManager exampleManager, ImagePlus trainingImage){
+
+		this.filterManager= filterManager;
+		this.exampleManager= exampleManager;
+		this.trainingImage= trainingImage;
 		prepareGUI();
 	}
 
-	public static void main(String[] args){
-		Gui swingLayoutDemo = new Gui();  
-		swingLayoutDemo.showGridBagLayoutDemo();       
-	}
 
 	private static void initLookAndFeel() {
 		String lookAndFeel = null;
@@ -91,30 +111,56 @@ public class Gui {
 			}
 		}
 	}
+
+
+	public void doAction( final ActionEvent event )
+	{
+		System.out.println("IN DO ACTION");
+		System.out.println(event.toString());
+		if(event ==FILTER_BUTTON_PRESSED ){
+			TabbedFilterPanel filterPanel=new TabbedFilterPanel(filterManager);
+			SwingUtilities.invokeLater(filterPanel);
+
+		}
+		if(event==FEATURE_BUTTON_PRESSED){
+          ExamplePanel examplePanel = new ExamplePanel(exampleManager, trainingImage);
+      	SwingUtilities.invokeLater(examplePanel);
+		}
+
+	}
+
+
+
 	private void prepareGUI(){
 		initLookAndFeel();
 		//Make sure we have nice window decorations.
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		mainFrame = new JFrame("ACTIVE SEGMENTATION");
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setSize(500,300);
+		
+		
+		
+	    trainingImage.show();
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout(null);
-		jButtonFeature = addButton( "FEATURE EXTRACTION", null, 25, 50, 200, 50, controlPanel );
-		jButtonLearning = addButton( "LEARNING", null, 275, 50, 200, 50, controlPanel );
-		jButtonEvaluation=addButton( "EVALUATION", null, 25, 150, 200, 50, controlPanel );
-		jButtonEvaluation=addButton( "SETTINGS", null, 275, 150, 200, 50, controlPanel );
+		addButton( "FILTERS", null, 25, 50, 200, 50, controlPanel,FILTER_BUTTON_PRESSED  );
+		addButton( "FEATURE EXTRACTION", null, 275, 50, 200, 50, controlPanel,FEATURE_BUTTON_PRESSED);
+		addButton( "LEARNING", null, 25, 150, 200, 50, controlPanel, LEARNING_BUTTON_PRESSED );
+		addButton( "EVALUATION", null, 275, 150, 200, 50, controlPanel, EVALUATION_BUTTON_PRESSED );
 
 		// postioning
 
 		controlPanel.setLocation(0, 0);
 		mainFrame.add(controlPanel);
 		mainFrame.setVisible(true);  
+
 	}
 
 
 	private JButton addButton( final String label, final Icon icon, final int x,
-			final int y, final int width, final int height,JPanel panel)
+			final int y, final int width, final int height,JPanel panel,final ActionEvent action)
 	{
 		final JButton button = new JButton();
 		panel.add( button );
@@ -122,6 +168,15 @@ public class Gui {
 		button.setIcon( icon );
 		button.setFont( FONT );
 		button.setBounds( x, y, width, height );
+		button.addActionListener( new ActionListener()
+		{
+			@Override
+			public void actionPerformed( final ActionEvent e )
+			{
+				System.out.println("CLICKED");
+				doAction(action);
+			}
+		} );
 
 		return button;
 	}
