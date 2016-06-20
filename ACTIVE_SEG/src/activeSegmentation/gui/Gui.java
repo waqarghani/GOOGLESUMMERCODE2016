@@ -12,6 +12,7 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
+import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
 import activeSegmentation.filterImpl.FilterManager;
 
@@ -20,7 +21,8 @@ public class Gui {
 	private JPanel controlPanel;
 	private FilterManager filterManager;
 	private IExampleManager exampleManager;
-    private ImagePlus trainingImage;
+	private IDataManager dataManager;
+	private ImagePlus trainingImage;
 
 	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
 	final ActionEvent FEATURE_BUTTON_PRESSED = new ActionEvent( this, 0, "Feature" );
@@ -37,10 +39,12 @@ public class Gui {
 	final static String LOOKANDFEEL = "Metal";
 	final static String THEME = "Test";
 	public static final Font FONT = new Font( "Arial", Font.BOLD, 13 );
-	public Gui(FilterManager filterManager, IExampleManager exampleManager, ImagePlus trainingImage){
+	public Gui(FilterManager filterManager, IExampleManager exampleManager,
+			IDataManager dataManager,ImagePlus trainingImage){
 
 		this.filterManager= filterManager;
 		this.exampleManager= exampleManager;
+		this.dataManager= dataManager;
 		this.trainingImage= trainingImage;
 		prepareGUI();
 	}
@@ -118,13 +122,21 @@ public class Gui {
 		System.out.println("IN DO ACTION");
 		System.out.println(event.toString());
 		if(event ==FILTER_BUTTON_PRESSED ){
-			TabbedFilterPanel filterPanel=new TabbedFilterPanel(filterManager);
+			TabbedFilterPanel filterPanel=new TabbedFilterPanel(filterManager,trainingImage);
 			SwingUtilities.invokeLater(filterPanel);
 
 		}
 		if(event==FEATURE_BUTTON_PRESSED){
-          ExamplePanel examplePanel = new ExamplePanel(exampleManager, trainingImage);
-      	SwingUtilities.invokeLater(examplePanel);
+			new ExampleWindow( trainingImage,exampleManager,dataManager);
+		}
+
+		if(event==LEARNING_BUTTON_PRESSED){
+			LearningPanel learningPanel = new LearningPanel(dataManager);
+			SwingUtilities.invokeLater(learningPanel);
+		}
+		
+		if(event==EVALUATION_BUTTON_PRESSED){
+			
 		}
 
 	}
@@ -138,10 +150,10 @@ public class Gui {
 		mainFrame = new JFrame("ACTIVE SEGMENTATION");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setSize(500,300);
-		
-		
-		
-	    trainingImage.show();
+
+
+
+		trainingImage.show();
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout(null);

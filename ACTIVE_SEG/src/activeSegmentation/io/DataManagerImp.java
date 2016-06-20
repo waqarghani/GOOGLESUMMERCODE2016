@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import activeSegmentation.IClassifier;
 import activeSegmentation.IDataManager;
@@ -218,9 +219,29 @@ public class DataManagerImp implements IDataManager {
 
 
 	@Override
-	public boolean saveExamples(String filename, List<Roi> roi) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean saveExamples(String filename, List<Roi> rois) {
+		
+		DataOutputStream out = null;
+		try {
+			ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(filename));
+			out = new DataOutputStream(new BufferedOutputStream(zos));
+			RoiEncoder re = new RoiEncoder(out);
+			for (Roi roi:rois) {
+				
+				zos.putNextEntry(new ZipEntry(roi.getName()+".roi"));
+				re.write(roi);
+				out.flush();
+			}
+			out.close();
+		} catch (IOException e) {
+			
+			return false;
+		} finally {
+			if (out!=null)
+				try {out.close();} catch (IOException e) {}
+		}
+		
+		return true;
 	}
 
 

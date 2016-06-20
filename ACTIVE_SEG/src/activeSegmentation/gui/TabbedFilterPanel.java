@@ -1,6 +1,11 @@
 package activeSegmentation.gui;
 
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.io.SaveDialog;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -45,6 +50,14 @@ import javax.swing.JTextArea;
 
 
 
+
+
+
+
+
+
+import activeSegmentation.IFilter;
+import activeSegmentation.IFilterManager;
 import activeSegmentation.filterImpl.FilterManager;
 
 
@@ -52,9 +65,10 @@ import activeSegmentation.filterImpl.FilterManager;
 public class TabbedFilterPanel implements Runnable {
 
 
-	private FilterManager filterManager;
+	private IFilterManager filterManager;
 	private JTabbedPane pane;
 
+	private ImagePlus trainingImage;
 
 	private static final Icon PREV_ICON = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/left.png" ) );
 
@@ -69,7 +83,7 @@ public class TabbedFilterPanel implements Runnable {
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent PREVIOUS_BUTTON_PRESSED = new ActionEvent( this, 1, "Previous" );
-	
+
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 2, "Compute" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -77,12 +91,15 @@ public class TabbedFilterPanel implements Runnable {
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 4, "Save" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
-	final ActionEvent DEFAULT_BUTTON_PRESSED = new ActionEvent( this, 4, "Default" );
-	
+	final ActionEvent DEFAULT_BUTTON_PRESSED = new ActionEvent( this, 5, "Default" );
+	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
+	final ActionEvent VIEW_BUTTON_PRESSED = new ActionEvent( this, 6, "View" );
 
-	public TabbedFilterPanel(FilterManager filterManager) {
+
+	public TabbedFilterPanel(FilterManager filterManager, ImagePlus trainingImage) {
 
 		this.filterManager = filterManager;
+		this.trainingImage= trainingImage;
 	}
 
 
@@ -96,33 +113,34 @@ public class TabbedFilterPanel implements Runnable {
 		pane.setFont(FONT);
 		pane.setBackground(Color.WHITE);
 
-		
+
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
 		panel.setFont(FONT);
-		
+
 		Set<String> filters= filterManager.getFilters();  
 		System.out.println(filters.size());
 		int filterSize=1;
 		for(String filter: filters){
 			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
 					filterManager.getFilter(filter).getImage(), filterSize, filters.size()),filter);
-		
+
 			filterSize++;
 
 		}
-		
-		
-		pane.setSize(515, 300);
+
+
+		pane.setSize(600, 300);
 		addButton( "COMPUTE",null , 20, 320, 100, 50,panel,COMPUTE_BUTTON_PRESSED );
 		addButton( "LOAD",null , 130, 320, 100, 50,panel,LOAD_BUTTON_PRESSED );
 		addButton( "DEFAULT",null , 240, 320, 100, 50,panel,DEFAULT_BUTTON_PRESSED );
 		addButton( "SAVE",null , 350, 320, 100, 50,panel,SAVE_BUTTON_PRESSED );
+		addButton( "VIEW",null , 460, 320, 100, 50,panel,VIEW_BUTTON_PRESSED );
 
-		
+
 		frame.add(pane);
 		frame.add(panel);
-		frame.setSize(520, 420);
+		frame.setSize(600, 420);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
@@ -133,9 +151,9 @@ public class TabbedFilterPanel implements Runnable {
 		p.setLayout(null);
 		int x=30, y=10, w=140, h=25;
 		if(size!=1)
-			addButton( "Previous", PREV_ICON, 10, 90, 28, 38,p,PREVIOUS_BUTTON_PRESSED );
+			addButton( "Previous", null, 10, 90, 28, 38,p,PREVIOUS_BUTTON_PRESSED );
 		if(size != maxFilters)
-			addButton( "Next", NEXT_ICON, 480, 90, 28, 38,p ,NEXT_BUTTON_PRESSED );
+			addButton( "Next", null, 480, 90, 28, 38,p ,NEXT_BUTTON_PRESSED );
 		//Icon icon = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/LOG.gif" ) );
 		Icon icon = new ImageIcon( image );
 		JLabel imagelabel= new JLabel(icon);
@@ -172,6 +190,43 @@ public class TabbedFilterPanel implements Runnable {
 		if(event==NEXT_BUTTON_PRESSED){
 
 			pane.setSelectedIndex(pane.getSelectedIndex()+1);
+		}
+
+		if(event==COMPUTE_BUTTON_PRESSED){
+
+			if(trainingImage != null){
+				filterManager.applyFilters(trainingImage);
+			}
+
+
+		}
+		if(event==SAVE_BUTTON_PRESSED){
+
+			SaveDialog sd = new SaveDialog("Save Feature...", "FilterImage", ".tiff");
+			String name = sd.getFileName();
+			ImageStack imageStack= filterManager.getFeatureStack();
+			if (name == null & imageStack!=null){
+			
+			IJ.saveAsTiff( new ImagePlus("FILTERED IMAGE", imageStack),name);
+			}
+			
+		}
+
+		if(event==LOAD_BUTTON_PRESSED){
+			ImagePlus loadedImage= IJ.openImage();
+			filterManager.setImageStack(loadedImage.getImageStack());
+
+		}
+		if(event==DEFAULT_BUTTON_PRESSED){
+
+         filterManager.setDefault();
+
+		}
+
+		if(event==VIEW_BUTTON_PRESSED){
+			ImageStack imageStack= filterManager.getFeatureStack();
+			new ImagePlus("FILTERED IMAGE", imageStack).show();
+
 		}
 
 	}

@@ -21,4 +21,8 @@ public interface IFilterManager {
 	public ImageStack getImageStack(int sliceNum);
 	public Instance createInstance(int x, int y, int classIndex, int sliceNum);
 	public int getOriginalImageSize();
+	public IFilter getFilter(String key);
+	public boolean setImageStack(ImageStack featureStack);
+	public ImageStack getFeatureStack();
+	public boolean setDefault();
 }

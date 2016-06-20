@@ -16,11 +16,13 @@ import java.util.Set;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
 import activeSegmentation.feature.ExampleManagerImpl;
 import activeSegmentation.filterImpl.FilterManager;
 import activeSegmentation.gui.Gui;
 import activeSegmentation.gui.TabbedFilterPanel;
+import activeSegmentation.io.DataManagerImp;
 
 
 
@@ -63,8 +65,9 @@ public class Weka_Segmentation_ implements PlugIn {
 				new ImageJ();
 				Weka_Segmentation_ test_Gui_ = new Weka_Segmentation_();
 				FilterManager filterManager=test_Gui_.runProcess(home);
+				IDataManager dataManager= new DataManagerImp();
 				IExampleManager exampleManager = new ExampleManagerImpl(test_Gui_.getTrainingImage().getImageStackSize(),2);
-				Gui gui= new Gui(filterManager,exampleManager,test_Gui_.getTrainingImage() );
+				Gui gui= new Gui(filterManager,exampleManager,dataManager,test_Gui_.getTrainingImage() );
 				gui.showGridBagLayoutDemo();
 				
 				

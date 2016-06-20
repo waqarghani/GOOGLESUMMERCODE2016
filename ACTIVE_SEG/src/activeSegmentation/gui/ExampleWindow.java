@@ -1,64 +1,70 @@
 package activeSegmentation.gui;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.gui.ColorChooser;
-import ij.gui.Roi;
-import ij.io.OpenDialog;
-import ij.io.SaveDialog;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.Font;
+
+
+
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
+import activeSegmentation.Common;
 import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
+import ij.ImagePlus;
+import ij.gui.Roi;
+import ij.gui.StackWindow;
+import ij.io.OpenDialog;
+import ij.io.SaveDialog;
+
+public class ExampleWindow extends StackWindow {
 
 
-
-
-public class ExamplePanel implements Runnable {
-
+	/**
+	 * 
+	 */
 	private IExampleManager exampleManager;
 	private IDataManager dataManager;
+	private static final long serialVersionUID = 1L;
 	private ImagePlus displayImage;
-	/** array of roi list overlays to paint the transparent rois of each class */
-	RoiListOverlay [] roiOverlay;
-	/** opacity (in %) of the result overlay image */
-	int overlayOpacity = 33;
 	/** 50% alpha composite */
 	final Composite transparency050 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f );
+	/** 25% alpha composite */
+	//final Composite transparency025 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f );
+	/** opacity (in %) of the result overlay image */
+	int overlayOpacity = 33;
 	/** alpha composite for the result overlay image */
 	Composite overlayAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, overlayOpacity / 100f);
 	/** current segmentation result overlay */
 	ImageOverlay resultOverlay;
+	private  int MAX_NUM_CLASSES =10;
+	GridBagLayout boxAnnotation = new GridBagLayout();
 
-
-
-	private int numberofClasses;
 	private java.awt.List exampleList[];
 	/** available colors for available classes */
 	private Color[] colors = new Color[]{Color.blue, Color.green, Color.red,
 			Color.cyan, Color.magenta};
-
 	private static final Icon uploadIcon = new ImageIcon(ExamplePanel.class.getResource("/activeSegmentation/images/upload.png"));
 	//System.out.println("In Buttion ICon" +buttonIcon.getDescription());
 	private static final Icon downloadIcon = new ImageIcon(ExamplePanel.class.getResource("/activeSegmentation/images/download.png"));
-
-	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 21, "Compute" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -68,12 +74,24 @@ public class ExamplePanel implements Runnable {
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent DEFAULT_BUTTON_PRESSED = new ActionEvent( this, 24, "Default" );
 
+	private int numberofClasses;
 
-	public ExamplePanel(IExampleManager exampleManager,IDataManager dataManager, ImagePlus displayImage) {
+	/** array of roi list overlays to paint the transparent rois of each class */
+	RoiListOverlay [] roiOverlay;
+
+	public ExampleWindow(ImagePlus imp, IExampleManager exampleManager, IDataManager dataManager){
+
+		super(imp, new OverlayedImageCanvas(imp) );	
+
+		this.displayImage= imp;
 		this.exampleManager = exampleManager;
 		this.dataManager= dataManager;
-		this.displayImage= displayImage;
+
 		this.numberofClasses= exampleManager.getNumOfClasses();
+		this.exampleList = new java.awt.List[this.numberofClasses];
+
+		roiOverlay = new RoiListOverlay[this.numberofClasses];
+
 		this.exampleList = new java.awt.List[this.numberofClasses];
 
 		roiOverlay = new RoiListOverlay[this.numberofClasses];
@@ -86,9 +104,103 @@ public class ExamplePanel implements Runnable {
 
 
 
+		// add roi list overlays (one per class)
+		for(int i = 0; i < this.numberofClasses; i++)
+		{
+			roiOverlay[i] = new RoiListOverlay();
+			roiOverlay[i].setComposite( transparency050 );
+			((OverlayedImageCanvas)ic).addOverlay(roiOverlay[i]);
+		}
+
+		
+		resultOverlay = new ImageOverlay();
+		resultOverlay.setComposite( overlayAlpha );
+		((OverlayedImageCanvas)ic).addOverlay(resultOverlay);
+
+		this.setTitle("Active Segmentation");
+		JPanel imagePanel = new JPanel();	
+		imagePanel.add(ic);
+
+		// Control panel
+		ControlJPanel controlPanel = new ControlJPanel(imp,exampleManager, numberofClasses);
+
+		Panel all = new Panel();
+		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
+		all.setLayout(box);
+		all.add(imagePanel);
+		all.add(controlPanel);
+		add(all);  	      	      	   
+
+		this.pack();	 	    
+		this.setVisible(true); 
 
 	}
 
+
+
+
+
+	public void doAction( final ActionEvent event )
+	{
+		if(event==COMPUTE_BUTTON_PRESSED){
+
+		}
+		if(event==SAVE_BUTTON_PRESSED){
+
+		}
+
+		if(event==LOAD_BUTTON_PRESSED){
+
+		}
+		if(event==DEFAULT_BUTTON_PRESSED){
+
+		}
+		if(event.getActionCommand()== "AddButton"){	
+			addExamples(event.getID());
+		}
+
+		if(event.getActionCommand()== "UploadButton"){	
+
+			uploadExamples(event.getID());
+		}
+
+		if(event.getActionCommand()== "DownloadButton"){	
+
+			saveRoi(event.getID());
+		}
+
+	}
+
+	private JButton addButton( final String label, final Icon icon, final int x,
+			final int y, final int width, final int height,JComponent panel, final ActionEvent action)
+	{
+		final JButton button = new JButton();
+		panel.add( button );
+		button.setText( label );
+		button.setIcon( icon );
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.setFont( Common.FONT );
+		button.setBounds( x, y, width, height );
+		System.out.println("ADDED");
+		button.addActionListener( new ActionListener()
+		{
+			@Override
+			public void actionPerformed( final ActionEvent e )
+			{
+				System.out.println("CLICKED");
+				doAction(action);
+			}
+		} );
+
+		return button;
+	}
+
+
+
+
+
+
+	/* HELPER FUNCTIONS*/
 
 
 	private void addExamples(int i)
@@ -150,40 +262,6 @@ public class ExamplePanel implements Runnable {
 	}
 
 
-
-
-	public void doAction( final ActionEvent event )
-	{
-		if(event==COMPUTE_BUTTON_PRESSED){
-
-		}
-		if(event==SAVE_BUTTON_PRESSED){
-
-		}
-
-		if(event==LOAD_BUTTON_PRESSED){
-
-		}
-		if(event==DEFAULT_BUTTON_PRESSED){
-
-		}
-		if(event.getActionCommand()== "AddButton"){	
-			addExamples(event.getID());
-		}
-
-		if(event.getActionCommand()== "UploadButton"){	
-
-			uploadExamples(event.getID());
-		}
-
-		if(event.getActionCommand()== "DownloadButton"){	
-
-			saveRoi(event.getID());
-		}
-
-	}
-
-
 	public boolean saveRoi(int  i) {
 
 		String path;
@@ -227,57 +305,6 @@ public class ExamplePanel implements Runnable {
 
 
 
-
-	private JButton addButton( final String label, final Icon icon, final int x,
-			final int y, final int width, final int height,JComponent panel, final ActionEvent action)
-	{
-		final JButton button = new JButton();
-		panel.add( button );
-		button.setText( label );
-		button.setIcon( icon );
-		button.setMargin(new Insets(0, 0, 0, 0));
-		button.setFont( FONT );
-		button.setBounds( x, y, width, height );
-		System.out.println("ADDED");
-		button.addActionListener( new ActionListener()
-		{
-			@Override
-			public void actionPerformed( final ActionEvent e )
-			{
-				System.out.println("CLICKED");
-				doAction(action);
-			}
-		} );
-
-		return button;
-	}
-
-
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		final JFrame frame = new JFrame("FEATURE");
-		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
-		JPanel panel = new JPanel();
-		panel.setLayout(null);
-
-
-
-
-		addButton( "COMPUTE",null , 20, 320, 100, 50,panel,COMPUTE_BUTTON_PRESSED );
-		addButton( "LOAD",null , 130, 320, 100, 50,panel,LOAD_BUTTON_PRESSED );
-		addButton( "DEFAULT",null , 240, 320, 100, 50,panel,DEFAULT_BUTTON_PRESSED );
-		addButton( "SAVE",null , 350, 320, 100, 50,panel,SAVE_BUTTON_PRESSED );
-
-
-		frame.add(panel);
-		frame.setSize(520, 420);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);	
-
-	}
 
 
 }

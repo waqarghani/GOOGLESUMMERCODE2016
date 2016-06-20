@@ -36,6 +36,7 @@ public class FilterManager implements IFilterManager {
 	private Map<String,IFilter> filterMap= new HashMap<String, IFilter>();
 	private Map<Integer,ImageStack> featurStackMap= new HashMap<Integer, ImageStack>();
 	private FilterUtil filterUtil= new FilterUtil();
+	private ImageStack finalImageStack;
 	/** flag to specify the use of color features */
 	private  boolean colorFeatures;
 
@@ -120,6 +121,7 @@ public class FilterManager implements IFilterManager {
 			}
 		}
 
+		this.finalImageStack= finalStack;
 		return finalStack;
 	}
 
@@ -213,6 +215,29 @@ public class FilterManager implements IFilterManager {
 	public int getOriginalImageSize() {
 		// TODO Auto-generated method stub
 		return originalImage.getImageStackSize();
+	}
+
+
+	@Override
+	public boolean setImageStack(ImageStack featureStack) {
+		// TODO Auto-generated method stub
+		this.finalImageStack= featureStack;
+		
+		return true;
+	}
+
+
+	@Override
+	public ImageStack getFeatureStack() {
+		// TODO Auto-generated method stub
+		return this.finalImageStack;
+	}
+
+
+	@Override
+	public boolean setDefault() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
