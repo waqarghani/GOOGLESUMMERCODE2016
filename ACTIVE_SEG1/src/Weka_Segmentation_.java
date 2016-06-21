@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 
 import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
+import activeSegmentation.IFilterManager;
 import activeSegmentation.feature.ExampleManagerImpl;
 import activeSegmentation.filterImpl.FilterManager;
 import activeSegmentation.gui.Gui;
@@ -64,7 +65,7 @@ public class Weka_Segmentation_ implements PlugIn {
 				System.setProperty("plugins.dir", args[0]);
 				new ImageJ();
 				Weka_Segmentation_ test_Gui_ = new Weka_Segmentation_();
-				FilterManager filterManager=test_Gui_.runProcess(home);
+				IFilterManager filterManager=test_Gui_.runProcess(home);
 				IDataManager dataManager= new DataManagerImp();
 				IExampleManager exampleManager = new ExampleManagerImpl(test_Gui_.getTrainingImage().getImageStackSize(),2);
 				Gui gui= new Gui(filterManager,exampleManager,dataManager,test_Gui_.getTrainingImage() );
@@ -87,9 +88,15 @@ public class Weka_Segmentation_ implements PlugIn {
 	public void run(String arg0) {
 		// TODO Auto-generated method stub
 		String home = "C://Program Files//ImageJ//plugins//activeSegmentation//";
-		ImagePlus trainingImage=null;
 		try {
-			runProcess(home);
+			IFilterManager filterManager=runProcess(home);
+			
+			IDataManager dataManager= new DataManagerImp();
+			IExampleManager exampleManager = new ExampleManagerImpl(trainingImage.getImageStackSize(),2);
+			Gui gui= new Gui(filterManager,exampleManager,dataManager,trainingImage );
+			gui.showGridBagLayoutDemo();
+			
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,13 +105,13 @@ public class Weka_Segmentation_ implements PlugIn {
 		
 	}
 
-	public  FilterManager runProcess(String home) throws Exception{
+	public  IFilterManager runProcess(String home) throws Exception{
 		
 		try {
 			
 			/*-------------- LOADING FILTERS* ------------------*/
 			System.out.println("-------------- LOADING FILTERS* ------------------");
-			FilterManager filterManager=new FilterManager();
+			IFilterManager filterManager=new FilterManager();
 			filterManager.loadFilters(home);
 			
 			

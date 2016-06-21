@@ -70,12 +70,7 @@ public class TabbedFilterPanel implements Runnable {
 
 	private ImagePlus trainingImage;
 
-	private static final Icon PREV_ICON = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/left.png" ) );
-
-	private static final Icon NEXT_ICON = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/right.png" ) );
-
-	private static final Icon TAB_ICON = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/tabicon.png" ) );
-
+	
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
 
 	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
@@ -96,7 +91,7 @@ public class TabbedFilterPanel implements Runnable {
 	final ActionEvent VIEW_BUTTON_PRESSED = new ActionEvent( this, 6, "View" );
 
 
-	public TabbedFilterPanel(FilterManager filterManager, ImagePlus trainingImage) {
+	public TabbedFilterPanel(IFilterManager filterManager, ImagePlus trainingImage) {
 
 		this.filterManager = filterManager;
 		this.trainingImage= trainingImage;
@@ -105,6 +100,7 @@ public class TabbedFilterPanel implements Runnable {
 
 
 
+	@Override
 	public void run() {
 		final JFrame frame = new JFrame("FILTER");
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

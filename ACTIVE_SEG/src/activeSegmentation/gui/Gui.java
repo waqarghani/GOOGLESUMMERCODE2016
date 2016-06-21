@@ -14,12 +14,13 @@ import javax.swing.plaf.metal.OceanTheme;
 
 import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
+import activeSegmentation.IFilterManager;
 import activeSegmentation.filterImpl.FilterManager;
 
 public class Gui {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
-	private FilterManager filterManager;
+	private IFilterManager filterManager;
 	private IExampleManager exampleManager;
 	private IDataManager dataManager;
 	private ImagePlus trainingImage;
@@ -39,7 +40,7 @@ public class Gui {
 	final static String LOOKANDFEEL = "Metal";
 	final static String THEME = "Test";
 	public static final Font FONT = new Font( "Arial", Font.BOLD, 13 );
-	public Gui(FilterManager filterManager, IExampleManager exampleManager,
+	public Gui(IFilterManager filterManager, IExampleManager exampleManager,
 			IDataManager dataManager,ImagePlus trainingImage){
 
 		this.filterManager= filterManager;

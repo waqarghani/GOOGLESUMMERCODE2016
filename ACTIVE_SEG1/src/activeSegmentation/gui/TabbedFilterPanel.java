@@ -56,6 +56,7 @@ import javax.swing.JTextArea;
 
 
 
+
 import activeSegmentation.IFilter;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.filterImpl.FilterManager;
@@ -70,12 +71,7 @@ public class TabbedFilterPanel implements Runnable {
 
 	private ImagePlus trainingImage;
 
-	private static final Icon PREV_ICON = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/left.png" ) );
-
-	private static final Icon NEXT_ICON = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/right.png" ) );
-
-	private static final Icon TAB_ICON = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/tabicon.png" ) );
-
+	
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
 
 	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
@@ -96,19 +92,21 @@ public class TabbedFilterPanel implements Runnable {
 	final ActionEvent VIEW_BUTTON_PRESSED = new ActionEvent( this, 6, "View" );
 
 
-	public TabbedFilterPanel(FilterManager filterManager, ImagePlus trainingImage) {
+	public TabbedFilterPanel(IFilterManager filterManager, ImagePlus trainingImage) {
 
 		this.filterManager = filterManager;
 		this.trainingImage= trainingImage;
+		 IJ.log("IN FLITER PANEL");
 	}
 
 
-
-
+	@Override
 	public void run() {
+		
+		 IJ.log("IN FLITER PANEL1");
 		final JFrame frame = new JFrame("FILTER");
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
+      
 		pane = new JTabbedPane();
 		pane.setFont(FONT);
 		pane.setBackground(Color.WHITE);
@@ -120,6 +118,7 @@ public class TabbedFilterPanel implements Runnable {
 
 		Set<String> filters= filterManager.getFilters();  
 		System.out.println(filters.size());
+		IJ.log("filter size: "+filters.size());
 		int filterSize=1;
 		for(String filter: filters){
 			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
@@ -129,7 +128,7 @@ public class TabbedFilterPanel implements Runnable {
 
 		}
 
-
+     
 		pane.setSize(600, 300);
 		addButton( "COMPUTE",null , 20, 320, 100, 50,panel,COMPUTE_BUTTON_PRESSED );
 		addButton( "LOAD",null , 130, 320, 100, 50,panel,LOAD_BUTTON_PRESSED );
