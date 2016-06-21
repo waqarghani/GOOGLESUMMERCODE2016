@@ -141,7 +141,8 @@ public class ExampleWindow extends StackWindow
 		imagePanel.add(sliceSelector,getGbc(0, 1, 1, false, true));
 		}
 		
-				
+		
+		
 		this.exampleList = new java.awt.List[Common.MAX_NUM_CLASSES];
 
 		for(int i = 0; i < Common.MAX_NUM_CLASSES ; i++){

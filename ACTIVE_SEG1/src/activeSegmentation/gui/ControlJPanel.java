@@ -33,20 +33,16 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -54,14 +50,13 @@ import activeSegmentation.Common;
 import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
 
-
 /**
- * 
+ * This class implements the interactive buttons for the Siox segmentation GUI.
  *  
- * @author
+ * @author Ignacio Arganda-Carreras, Johannes Schindelin, Stephan Saalfeld
  *
  */
-public class ExampleWindow extends StackWindow
+public class ControlJPanel extends StackWindow
 {
 	/** Generated serial version UID */
 	private static final long serialVersionUID = -1037100741242680537L;
@@ -69,9 +64,10 @@ public class ExampleWindow extends StackWindow
 	// GUI components
 	final JPanel labelsJPanel=new JPanel(new GridBagLayout());
 	final JPanel resetJPanel = new JPanel(new GridBagLayout());
-	/** 50% alpha composite */
-	final Composite transparency050 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f );
 
+
+	final JLabel fgOrBgJLabel=new JLabel("Add Known ");
+	final JButton segmentJButton = new JButton("Segment");
 	int numberofClasses;
 	IExampleManager exampleManager;
 	IDataManager dataManager;
@@ -82,6 +78,7 @@ public class ExampleWindow extends StackWindow
 	/** array of roi list overlays to paint the transparent rois of each class */
 	RoiListOverlay [] roiOverlay;
 	private static final Icon uploadIcon = new ImageIcon(ExamplePanel.class.getResource("/activeSegmentation/images/upload.png"));
+	//System.out.println("In Buttion ICon" +buttonIcon.getDescription());
 	private static final Icon downloadIcon = new ImageIcon(ExamplePanel.class.getResource("/activeSegmentation/images/download.png"));
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -99,32 +96,27 @@ public class ExampleWindow extends StackWindow
 	int overlayOpacity = 33;
 	/** alpha composite for the result overlay image */
 	Composite overlayAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, overlayOpacity / 100f);
+	
 
 	ImageOverlay resultOverlay;
 
+
+	//-----------------------------------------------------------------
 	/**
 	 * Constructs a control panel for interactive SIOX segmentation on given image.
 	 */
-	public ExampleWindow(ImagePlus imp,IExampleManager exampleManager, IDataManager dataManager)
+	public ControlJPanel(ImagePlus imp,IExampleManager exampleManager, IDataManager dataManager ,int classes)
 	{
 		super(imp, new OverlayedImageCanvas(imp) );	
 
 
 		this.displayImage= imp;
 		this.exampleManager= exampleManager;
-		this.numberofClasses= exampleManager.getNumOfClasses();
+		this.numberofClasses= classes;
 		this.dataManager= dataManager;
 
 
-		roiOverlay = new RoiListOverlay[Common.MAX_NUM_CLASSES];
-
-		// add roi list overlays (one per class)
-		for(int i = 0; i < Common.MAX_NUM_CLASSES; i++)
-		{
-			roiOverlay[i] = new RoiListOverlay();
-			roiOverlay[i].setComposite( transparency050 );
-			((OverlayedImageCanvas)ic).addOverlay(roiOverlay[i]);
-		}
+		roiOverlay = new RoiListOverlay[this.numberofClasses];
 
 
 		resultOverlay = new ImageOverlay();
@@ -132,22 +124,17 @@ public class ExampleWindow extends StackWindow
 		((OverlayedImageCanvas)ic).addOverlay(resultOverlay);
 
 		this.setTitle("Active Segmentation");
-		JPanel imagePanel = new JPanel(new GridBagLayout());	
-		imagePanel.add(ic, getGbc(0, 0, 1, false, false));
-		if(null != sliceSelector){
-			
-		sliceSelector.setEnabled(true);
-		imagePanel.add(zSelector,getGbc(0, 0, 0, false, false));
-		imagePanel.add(sliceSelector,getGbc(0, 1, 1, false, true));
-		}
-		
-				
-		this.exampleList = new java.awt.List[Common.MAX_NUM_CLASSES];
+		JPanel imagePanel = new JPanel();	
+		imagePanel.add(ic);
+		this.exampleList = new java.awt.List[this.numberofClasses];
 
-		for(int i = 0; i < Common.MAX_NUM_CLASSES ; i++){
+		for(int i = 0; i < this.numberofClasses ; i++)
+		{
 			exampleList[i] = new java.awt.List(5);
 			exampleList[i].setForeground(colors[i]);
 		}
+
+
 
 		final JPanel controlsBox=new JPanel(new GridBagLayout());
 
@@ -160,69 +147,39 @@ public class ExampleWindow extends StackWindow
 			addButton( exampleManager.getClassLabels()[i],null ,labelsJPanel,
 					addbuttonAction,new Dimension(100, 21),getGbc(0,j , 1, false, false) );
 			ActionEvent uploadAction= new ActionEvent(this, i,"UploadButton");
+			j++;
 			addButton( null,uploadIcon,labelsJPanel,uploadAction,
-					new Dimension(20, 21),getGbc(1, j, 1, false, false));
+					new Dimension(20, 21),getGbc(0, j, 1, false, false));
 			ActionEvent downloadAction= new ActionEvent(this, i,"DownloadButton");
 			addButton( null,downloadIcon ,labelsJPanel,downloadAction,
-					new Dimension(20, 21),getGbc(2, j, 1, false, false));
+					new Dimension(20, 21),getGbc(1, j, 1, false, false));
 			j++;
-			exampleList[i].addMouseListener(mouseListener);
 			labelsJPanel.add( exampleList[i], getGbc(0,j, 1, false, false));
 			j++;
 		}
+
+
+
 
 		//Scroll panel for the label panel
 		JScrollPane scrollPanel = new JScrollPane( labelsJPanel );
 		scrollPanel.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
 		scrollPanel.setMinimumSize( labelsJPanel.getPreferredSize() );
 
+
 		resetJPanel.add(computeJButton, getGbc(0, 0, 1, false, false));				
 		resetJPanel.add(loadJButton, getGbc(1, 0, 1, false, false));
 		resetJPanel.add(saveJButton, getGbc(2, 0, 1, false, false));
+
 		controlsBox.add(scrollPanel, getGbc(0, 0, 1, false, true));
+
 		controlsBox.add(resetJPanel, getGbc(0, 2, 1, false, true));
+
 		add(controlsBox, BorderLayout.EAST);
-		
-		
-		
 
-		Panel all = new Panel();
-		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
-		all.setLayout(box);
-		all.add(imagePanel);
-		all.add(controlsBox);
-		add(all);  	      	      	   
-
-		this.pack();	 	    
-		this.setVisible(true); 
 
 	}// end ControlJPanel constructor
 
-
-
-	private  MouseListener mouseListener = new MouseAdapter() {
-		public void mouseClicked(MouseEvent mouseEvent) {
-			java.awt.List theList = ( java.awt.List) mouseEvent.getSource();
-			if (mouseEvent.getClickCount() == 1) {
-				int index = theList.getSelectedIndex();
-				if (index >= 0) {
-					String item =theList.getItem(index);
-					String[] arr= item.split(" ");
-					showSelected( Integer.parseInt(arr[1]));
-				}
-
-			}
-
-			if (mouseEvent.getClickCount() == 2) {
-				int index = theList.getSelectedIndex();
-				if (index >= 0) {
-					String item =theList.getItem(index);
-					String[] arr= item.split(" ");
-					deleteSelected(Integer.parseInt(arr[1]));
-				}
-			}
-		}
-	};
 
 
 
@@ -254,18 +211,21 @@ public class ExampleWindow extends StackWindow
 
 
 	private JButton addButton( final String label, final Icon icon,JComponent panel, 
-			final ActionEvent action, Dimension dimension,GridBagConstraints labelsConstraints ){
+			final ActionEvent action, Dimension dimension,GridBagConstraints labelsConstraints )
+	{
 		final JButton button = new JButton();
 		panel.add( button, labelsConstraints);
 		button.setText( label );
 		button.setIcon( icon );
 		button.setFont( Common.FONT );
 		button.setPreferredSize(dimension);
+		System.out.println("ADDED");
 		button.addActionListener( new ActionListener()
 		{
 			@Override
 			public void actionPerformed( final ActionEvent e )
 			{
+				System.out.println("CLICKED");
 				doAction(action);
 			}
 		} );
@@ -274,20 +234,45 @@ public class ExampleWindow extends StackWindow
 	}
 
 
-	public void doAction( final ActionEvent event )	{
-		if(event==COMPUTE_BUTTON_PRESSED){
 
+	private JButton addButton( final String label, final Icon icon, final int x,
+			final int y, final int width, final int height,JComponent panel, final ActionEvent action)
+	{
+		final JButton button = new JButton();
+		panel.add( button );
+		button.setText( label );
+		button.setIcon( icon );
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.setFont( Common.FONT );
+		button.setBounds( x, y, width, height );
+		System.out.println("ADDED");
+		button.addActionListener( new ActionListener()
+		{
+			@Override
+			public void actionPerformed( final ActionEvent e )
+			{
+				System.out.println("CLICKED");
+				doAction(action);
+			}
+		} );
+
+		return button;
+	}
+
+
+
+	public void doAction( final ActionEvent event )
+	{
+		if(event==COMPUTE_BUTTON_PRESSED){
 
 		}
 		if(event==SAVE_BUTTON_PRESSED){
-
 
 		}
 
 		if(event==LOAD_BUTTON_PRESSED){
 
 		}
-
 
 		if(event.getActionCommand()== "AddButton"){	
 			addExamples(event.getID());
@@ -307,44 +292,7 @@ public class ExampleWindow extends StackWindow
 
 	/* HELPER FUNCTIONS */
 
-
-	/**
-	 * Select a list and deselect the others
-	 * 
-	 * @param e item event (originated by a list)
-	 * @param i list index
-	 */
-	private void showSelected(int classId ){
-		// find the right slice of the corresponding ROI
-
-		drawExamples();
-		displayImage.setColor(Color.YELLOW);
-		int index=exampleList[classId].getSelectedIndex();
-		final Roi newRoi = 
-				exampleManager.getExamples(classId, displayImage.getCurrentSlice())
-				.get(index);
-		// Set selected trace as current ROI
-		newRoi.setImage(displayImage);
-		displayImage.setRoi(newRoi);
-
-		displayImage.updateAndDraw();
-	}  
-
-
-	/**
-	 * Delete one of the ROIs
-	 *
-	 * @param e action event
-	 */
-	private void deleteSelected(int classId){
-		int index = exampleList[classId].getSelectedIndex();
-		// delete item from the list of ROIs of that class and slice
-		exampleManager.deleteExample(classId, displayImage.getCurrentSlice(), index);
-		//delete item from GUI list
-		exampleList[classId].remove(index);
-		drawExamples();
-		updateExampleLists();
-	}
+	/* HELPER FUNCTIONS*/
 
 
 	private void addExamples(int i)
@@ -379,6 +327,7 @@ public class ExampleWindow extends StackWindow
 			for (Roi r : exampleManager.getExamples(i, currentSlice))
 			{
 				rois.add(r);
+				//IJ.log("painted ROI: " + r + " in color "+ colors[i] + ", slice = " + currentSlice);
 			}
 			roiOverlay[i].setRoi(rois);
 		}
@@ -391,20 +340,18 @@ public class ExampleWindow extends StackWindow
 	/**
 	 * Update the example lists in the GUI
 	 */
-	protected void updateExampleLists()	{
+	protected void updateExampleLists()
+	{
 		final int currentSlice = displayImage.getCurrentSlice();
 
 		for(int i = 0; i < numberofClasses; i++)
 		{
 			exampleList[i].removeAll();
-			for(int j=0; j<exampleManager.getExamples(i, currentSlice).size(); j++){	
-
-				exampleList[i].add("trace " + i + " "+ j + " " + currentSlice);
-			}
+			for(int j=0; j<exampleManager.getExamples(i, currentSlice).size(); j++)
+				exampleList[i].add("trace " + j + " (Z=" + currentSlice+")");
 		}
 
 	}
-
 
 
 	public boolean saveRoi(int  i) {
@@ -424,24 +371,31 @@ public class ExampleWindow extends StackWindow
 
 	}
 
+
 	/**
 	 * Add examples defined by the user to the corresponding list
 	 * in the GUI and the example list in the segmentation object.
 	 * 
 	 * @param i GUI list index
 	 */
-	private void uploadExamples(int i){
+	private void uploadExamples(int i)
+	{
 		//get selected pixels
 
 		OpenDialog od = new OpenDialog("Choose data file", OpenDialog.getLastDirectory(), "data.arff");
 		if (od.getFileName()==null)
 			return;
 
+
 		final int n = displayImage.getCurrentSlice();
 
 		dataManager.openZip(od.getDirectory() + od.getFileName(), i, n);
+
 		drawExamples();
 		updateExampleLists();
 	}
-	
-}
+
+
+
+
+}// end class ControlJPanel
