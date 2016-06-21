@@ -70,9 +70,7 @@ public class Weka_Segmentation_ implements PlugIn {
 				IExampleManager exampleManager = new ExampleManagerImpl(test_Gui_.getTrainingImage().getImageStackSize(),2);
 				Gui gui= new Gui(filterManager,exampleManager,dataManager,test_Gui_.getTrainingImage() );
 				gui.showGridBagLayoutDemo();
-				
-				
-				
+							
 			} else {
 				throw new IllegalArgumentException();
 			}
