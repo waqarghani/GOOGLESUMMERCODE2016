@@ -40,15 +40,22 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+
+import org.w3c.dom.ls.LSInput;
 
 import activeSegmentation.Common;
 import activeSegmentation.IDataManager;
@@ -69,20 +76,24 @@ public class ExampleWindow extends StackWindow
 	// GUI components
 	final JPanel labelsJPanel=new JPanel(new GridBagLayout());
 	final JPanel resetJPanel = new JPanel(new GridBagLayout());
+	JPanel imagePanel;
+	JScrollPane scrollPanel;
+	Panel all;
 	/** 50% alpha composite */
 	final Composite transparency050 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f );
 
 	int numberofClasses;
 	IExampleManager exampleManager;
 	IDataManager dataManager;
-	private java.awt.List exampleList[];
+	private JList exampleList[];
+	private JList allexampleList[];
 	private Color[] colors = new Color[]{Color.blue, Color.green, Color.red,
 			Color.cyan, Color.magenta};
 
 	/** array of roi list overlays to paint the transparent rois of each class */
 	RoiListOverlay [] roiOverlay;
-	private static final Icon uploadIcon = new ImageIcon(ExamplePanel.class.getResource("/activeSegmentation/images/upload.png"));
-	private static final Icon downloadIcon = new ImageIcon(ExamplePanel.class.getResource("/activeSegmentation/images/download.png"));
+	private static final Icon uploadIcon = new ImageIcon(ExampleWindow.class.getResource("/activeSegmentation/images/upload.png"));
+	private static final Icon downloadIcon = new ImageIcon(ExampleWindow.class.getResource("/activeSegmentation/images/download.png"));
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 21, "TRAIN" );
@@ -132,23 +143,29 @@ public class ExampleWindow extends StackWindow
 		((OverlayedImageCanvas)ic).addOverlay(resultOverlay);
 
 		this.setTitle("Active Segmentation");
-		JPanel imagePanel = new JPanel(new GridBagLayout());	
+		 imagePanel = new JPanel(new GridBagLayout());	
 		imagePanel.add(ic, getGbc(0, 0, 1, false, false));
 		if(null != sliceSelector){
-			
-		sliceSelector.setEnabled(true);
-		imagePanel.add(zSelector,getGbc(0, 0, 0, false, false));
-		imagePanel.add(sliceSelector,getGbc(0, 1, 1, false, true));
+
+			sliceSelector.setEnabled(true);
+			imagePanel.add(zSelector,getGbc(0, 0, 0, false, false));
+			imagePanel.add(sliceSelector,getGbc(0, 1, 1, false, true));
 		}
-		
-				
-		this.exampleList = new java.awt.List[Common.MAX_NUM_CLASSES];
+
+
+		this.exampleList = new JList[Common.MAX_NUM_CLASSES];
+		this.allexampleList = new JList[Common.MAX_NUM_CLASSES];
 
 		for(int i = 0; i < Common.MAX_NUM_CLASSES ; i++){
-			exampleList[i] = new java.awt.List(5);
+			
+			exampleList[i] = model();
 			exampleList[i].setForeground(colors[i]);
+			allexampleList[i] = model();
+			allexampleList[i].setForeground(colors[i]);
+			
 		}
 
+		
 		final JPanel controlsBox=new JPanel(new GridBagLayout());
 
 		labelsJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
@@ -157,8 +174,10 @@ public class ExampleWindow extends StackWindow
 		for(int i = 0; i < numberofClasses; i++)
 		{
 			ActionEvent addbuttonAction= new ActionEvent(this, i,"AddButton");
+			
 			addButton( exampleManager.getClassLabels()[i],null ,labelsJPanel,
 					addbuttonAction,new Dimension(100, 21),getGbc(0,j , 1, false, false) );
+			
 			ActionEvent uploadAction= new ActionEvent(this, i,"UploadButton");
 			addButton( null,uploadIcon,labelsJPanel,uploadAction,
 					new Dimension(20, 21),getGbc(1, j, 1, false, false));
@@ -167,12 +186,20 @@ public class ExampleWindow extends StackWindow
 					new Dimension(20, 21),getGbc(2, j, 1, false, false));
 			j++;
 			exampleList[i].addMouseListener(mouseListener);
-			labelsJPanel.add( exampleList[i], getGbc(0,j, 1, false, false));
+			// Add the listbox to a scrolling pane
+			JScrollPane scrollPane = new JScrollPane();
+			scrollPane.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+			scrollPane.getViewport().add( exampleList[i] );
+			labelsJPanel.add( scrollPane, getGbc(0,j, 1, false, false));
+			JScrollPane scrollPane1 = new JScrollPane();
+			scrollPane1.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+			scrollPane1.getViewport().add( allexampleList[i] );
+			labelsJPanel.add( scrollPane1, getGbc(1,j, 1, false, false));
 			j++;
 		}
 
 		//Scroll panel for the label panel
-		JScrollPane scrollPanel = new JScrollPane( labelsJPanel );
+		scrollPanel = new JScrollPane( labelsJPanel );
 		scrollPanel.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
 		scrollPanel.setMinimumSize( labelsJPanel.getPreferredSize() );
 
@@ -182,9 +209,9 @@ public class ExampleWindow extends StackWindow
 		controlsBox.add(scrollPanel, getGbc(0, 0, 1, false, true));
 		controlsBox.add(resetJPanel, getGbc(0, 2, 1, false, true));
 		add(controlsBox, BorderLayout.EAST);
-		
-		
-		
+
+
+
 
 		Panel all = new Panel();
 		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
@@ -199,14 +226,25 @@ public class ExampleWindow extends StackWindow
 	}// end ControlJPanel constructor
 
 
+	
+	private JList model(){
+		DefaultListModel traces = new DefaultListModel();
+		traces.addElement(" ");
+		JList list=new JList(traces);
+		list.setVisibleRowCount(5);
+		list.setFixedCellHeight(20);
+		list.setFixedCellWidth(100);
+		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		return list;
+	}
 
 	private  MouseListener mouseListener = new MouseAdapter() {
 		public void mouseClicked(MouseEvent mouseEvent) {
-			java.awt.List theList = ( java.awt.List) mouseEvent.getSource();
+			JList theList = ( JList) mouseEvent.getSource();
 			if (mouseEvent.getClickCount() == 1) {
 				int index = theList.getSelectedIndex();
 				if (index >= 0) {
-					String item =theList.getItem(index);
+					String item =theList.getSelectedValue().toString();
 					String[] arr= item.split(" ");
 					showSelected( Integer.parseInt(arr[1]));
 				}
@@ -216,7 +254,7 @@ public class ExampleWindow extends StackWindow
 			if (mouseEvent.getClickCount() == 2) {
 				int index = theList.getSelectedIndex();
 				if (index >= 0) {
-					String item =theList.getItem(index);
+					String item =theList.getSelectedValue().toString();
 					String[] arr= item.split(" ");
 					deleteSelected(Integer.parseInt(arr[1]));
 				}
@@ -338,14 +376,24 @@ public class ExampleWindow extends StackWindow
 	 */
 	private void deleteSelected(int classId){
 		int index = exampleList[classId].getSelectedIndex();
-		// delete item from the list of ROIs of that class and slice
 		exampleManager.deleteExample(classId, displayImage.getCurrentSlice(), index);
-		//delete item from GUI list
-		exampleList[classId].remove(index);
 		drawExamples();
 		updateExampleLists();
 	}
 
+	
+
+	/**
+	 * Repaint all panels
+	 */
+	public void repaintAll()
+	{
+		this.imagePanel.repaint();
+		getCanvas().repaint();
+		this.labelsJPanel.repaint();
+		this.scrollPanel.repaint();
+		this.all.repaint();
+	}
 
 	private void addExamples(int i)
 	{
@@ -361,6 +409,7 @@ public class ExampleWindow extends StackWindow
 		//traceCounter[i]++;
 		drawExamples();
 		this.updateExampleLists();
+		
 
 	}
 
@@ -397,11 +446,25 @@ public class ExampleWindow extends StackWindow
 		for(int i = 0; i < numberofClasses; i++)
 		{
 			exampleList[i].removeAll();
+			Vector listModel = new Vector();
+
 			for(int j=0; j<exampleManager.getExamples(i, currentSlice).size(); j++){	
 
-				exampleList[i].add("trace " + i + " "+ j + " " + currentSlice);
+				listModel.addElement("trace " + i + " "+ j + " " + currentSlice);
+				//exampleList[i].add(new JLabel("trace " + i + " "+ j + " " + currentSlice));
+				//	exampleList[i].add("trace " + i + " "+ j + " " + currentSlice);
 			}
+			/*JList list=new JList(listModel);
+			list.setVisibleRowCount(10);
+			list.setFixedCellHeight(20);
+			list.setFixedCellWidth(140);
+			list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);*/
+
+			exampleList[i].setListData(listModel);
+			
+
 		}
+
 
 	}
 
@@ -443,5 +506,5 @@ public class ExampleWindow extends StackWindow
 		drawExamples();
 		updateExampleLists();
 	}
-	
+
 }

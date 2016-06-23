@@ -1,11 +1,17 @@
 package activeSegmentation.gui;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.WindowManager;
 
-import java.awt.*;
-import java.awt.event.*;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import ij.ImagePlus;
+
+
+
+
+
 
 import javax.swing.*;
 import javax.swing.plaf.metal.DefaultMetalTheme;
@@ -15,7 +21,6 @@ import javax.swing.plaf.metal.OceanTheme;
 import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
 import activeSegmentation.IFilterManager;
-import activeSegmentation.filterImpl.FilterManager;
 
 public class Gui {
 	private JFrame mainFrame;
