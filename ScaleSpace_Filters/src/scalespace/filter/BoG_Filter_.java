@@ -23,6 +23,7 @@ import ijaux.scale.GScaleSpace;
 
 
 
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -90,6 +91,7 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 
 	public static boolean sep= Prefs.getBoolean(ISSEP, false);
 	private static boolean isiso= Prefs.getBoolean(ISO, true);
+	private boolean isEnabled=true;
 
 	public boolean isFloat=false;
 	
@@ -451,5 +453,18 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 
 		return chart.createBufferedImage(200, 200);
 	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return isEnabled;
+	}
+
+	@Override
+	public void setEnabled(boolean isEnabled) {
+		// TODO Auto-generated method stub
+		this.isEnabled= isEnabled;
+	}
+
 
 }

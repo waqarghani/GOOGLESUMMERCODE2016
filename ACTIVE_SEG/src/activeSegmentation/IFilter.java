@@ -70,9 +70,10 @@ public interface IFilter {
 	 * @return Image
 	 */
 	public Image getImage();
-	
-	
+		
+	public boolean isEnabled();
 
+	public void setEnabled(boolean isEnabled);
 	
 
 }

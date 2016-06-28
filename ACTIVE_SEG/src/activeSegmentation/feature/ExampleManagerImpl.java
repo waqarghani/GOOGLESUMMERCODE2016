@@ -17,12 +17,11 @@ public class ExampleManagerImpl implements IExampleManager {
 
 	/** array of lists of Rois for each slice (vector index) 
 	 * and each class (arraylist index) of the training image */
-	private Vector<ArrayList<Roi>> examples[];
+	private List<Vector<ArrayList<Roi>>> examples;
 	
 	/** maximum number of classes (labels) allowed */
-	private int MAX_NUM_CLASSES = Common.MAX_NUM_CLASSES;
 	/** names of the current classes */
-	private String[] classLabels = new String[MAX_NUM_CLASSES];
+	private List<String> classLabels = new ArrayList<String>();
 	
 	/** current number of classes */
 	private int numOfClasses = 0;
@@ -31,21 +30,17 @@ public class ExampleManagerImpl implements IExampleManager {
 	public ExampleManagerImpl(int stackSize, int numOfClasses)
 	{
 		this.stackSize=stackSize;
-			
-		// update list of examples
-		examples = new Vector[stackSize];
+		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
+				// update list of examples
 		for(int i=0; i < stackSize; i++)
 		{
-			examples[i] = new Vector<ArrayList<Roi>>(MAX_NUM_CLASSES);
+			examples.add(new Vector<ArrayList<Roi>>());
 			
-			System.out.println("ADDED");
 		}
 		
-		for(int i=0; i<MAX_NUM_CLASSES; i++)
-			this.classLabels[ i ] = new String(Common.CLASS + (i+1));
 		
 		for(int i=0; i<numOfClasses;i++ ){
-			addClass();
+			addClass(i);
 		}
 	}
 
@@ -54,7 +49,7 @@ public class ExampleManagerImpl implements IExampleManager {
 	{
 		System.out.println(" IN WEKA Test Example"+ n+"class Number"+ classNum);
 				
-		examples[n-1].get(classNum).add(roi);
+		examples.get(n-1).get(classNum).add(roi);
 		System.out.println(" doneTest Example");
 	}
 	
@@ -79,7 +74,7 @@ public class ExampleManagerImpl implements IExampleManager {
 	 */
 	public List<Roi> getExamples(int classNum, int n) 
 	{
-		return examples[n-1].get(classNum);
+		return examples.get(n-1).get(classNum);
 	}
 	
 	/**
@@ -99,7 +94,7 @@ public class ExampleManagerImpl implements IExampleManager {
 	 * @return array containing all the class labels
 	 */
 	@Override
-	public String[] getClassLabels() 
+	public List<String> getClassLabels() 
 	{
 		return classLabels;
 	}
@@ -114,7 +109,7 @@ public class ExampleManagerImpl implements IExampleManager {
 	@Override
 	public void setClassLabel(int classNum, String label) 
 	{
-		getClassLabels()[classNum] = label;
+		classLabels.add(classNum, label);
 	}
 	
 	/**
@@ -142,12 +137,13 @@ public class ExampleManagerImpl implements IExampleManager {
 	/**
 	 * Add new segmentation class.
 	 */
-	public void addClass()
+	public void addClass(int classId)
 	{
 		
 			for(int i=1; i <= stackSize; i++)
-				examples[i-1].add(new ArrayList<Roi>());
-
+				examples.get(i-1).add(new ArrayList<Roi>());
+			
+		classLabels.add( new String(Common.CLASS + (classId+1)));
 		// increase number of available classes
 		numOfClasses ++;
 	}

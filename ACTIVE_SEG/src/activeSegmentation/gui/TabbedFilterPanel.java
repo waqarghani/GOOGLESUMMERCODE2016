@@ -7,12 +7,14 @@ import ij.ImageStack;
 import ij.io.SaveDialog;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,37 +30,22 @@ import java.util.Map;
 
 
 import java.util.Set;
+import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import activeSegmentation.IFilter;
+import activeSegmentation.Common;
 import activeSegmentation.IFilterManager;
-import activeSegmentation.filterImpl.FilterManager;
 
 
 
@@ -67,11 +54,11 @@ public class TabbedFilterPanel implements Runnable {
 
 	private IFilterManager filterManager;
 	private JTabbedPane pane;
+	private JList filterList;
 
 	private ImagePlus trainingImage;
 
-	
-	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
+
 
 	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
 	final ActionEvent NEXT_BUTTON_PRESSED = new ActionEvent( this, 0, "Next" );
@@ -95,6 +82,8 @@ public class TabbedFilterPanel implements Runnable {
 
 		this.filterManager = filterManager;
 		this.trainingImage= trainingImage;
+		this.filterList =Util.model();
+		this.filterList.setForeground(Color.GREEN);
 	}
 
 
@@ -104,72 +93,81 @@ public class TabbedFilterPanel implements Runnable {
 	public void run() {
 		final JFrame frame = new JFrame("FILTER");
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
 		pane = new JTabbedPane();
-		pane.setFont(FONT);
+		pane.setFont(Common.FONT);
 		pane.setBackground(Color.WHITE);
-
 
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setFont(FONT);
+		panel.setFont(Common.FONT);
 
 		Set<String> filters= filterManager.getFilters();  
 		System.out.println(filters.size());
 		int filterSize=1;
 		for(String filter: filters){
 			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
-					filterManager.getFilter(filter).getImage(), filterSize, filters.size()),filter);
-
+					filterManager.getFilter(filter).getImage(), 
+					filterSize, filters.size(),filter, filterManager.isFilterEnabled(filter)));
 			filterSize++;
 
 		}
 
 
 		pane.setSize(600, 300);
-		addButton( "COMPUTE",null , 20, 320, 100, 50,panel,COMPUTE_BUTTON_PRESSED );
-		addButton( "LOAD",null , 130, 320, 100, 50,panel,LOAD_BUTTON_PRESSED );
-		addButton( "DEFAULT",null , 240, 320, 100, 50,panel,DEFAULT_BUTTON_PRESSED );
-		addButton( "SAVE",null , 350, 320, 100, 50,panel,SAVE_BUTTON_PRESSED );
-		addButton( "VIEW",null , 460, 320, 100, 50,panel,VIEW_BUTTON_PRESSED );
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+		scrollPane.getViewport().add( filterList);
+		scrollPane.setBounds(605,20,100,280);
+		panel.add(scrollPane);
+		updateFiterList();
+		addButton( new JButton(),"COMPUTE",null , 20, 320, 100, 50,panel,COMPUTE_BUTTON_PRESSED,null );
+		addButton(new JButton(), "LOAD",null , 130, 320, 100, 50,panel,LOAD_BUTTON_PRESSED,null );
+		addButton(new JButton(), "DEFAULT",null , 240, 320, 100, 50,panel,DEFAULT_BUTTON_PRESSED,null );
+		addButton(new JButton(), "SAVE",null , 350, 320, 100, 50,panel,SAVE_BUTTON_PRESSED,null );
+		addButton(new JButton(), "VIEW",null , 460, 320, 100, 50,panel,VIEW_BUTTON_PRESSED,null );
 
 
 		frame.add(pane);
 		frame.add(panel);
-		frame.setSize(600, 420);
+		frame.setSize(730, 420);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 
 
-	private JPanel createTab( Map<String , String> settingsMap, Image image, int size, int maxFilters) {
+	private JPanel createTab( Map<String , String> settingsMap, Image image, 
+			int size, int maxFilters,String filter, boolean enabled) {
 		JPanel p = new JPanel();
 		p.setLayout(null);
 		int  y=10;
 		if(size!=1)
-			addButton( "Previous", null, 10, 90, 70, 38,p,PREVIOUS_BUTTON_PRESSED );
+			addButton( new JButton(), "Previous", null, 10, 90, 70, 38,p,PREVIOUS_BUTTON_PRESSED , null);
 		if(size != maxFilters)
-			addButton( "Next", null, 480, 90, 70, 38,p ,NEXT_BUTTON_PRESSED );
-		//Icon icon = new ImageIcon( TabbedFilterPanel.class.getResource( "../images/LOG.gif" ) );
+			addButton( new JButton(), "Next", null, 480, 90, 70, 38,p ,NEXT_BUTTON_PRESSED , null);
 		Icon icon = new ImageIcon( image );
 		JLabel imagelabel= new JLabel(icon);
 		imagelabel.setBounds(100, 3,210,225);
 		p.add(imagelabel);
 		for (String key: settingsMap.keySet()){
 
-
-
 			JLabel label= new JLabel(key);
-			label.setFont(FONT);
+			label.setFont(Common.FONT);
 			label.setBounds( 330, y, 70, 25 );
-			JTextArea textArea= new JTextArea();
 			p.add(label);
+			JTextArea textArea= new JTextArea();
 			textArea.setText( settingsMap.get(key));
-			textArea.setFont(FONT);
+			textArea.setFont(Common.FONT);
 			textArea.setBounds(400, y, 70, 25 );
 			p.add(textArea);   
 			y=y+50;
 		}
+
+		JButton button= new JButton();
+		ActionEvent event = new ActionEvent( button,1 , filter);
+		if(enabled)		
+			addButton( button,Common.ENABLED, null, 480,220 , 50, 20,p ,event, Color.GREEN);
+		else
+			addButton( button,Common.DISABLED, null, 480,220 , 50, 20,p ,event, Color.RED );
 
 		return p;
 	}
@@ -178,6 +176,25 @@ public class TabbedFilterPanel implements Runnable {
 	{
 		System.out.println("IN DO ACTION");
 		System.out.println(event.toString());
+
+		Set<String> filters= filterManager.getFilters();  
+		for(String filter : filters){
+			if(event.getActionCommand()== filter){
+
+				filterManager.enableFilter(filter);
+				Color	color=((Component)event.getSource()).getBackground();
+				if(color == Color.RED){
+					((JButton)event.getSource()).setBackground(Color.GREEN);
+					((JButton)event.getSource()).setText(Common.ENABLED);
+				}
+				else{
+					((JButton)event.getSource()).setBackground(Color.RED);
+					((JButton)event.getSource()).setText(Common.DISABLED);
+				}
+					
+				updateFiterList();
+			}
+		}
 		if(event == PREVIOUS_BUTTON_PRESSED ){
 
 			System.out.println("BUTTON PRESSED");
@@ -202,10 +219,10 @@ public class TabbedFilterPanel implements Runnable {
 			String name = sd.getFileName();
 			ImageStack imageStack= filterManager.getFeatureStack();
 			if (name == null & imageStack!=null){
-			
-			IJ.saveAsTiff( new ImagePlus("FILTERED IMAGE", imageStack),name);
+
+				IJ.saveAsTiff( new ImagePlus("FILTERED IMAGE", imageStack),name);
 			}
-			
+
 		}
 
 		if(event==LOAD_BUTTON_PRESSED){
@@ -215,7 +232,7 @@ public class TabbedFilterPanel implements Runnable {
 		}
 		if(event==DEFAULT_BUTTON_PRESSED){
 
-         filterManager.setDefault();
+			filterManager.setDefault();
 
 		}
 
@@ -228,16 +245,36 @@ public class TabbedFilterPanel implements Runnable {
 	}
 
 
+	private void updateFiterList() {
+		// TODO Auto-generated method stub
+		Set<String> filters= filterManager.getFilters();  
+		Vector listModel = new Vector();
+		for(String filter : filters){
+			if(filterManager.isFilterEnabled(filter)){
 
-	private JButton addButton( final String label, final Icon icon, final int x,
-			final int y, final int width, final int height,JComponent panel, final ActionEvent action)
+				listModel.addElement(filter);
+			}
+		}
+		filterList.setListData(listModel);
+		filterList.setForeground(Color.GREEN);
+
+	}
+
+
+
+
+	private JButton addButton(final JButton button ,final String label, final Icon icon, final int x,
+			final int y, final int width, final int height,
+			JComponent panel, final ActionEvent action,final Color color )
 	{
-		final JButton button = new JButton();
 		panel.add( button );
 		button.setText( label );
 		button.setIcon( icon );
 		button.setMargin(new Insets(0, 0, 0, 0));
-		button.setFont( FONT );
+		button.setFont( Common.FONT );
+		if(color!=null){
+			button.setBackground(color);
+		}
 		button.setBounds( x, y, width, height );
 		System.out.println("ADDED");
 		button.addActionListener( new ActionListener()

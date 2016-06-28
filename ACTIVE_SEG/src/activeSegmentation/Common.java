@@ -11,4 +11,6 @@ public class Common {
 	public static int WORKLOAD = 10000;
 	public static int DEFAULT_CLASSES=2;
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
+	public static final String ENABLED="Enabled";
+	public static final String DISABLED="Disabled";
 }

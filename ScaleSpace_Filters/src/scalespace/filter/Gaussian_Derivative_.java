@@ -87,6 +87,8 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 	private boolean isFloat=false;
 	private boolean isRGB=false;
 	private static int wnd=3;
+	private boolean isEnabled=true;
+
 
 	/* NEW VARIABLES*/
 
@@ -415,6 +417,19 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 
 		return chart.createBufferedImage(200, 200);
 	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return isEnabled;
+	}
+
+	@Override
+	public void setEnabled(boolean isEnabled) {
+		// TODO Auto-generated method stub
+		this.isEnabled= isEnabled;
+	}
+
 
 
 }

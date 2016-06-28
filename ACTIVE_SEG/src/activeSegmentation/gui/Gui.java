@@ -133,7 +133,7 @@ public class Gui {
 
 		}
 		if(event==FEATURE_BUTTON_PRESSED){
-			new ExampleWindow( trainingImage,exampleManager,dataManager);
+			new ExampleWindow1( trainingImage,exampleManager,dataManager);
 		}
 
 		if(event==LEARNING_BUTTON_PRESSED){
@@ -143,6 +143,8 @@ public class Gui {
 		
 		if(event==EVALUATION_BUTTON_PRESSED){
 			
+			EvaluationPanel evaluationPanel = new EvaluationPanel(dataManager);
+			SwingUtilities.invokeLater(evaluationPanel);
 		}
 
 	}

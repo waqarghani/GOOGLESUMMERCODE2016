@@ -25,4 +25,6 @@ public interface IFilterManager {
 	public boolean setImageStack(ImageStack featureStack);
 	public ImageStack getFeatureStack();
 	public boolean setDefault();
+	public boolean isFilterEnabled(String key);
+	public void enableFilter(String key);
 }

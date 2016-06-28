@@ -97,6 +97,16 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	private boolean convert=false;
 
 
+	public boolean isEnabled=true;
+
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 	/* NEW VARIABLES*/
 
 	/** A string key identifying this factory. */

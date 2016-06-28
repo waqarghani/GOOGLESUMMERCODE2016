@@ -27,6 +27,7 @@ import java.util.Properties;
 
 
 
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -95,6 +96,8 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	private boolean hasRoi=false;
 	private Object pixundo;
 	private boolean convert=false;
+	private boolean isEnabled=true;
+
 
 
 	/* NEW VARIABLES*/
@@ -392,6 +395,19 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 
 		return chart.createBufferedImage(200, 200);
 	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return isEnabled;
+	}
+
+	@Override
+	public void setEnabled(boolean isEnabled) {
+		// TODO Auto-generated method stub
+		this.isEnabled= isEnabled;
+	}
+
 
 
 }

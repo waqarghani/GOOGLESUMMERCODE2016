@@ -87,7 +87,16 @@ public class LoG_Filter1_ implements ExtendedPlugInFilter, DialogListener,IFilte
 
 	public  boolean scnorm= Prefs.getBoolean(SCNORM, false);
 
+	public boolean isEnabled=true;
 
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 	private ImagePlus image=null;	
 	private boolean isFloat=false;	
 	private boolean hasRoi=false;

@@ -64,15 +64,15 @@ public class FilterManager implements IFilterManager {
 
 		}
 
-		 ClassLoader classLoader= FilterManager.class.getClassLoader();
-		 IJ.log("IN FILTER");
+		ClassLoader classLoader= FilterManager.class.getClassLoader();
+		IJ.log("IN FILTER");
 
 		for(String plugin: classes){		
 
-			 IJ.log(plugin);
+			IJ.log(plugin);
 			Class<?>[] classesList=(classLoader.loadClass(plugin)).getInterfaces();
 			for(Class<?> cs:classesList){
-                
+
 				//IJ.log(cs.getSimpleName());
 				if(cs.getSimpleName().equals("IFilter")){
 					// IJ.log(cs.getSimpleName());
@@ -93,21 +93,24 @@ public class FilterManager implements IFilterManager {
 		for(int i=1; i<=originalImage.getImageStackSize(); i++){
 			List<ImageStack> tempStack= new ArrayList<ImageStack>();
 			for(IFilter filter: filterMap.values()){
-				ImageStack featureStack= filter.applyFilter(originalImage.getImageStack().getProcessor(i));
-				//new ImagePlus("temp", featureStack).show();
-				tempStack.add(featureStack);
-			//	new ImagePlus(" stack", featureStack).show();
+				if(filter.isEnabled()){
+					ImageStack featureStack= filter.applyFilter(originalImage.getImageStack().getProcessor(i));
+					//new ImagePlus("temp", featureStack).show();
+					tempStack.add(featureStack);
+					//	new ImagePlus(" stack", featureStack).show();
+				}
+				
 			}
 
 			System.out.println("temp size"+tempStack.size());
 
 			featurStackMap.put(i, combineStacks(tempStack));
-			
+
 		}
 
 	}
 
-	
+
 
 	private ImageStack combineStacks(List<ImageStack> imageStackList)
 	{
@@ -139,8 +142,12 @@ public class FilterManager implements IFilterManager {
 		return filterMap.get(key);
 	}
 
-	
-	
+	public boolean isFilterEnabled(String key){
+
+		return filterMap.get(key).isEnabled();
+	}
+
+
 	public boolean updateFilterSetting(String key, Map<String,String> settingsMap){
 
 		return filterMap.get(key).updateSettings(settingsMap);
@@ -222,7 +229,7 @@ public class FilterManager implements IFilterManager {
 	public boolean setImageStack(ImageStack featureStack) {
 		// TODO Auto-generated method stub
 		this.finalImageStack= featureStack;
-		
+
 		return true;
 	}
 
@@ -238,6 +245,18 @@ public class FilterManager implements IFilterManager {
 	public boolean setDefault() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+
+	@Override
+	public void enableFilter(String key) {
+		// TODO Auto-generated method stub
+		if(filterMap.get(key).isEnabled()){
+			filterMap.get(key).setEnabled(false);	
+		}
+		else{
+			filterMap.get(key).setEnabled(true);	
+		}
 	}
 
 }

@@ -57,7 +57,7 @@ public class FeatureExtraction {
 					Roi r=  exampleManager.getExamples(classIndex, sliceNum-1).get(j);					
 					nl += addRectangleRoiInstances( trainingData, classIndex, sliceNum, r );
 				}
-			IJ.log("# of pixels selected as " + exampleManager.getClassLabels()[classIndex] + ": " +nl);
+			IJ.log("# of pixels selected as " + exampleManager.getClassLabels().get(classIndex) + ": " +nl);
 		}
 
 		if (trainingData.numInstances() == 0)
@@ -131,8 +131,8 @@ public class FeatureExtraction {
 			{			
 				for(int n=0; n<filterManager.getOriginalImageSize(); n++)
 				{
-					if(classes.contains(exampleManager.getClassLabels()[i]) == false)
-						classes.add(exampleManager.getClassLabels()[i]);
+					if(classes.contains(exampleManager.getClassLabels().get(i)) == false)
+						classes.add(exampleManager.getClassLabels().get(i));
 				}
 			}			
 		}

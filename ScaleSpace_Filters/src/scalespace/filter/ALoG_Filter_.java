@@ -74,6 +74,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	private static int sz= Prefs.getInt(LEN, 2);
 	private  int max_sz= Prefs.getInt(MAX_LEN, 8);
 	//private static float sigma=(float) Prefs.getDouble(SIGMA, 2.0f);
+	private boolean isEnabled=true;
 
 	private float[][] kernel=null;
 
@@ -456,6 +457,21 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 				);
 
 		return chart.createBufferedImage(200, 200);
+	}
+
+	
+
+	
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return isEnabled;
+	}
+
+	@Override
+	public void setEnabled(boolean isEnabled) {
+		// TODO Auto-generated method stub
+		this.isEnabled= isEnabled;
 	}
 
 }
