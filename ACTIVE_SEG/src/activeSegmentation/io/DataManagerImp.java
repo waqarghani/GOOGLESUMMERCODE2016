@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -29,6 +30,10 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import activeSegmentation.IClassifier;
 import activeSegmentation.IDataManager;
@@ -145,14 +150,14 @@ public class DataManagerImp implements IDataManager {
 
 
 	@Override
-	public List<Roi> openZip(String path, int classNum, int sliceNumber) {
+	public List<Roi> openZip(String path) {
 		// TODO Auto-generated method stub
 		
-		return openZip1(path, classNum, sliceNumber);
+		return openZip1(path);
 		
 	}
 	
-	private List<Roi> openZip1(String path,int classNum, int n) { 
+	private List<Roi> openZip1(String path) { 
 		Hashtable rois = new Hashtable();
 		ZipInputStream in = null; 
 		List<Roi> roiList= new ArrayList<Roi>();
@@ -253,13 +258,43 @@ public class DataManagerImp implements IDataManager {
 	}
 
 
+    @Override
+	public void writeFile(String path, JSONObject obj){
+		try {
 
-	@Override
-	public boolean loadExamples(String directory) {
-		// TODO Auto-generated method stub
-		return false;
+			FileWriter file = new FileWriter(path);
+			file.write(obj.toJSONString());
+			file.flush();
+			file.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.print(obj);
+
 	}
+	
+	
+    @Override
+	public JSONObject readFile(String file){
+		JSONParser parser = new JSONParser();
+		try {
+			Object obj = parser.parse(new FileReader(file));
 
+			JSONObject jsonObject = (JSONObject) obj;
+			
+			return jsonObject;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+
+	}
 
 
 	

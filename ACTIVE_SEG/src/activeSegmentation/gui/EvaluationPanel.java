@@ -13,17 +13,21 @@ import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import activeSegmentation.Common;
 import activeSegmentation.IDataManager;
+import activeSegmentation.IEvaluation;
 import activeSegmentation.learning.SMO;
 import weka.classifiers.Classifier;
 import weka.core.OptionHandler;
@@ -35,6 +39,7 @@ public class EvaluationPanel  implements Runnable {
 
 	private IDataManager dataManager;
 
+	private IEvaluation evaluation;
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -44,8 +49,9 @@ public class EvaluationPanel  implements Runnable {
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 4, "Save" );
 
-	public EvaluationPanel(IDataManager dataManager) {
+	public EvaluationPanel(IDataManager dataManager, IEvaluation evaluation) {
 		this.dataManager= dataManager;
+		this.evaluation= evaluation;
 	}
 
 	public void doAction( final ActionEvent event )
@@ -85,16 +91,16 @@ public class EvaluationPanel  implements Runnable {
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		JPanel controlsBox=new JPanel(new GridBagLayout());
-		JPanel controlJPanel=new JPanel(new GridBagLayout());
-		controlJPanel.setBorder(BorderFactory.createTitledBorder("CONTROL"));
+
 		JPanel curvesJPanel=new JPanel(new GridBagLayout());
 		curvesJPanel.setBorder(BorderFactory.createTitledBorder("PLOTS"));
+
 		JPanel resultJPanel=new JPanel(new GridBagLayout());
 		resultJPanel.setBorder(BorderFactory.createTitledBorder("RESULTS"));
-		
+
 		JPanel resetJPanel = new JPanel(new GridBagLayout());
-		
-		
+
+
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,new Dimension(100, 25),Util.getGbc(0, 0, 1, false, false));
 		addButton( "LOAD",null ,resetJPanel,
@@ -102,17 +108,36 @@ public class EvaluationPanel  implements Runnable {
 		addButton( "SAVE",null ,resetJPanel,
 				SAVE_BUTTON_PRESSED,new Dimension(100, 25),Util.getGbc(2, 0, 1, false, false) );
 
-		
+
 		controlsBox.add(resultJPanel, Util.getGbc(0, 0, 1, false, true));
-		controlsBox.add(controlJPanel, Util.getGbc(1, 0, 1, false, true));
+		controlsBox.add(addMetrics(), Util.getGbc(1, 0, 1, false, true));
 		controlsBox.add(curvesJPanel, Util.getGbc(0, 1, 1, false, true));
 		controlsBox.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
-		
-		
+
+
 		frame.add(controlsBox);
-		frame.setSize(520, 420);
+		frame.setSize(800, 600);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);	
+	}
+
+
+	private JPanel addMetrics(){
+		JPanel controlJPanel=new JPanel(new GridBagLayout());
+		controlJPanel.setBorder(BorderFactory.createTitledBorder("METRICS"));
+		List<JCheckBox> jCheckBoxList= new ArrayList<JCheckBox>();
+		int j=0,k=0;
+		for(String metrics: evaluation.getMetrics()){
+			JCheckBox  checkBox = new JCheckBox(metrics);
+			jCheckBoxList.add(checkBox);
+			controlJPanel.add(checkBox, Util.getGbc(k, j, 1, false, false));
+			k++;
+			if( k==4){
+				k=0;
+				j++;
+			}
+		}
+		return controlJPanel;
 	}
 
 	private JButton addButton( final String label, final Icon icon,JComponent panel, 

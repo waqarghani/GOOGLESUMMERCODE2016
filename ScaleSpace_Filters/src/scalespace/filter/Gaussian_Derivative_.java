@@ -317,6 +317,18 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 	}
 
 	@Override
+	public boolean reset() {
+		// TODO Auto-generated method stub
+		sz= Prefs.getInt(LEN, 2);
+		max_sz= Prefs.getInt(MAX_LEN, 8);
+		sep= Prefs.getBoolean(ISSEP, true);
+		scnorm=Prefs.getBoolean(SCNORM, false);
+		nn = Prefs.getInt(GN, 1);
+		mm = Prefs.getInt(GM, 0);
+		return true;
+	}
+
+	@Override
 	public Map<String, String> getDefaultSettings() {
 
 		settings.put(LEN, Integer.toString(sz));
@@ -394,7 +406,7 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 
 		return Math.exp(-Math.pow(x, 2)/2) / (2  *Math.sqrt(3.14));
 	}
-	
+
 	@Override
 	public Image getImage(){
 

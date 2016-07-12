@@ -15,4 +15,6 @@ public interface IExampleManager {
 	public void setNumOfClasses(int numOfClasses);
 	public int getNumOfClasses();
 	public void addClass(int classId);
+	public void loadExamples(String file);
+	public void saveExamples(String path,String name);
 }

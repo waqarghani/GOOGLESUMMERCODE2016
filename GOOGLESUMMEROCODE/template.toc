@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}What is Active Segmentation?}{2}{subsection.1.1}
+\contentsline {section}{\numberline {2}Workflow}{2}{section.2}
+\contentsline {section}{\numberline {3}Description}{2}{section.3}
+\contentsline {subsection}{\numberline {3.1}Filter Form}{2}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Feature Form}{2}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Learning Form}{2}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Evaluation Form}{2}{subsection.3.4}
+\contentsline {section}{\numberline {4}Meta Data}{2}{section.4}
+\contentsline {subsection}{\numberline {4.1}Mind Map}{2}{subsection.4.1}

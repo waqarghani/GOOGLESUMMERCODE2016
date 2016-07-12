@@ -13,14 +13,18 @@ import ij.ImagePlus;
 
 
 
+
+
 import javax.swing.*;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
 import activeSegmentation.IDataManager;
+import activeSegmentation.IEvaluation;
 import activeSegmentation.IExampleManager;
 import activeSegmentation.IFilterManager;
+import activeSegmentation.feature.FeatureExtraction;
 
 public class Gui {
 	private JFrame mainFrame;
@@ -28,6 +32,7 @@ public class Gui {
 	private IFilterManager filterManager;
 	private IExampleManager exampleManager;
 	private IDataManager dataManager;
+	private IEvaluation evaluation;
 	private ImagePlus trainingImage;
 
 	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
@@ -46,12 +51,13 @@ public class Gui {
 	final static String THEME = "Test";
 	public static final Font FONT = new Font( "Arial", Font.BOLD, 13 );
 	public Gui(IFilterManager filterManager, IExampleManager exampleManager,
-			IDataManager dataManager,ImagePlus trainingImage){
+			IDataManager dataManager,IEvaluation evaluation, ImagePlus trainingImage){
 
 		this.filterManager= filterManager;
 		this.exampleManager= exampleManager;
 		this.dataManager= dataManager;
 		this.trainingImage= trainingImage;
+		this.evaluation = evaluation;
 		prepareGUI();
 	}
 
@@ -133,7 +139,7 @@ public class Gui {
 
 		}
 		if(event==FEATURE_BUTTON_PRESSED){
-			new ExampleWindow1( trainingImage,exampleManager,dataManager);
+			new ExampleWindow1( trainingImage.duplicate(),exampleManager,dataManager,filterManager);
 		}
 
 		if(event==LEARNING_BUTTON_PRESSED){
@@ -143,7 +149,7 @@ public class Gui {
 		
 		if(event==EVALUATION_BUTTON_PRESSED){
 			
-			EvaluationPanel evaluationPanel = new EvaluationPanel(dataManager);
+			EvaluationPanel evaluationPanel = new EvaluationPanel(dataManager, evaluation);
 			SwingUtilities.invokeLater(evaluationPanel);
 		}
 

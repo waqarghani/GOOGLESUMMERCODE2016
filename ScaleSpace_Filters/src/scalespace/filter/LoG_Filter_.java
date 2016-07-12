@@ -28,6 +28,7 @@ import java.util.Properties;
 
 
 
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -310,6 +311,16 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	}
 
 	@Override
+	public boolean reset() {
+		// TODO Auto-generated method stub
+		sz= Prefs.getInt(LEN, 2);
+		max_sz= Prefs.getInt(MAX_LEN, 8);
+		sep= Prefs.getBoolean(ISSEP, true);
+		return true;
+	}
+
+
+	@Override
 	public boolean updateSettings(Map<String, String> settingsMap) {
 		sz=Integer.parseInt(settingsMap.get(LEN));
 		max_sz=Integer.parseInt(settingsMap.get(MAX_LEN));
@@ -371,8 +382,8 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 
 		return (x*x-2)* Math.exp(-Math.pow(x, 2)/2) / (2  *Math.sqrt(3.14));
 	}
-	
-	
+
+
 	@Override
 	public Image getImage(){
 

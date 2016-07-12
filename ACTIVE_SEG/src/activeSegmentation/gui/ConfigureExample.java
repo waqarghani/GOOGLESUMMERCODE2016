@@ -28,7 +28,6 @@ public class ConfigureExample   {
 
 
 	private int numberofClasses;
-	private  Integer maxNoClasses;
 	private IExampleManager exampleManager;
 	private JFrame frame = new JFrame("CONFIGURE");
 	private List<JCheckBox> jCheckBoxList= new ArrayList<JCheckBox>();
@@ -57,7 +56,6 @@ public class ConfigureExample   {
 
 		this.exampleManager= exampleManager;
 		this.numberofClasses= 2;
-		maxNoClasses=Common.MAX_NUM_CLASSES;
 		setDefaultColors();
 	}
 	
@@ -81,11 +79,8 @@ public class ConfigureExample   {
 
 		JPanel configureJPanel = new JPanel(new GridBagLayout());
 		JLabel maxClassesLabel= new JLabel("MAX CLASSES :");
-		JTextArea maxClasses= new JTextArea();
-		maxClasses.setText( maxNoClasses.toString());
-		maxClasses.setFont(Common.FONT);
+		
 		configureJPanel.add(maxClassesLabel,Util.getGbc(0, 0, 1, false, false));
-		configureJPanel.add(maxClasses,Util.getGbc(1, 0, 1, false, false));
 
 		addButton( "ADDCLASS",null ,configureJPanel,
 				ADD_BUTTON_PRESSED,new Dimension(100, 25),Util.getGbc(2,0 , 1, false, false),null );
@@ -245,14 +240,7 @@ public class ConfigureExample   {
 		this.numberofClasses = numberofClasses;
 	}
 
-	public Integer getMaxNoClasses() {
-		return maxNoClasses;
-	}
-
-	public void setMaxNoClasses(Integer maxNoClasses) {
-		this.maxNoClasses = maxNoClasses;
-	}
-
+	
 	
 
 }

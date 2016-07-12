@@ -28,7 +28,7 @@ public class FeatureExtraction {
 	private Instances loadedTrainingData;
 
 
-	private FeatureExtraction(IFilterManager filterManager, IExampleManager exampleManager){
+	public FeatureExtraction(IFilterManager filterManager, IExampleManager exampleManager){
 
 		this.filterManager= filterManager;
 		this.exampleManager= exampleManager;
@@ -52,22 +52,21 @@ public class FeatureExtraction {
 
 			// Read all lists of examples
 			for(int sliceNum = 1; sliceNum <= filterManager.getOriginalImageSize(); sliceNum ++)
-				for(int j=0; j < exampleManager.getExamples(classIndex, sliceNum-1).size(); j++)
+				for(int j=0; j < exampleManager.getExamples(classIndex, sliceNum).size(); j++)
 				{       
-					Roi r=  exampleManager.getExamples(classIndex, sliceNum-1).get(j);					
+					Roi r=  exampleManager.getExamples(classIndex, sliceNum).get(j);					
 					nl += addRectangleRoiInstances( trainingData, classIndex, sliceNum, r );
 				}
 			IJ.log("# of pixels selected as " + exampleManager.getClassLabels().get(classIndex) + ": " +nl);
 		}
 
 		if (trainingData.numInstances() == 0)
-			return null;		
+			return null;	
+		
 
 		return trainingData;
 
-
 	}
-
 
 
 	/**
@@ -100,7 +99,7 @@ public class FeatureExtraction {
 			{
 				
 				if(poly.contains(new Point(x0, y0))){
-					trainingData.add( filterManager.createInstance(x, y, classIndex, sliceNum-1) );
+					trainingData.add( filterManager.createInstance(x, y, classIndex, sliceNum) );
 				}				
 				// increase number of instances for this class
 				numInstances ++;

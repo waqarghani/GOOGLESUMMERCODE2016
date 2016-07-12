@@ -124,6 +124,7 @@ public class WekaClassifier implements IClassifier, Serializable {
 			// test the current classifier with the test set
 			Evaluation evaluator = new Evaluation(new Instances(instances.getDataset(), 0));
 
+			
 			double[] predict =evaluator.evaluateModel(classifier, instances.getDataset());
 
 			System.out.println(evaluator.toSummaryString());
@@ -146,6 +147,6 @@ public class WekaClassifier implements IClassifier, Serializable {
 	}
 
 
-
+  
 
 }

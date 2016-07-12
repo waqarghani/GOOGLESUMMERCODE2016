@@ -9,6 +9,7 @@ import ij.plugin.PlugIn;
 
 import java.awt.Panel;
 import java.awt.BufferCapabilities.FlipContents;
+import java.beans.FeatureDescriptor;
 import java.io.File;
 import java.net.URL;
 import java.util.Set;
@@ -17,13 +18,17 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import activeSegmentation.IDataManager;
+import activeSegmentation.IEvaluation;
 import activeSegmentation.IExampleManager;
 import activeSegmentation.IFilterManager;
+import activeSegmentation.evaluation.EvaluationMetrics;
 import activeSegmentation.feature.ExampleManagerImpl;
+import activeSegmentation.feature.FeatureExtraction;
 import activeSegmentation.filterImpl.FilterManager;
 import activeSegmentation.gui.Gui;
 import activeSegmentation.gui.TabbedFilterPanel;
 import activeSegmentation.io.DataManagerImp;
+import activeSegmentation.metadatamodel.FilterMetadata;
 
 
 
@@ -65,11 +70,19 @@ public class Weka_Segmentation_ implements PlugIn {
 				System.setProperty("plugins.dir", args[0]);
 				new ImageJ();
 				Weka_Segmentation_ test_Gui_ = new Weka_Segmentation_();
-				IFilterManager filterManager=test_Gui_.runProcess(home);
 				IDataManager dataManager= new DataManagerImp();
-				IExampleManager exampleManager = new ExampleManagerImpl(test_Gui_.getTrainingImage().getImageStackSize(),2);
-				Gui gui= new Gui(filterManager,exampleManager,dataManager,test_Gui_.getTrainingImage() );
+				IFilterManager filterManager=test_Gui_.runProcess(home,dataManager);
+				/*FilterMetadata filterMetadata= new FilterMetadata(filterManager);
+				filterMetadata.setFilterSettings("filter.txt");*/
+				
+				IEvaluation evaluation= new EvaluationMetrics();
+				IExampleManager exampleManager = new ExampleManagerImpl(
+						test_Gui_.getTrainingImage().getImageStackSize(),2,dataManager);
+				Gui gui= new Gui(filterManager,exampleManager,dataManager,evaluation,test_Gui_.getTrainingImage() );
 				gui.showGridBagLayoutDemo();
+				
+			//	filterMetadata.saveFilters();
+				
 							
 			} else {
 				throw new IllegalArgumentException();
@@ -88,11 +101,14 @@ public class Weka_Segmentation_ implements PlugIn {
 		String home = "C://Program Files//ImageJ//plugins//activeSegmentation//";
 		
 		try {
-			IFilterManager filterManager=runProcess(home);
 
 			IDataManager dataManager= new DataManagerImp();
-			IExampleManager exampleManager = new ExampleManagerImpl(trainingImage.getImageStackSize(),2);
-			Gui gui= new Gui(filterManager,exampleManager,dataManager,trainingImage );
+			IFilterManager filterManager=runProcess(home, dataManager);
+			IEvaluation evaluation= new EvaluationMetrics();
+			IExampleManager exampleManager = new ExampleManagerImpl(
+					trainingImage.getImageStackSize(),2,dataManager);
+			//FeatureExtraction featureExtraction= new FeatureExtraction(filterManager,exampleManager);
+			Gui gui= new Gui(filterManager,exampleManager,dataManager,evaluation,trainingImage );
 			gui.showGridBagLayoutDemo();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -102,13 +118,13 @@ public class Weka_Segmentation_ implements PlugIn {
 		
 	}
 
-	public  IFilterManager runProcess(String home) throws Exception{
+	public  IFilterManager runProcess(String home, IDataManager dataManager) throws Exception{
 		
 		try {
 			
 			/*-------------- LOADING FILTERS* ------------------*/
 			System.out.println("-------------- LOADING FILTERS* ------------------");
-			IFilterManager filterManager=new FilterManager();
+			IFilterManager filterManager=new FilterManager(dataManager);
 			filterManager.loadFilters(home);
 			
 			

@@ -4,6 +4,7 @@ package activeSegmentation.gui;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.io.OpenDialog;
 import ij.io.SaveDialog;
 
 import java.awt.Color;
@@ -15,6 +16,7 @@ import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +45,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import activeSegmentation.Common;
 import activeSegmentation.IFilterManager;
+import activeSegmentation.filterImpl.FilterManager;
 
 
 
@@ -56,6 +60,7 @@ public class TabbedFilterPanel implements Runnable {
 	private JTabbedPane pane;
 	private JList filterList;
 
+	private Map<String,List<JTextField>> textMap;
 	private ImagePlus trainingImage;
 
 
@@ -84,9 +89,8 @@ public class TabbedFilterPanel implements Runnable {
 		this.trainingImage= trainingImage;
 		this.filterList =Util.model();
 		this.filterList.setForeground(Color.GREEN);
+		textMap= new HashMap<String, List<JTextField>>();
 	}
-
-
 
 
 	@Override
@@ -106,7 +110,7 @@ public class TabbedFilterPanel implements Runnable {
 		int filterSize=1;
 		for(String filter: filters){
 			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
-					filterManager.getFilter(filter).getImage(), 
+					filterManager.getFilterImage(filter), 
 					filterSize, filters.size(),filter, filterManager.isFilterEnabled(filter)));
 			filterSize++;
 
@@ -114,9 +118,7 @@ public class TabbedFilterPanel implements Runnable {
 
 
 		pane.setSize(600, 300);
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
-		scrollPane.getViewport().add( filterList);
+		JScrollPane scrollPane = Util.addScrollPanel(filterList,null);
 		scrollPane.setBounds(605,20,100,280);
 		panel.add(scrollPane);
 		updateFiterList();
@@ -148,20 +150,24 @@ public class TabbedFilterPanel implements Runnable {
 		JLabel imagelabel= new JLabel(icon);
 		imagelabel.setBounds(100, 3,210,225);
 		p.add(imagelabel);
+
+		List<JTextField> jtextList= new ArrayList<JTextField>();
 		for (String key: settingsMap.keySet()){
 
 			JLabel label= new JLabel(key);
 			label.setFont(Common.FONT);
 			label.setBounds( 330, y, 70, 25 );
 			p.add(label);
-			JTextArea textArea= new JTextArea();
-			textArea.setText( settingsMap.get(key));
+
+			JTextField textArea= new JTextField(settingsMap.get(key));
 			textArea.setFont(Common.FONT);
 			textArea.setBounds(400, y, 70, 25 );
 			p.add(textArea);   
+			jtextList.add(textArea);
 			y=y+50;
 		}
 
+		textMap.put(filter, jtextList);
 		JButton button= new JButton();
 		ActionEvent event = new ActionEvent( button,1 , filter);
 		if(enabled)		
@@ -191,7 +197,7 @@ public class TabbedFilterPanel implements Runnable {
 					((JButton)event.getSource()).setBackground(Color.RED);
 					((JButton)event.getSource()).setText(Common.DISABLED);
 				}
-					
+
 				updateFiterList();
 			}
 		}
@@ -215,36 +221,68 @@ public class TabbedFilterPanel implements Runnable {
 		}
 		if(event==SAVE_BUTTON_PRESSED){
 
-			SaveDialog sd = new SaveDialog("Save Feature...", "FilterImage", ".tiff");
+			System.out.println("");
+			String key= pane.getTitleAt( pane.getSelectedIndex());
+			int i=0;
+			Map<String,String> settingsMap= new HashMap<String, String>();
+			for (String settingsKey: filterManager.getFilterSetting(key).keySet()){
+				settingsMap.put(settingsKey, textMap.get(key).get(i).getText());	
+				i++;
+			}
+
+			filterManager.updateFilterSetting(key, settingsMap);
+
+
+			/*	SaveDialog sd = new SaveDialog("Save Feature...", "FilterImage", ".tiff");
 			String name = sd.getFileName();
 			ImageStack imageStack= filterManager.getFeatureStack();
 			if (name == null & imageStack!=null){
 
 				IJ.saveAsTiff( new ImagePlus("FILTERED IMAGE", imageStack),name);
-			}
+			}*/
 
 		}
 
 		if(event==LOAD_BUTTON_PRESSED){
-			ImagePlus loadedImage= IJ.openImage();
-			filterManager.setImageStack(loadedImage.getImageStack());
+			/*ImagePlus loadedImage= IJ.openImage();
+			filterManager.setFinalImage(loadedImage);*/
+			OpenDialog od = new OpenDialog("Choose filter File", OpenDialog.getLastDirectory(), "filter.txt");
+			if (od.getFileName()==null)
+				return;
+			filterManager.setFilterSettings(od.getDirectory()+od.getFileName());
+			for(String filter: filterManager.getFilters()){
+				updateTabbedGui(filter);
+			}
+			
 
 		}
 		if(event==DEFAULT_BUTTON_PRESSED){
 
-			filterManager.setDefault();
+			String key= pane.getTitleAt( pane.getSelectedIndex());
+			filterManager.setDefault(key);
+			updateTabbedGui(key);
+			
 
 		}
 
 		if(event==VIEW_BUTTON_PRESSED){
-			ImageStack imageStack= filterManager.getFeatureStack();
-			new ImagePlus("FILTERED IMAGE", imageStack).show();
+	       filterManager.getFinalImage().show();
 
 		}
 
 	}
 
 
+	private void updateTabbedGui(String key){
+		int i=0;
+		Map<String,String> settingsMap=filterManager.getFilterSetting(key);
+		for (String settingsKey: settingsMap.keySet() ){
+			
+			 textMap.get(key).get(i).setText(settingsMap.get(settingsKey));
+			 i++;
+		}
+
+	}
 	private void updateFiterList() {
 		// TODO Auto-generated method stub
 		Set<String> filters= filterManager.getFilters();  
@@ -259,8 +297,6 @@ public class TabbedFilterPanel implements Runnable {
 		filterList.setForeground(Color.GREEN);
 
 	}
-
-
 
 
 	private JButton addButton(final JButton button ,final String label, final Icon icon, final int x,

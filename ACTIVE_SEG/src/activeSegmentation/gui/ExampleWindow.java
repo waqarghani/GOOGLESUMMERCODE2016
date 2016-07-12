@@ -140,7 +140,7 @@ public class ExampleWindow extends StackWindow implements ActionListener
 			imagePanel.add(sliceSelector,Util.getGbc(0, 1, 1, false, true));
 		}
 
-		for(int i = 0; i < configureExample.getMaxNoClasses() ; i++){
+	/*	for(int i = 0; i < configureExample.getMaxNoClasses() ; i++){
 
 			JList current=Util.model();
 			current.setForeground(configureExample.getColors().get(i));
@@ -149,7 +149,7 @@ public class ExampleWindow extends StackWindow implements ActionListener
 			all.setForeground(configureExample.getColors().get(i));
 			allexampleList.add(all);		
 
-		}
+		}*/
 
 		createPanel();
 
@@ -485,7 +485,7 @@ public class ExampleWindow extends StackWindow implements ActionListener
 
 		final int n = displayImage.getCurrentSlice();
 
-		dataManager.openZip(od.getDirectory() + od.getFileName(), i, n);
+		dataManager.openZip(od.getDirectory() + od.getFileName());
 		drawExamples();
 		updateExampleLists();
 	}

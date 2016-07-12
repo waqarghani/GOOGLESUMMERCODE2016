@@ -72,6 +72,7 @@ public interface IFilter {
 	public Image getImage();
 		
 	public boolean isEnabled();
+	public boolean reset();
 
 	public void setEnabled(boolean isEnabled);
 	

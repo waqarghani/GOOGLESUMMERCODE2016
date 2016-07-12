@@ -1,0 +1,1 @@
+{"Filters":[{"Filter":"LOG1","G_SEP":"true","G_len":"2","G_SCNORM":"false","G_MAX":"16"},{"Filter":"LOG","G_SEP":"true","G_len":"2","G_SCNORM":"false","G_MAX":"8"}]}

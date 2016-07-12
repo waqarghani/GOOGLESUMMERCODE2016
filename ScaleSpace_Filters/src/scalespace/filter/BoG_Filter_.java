@@ -24,6 +24,7 @@ import ijaux.scale.GScaleSpace;
 
 
 
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -374,6 +375,16 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 		sep=Boolean.parseBoolean(settingsMap.get(ISSEP));
 		isiso=Boolean.parseBoolean(settingsMap.get(ISO));
 
+		return true;
+	}
+	
+	@Override
+	public boolean reset() {
+		// TODO Auto-generated method stub
+	sz= Prefs.getInt(LEN, 2);
+	max_sz= Prefs.getInt(MAX_LEN, 8);
+	sep= Prefs.getBoolean(ISSEP, true);
+	isiso=Prefs.getBoolean(ISO, true);
 		return true;
 	}
 

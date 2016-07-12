@@ -375,10 +375,19 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	}
 
 	@Override
+	public boolean reset() {
+		// TODO Auto-generated method stub
+		sz= Prefs.getInt(LEN, 2);
+		max_sz= Prefs.getInt(MAX_LEN, 8);
+		fulloutput= Prefs.getBoolean(FULL_OUTPUT, true);
+		return true;
+	}
+
+	@Override
 	public boolean updateSettings(Map<String, String> settingsMap) {
 		sz=Integer.parseInt(settingsMap.get(LEN));
 		max_sz=Integer.parseInt(settingsMap.get(MAX_LEN));
-        fulloutput= Boolean.parseBoolean(settingsMap.get(FULL_OUTPUT));
+		fulloutput= Boolean.parseBoolean(settingsMap.get(FULL_OUTPUT));
 
 		return true;
 	}
@@ -434,8 +443,8 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 
 		return (x*x-2)* Math.exp(-Math.pow(x, 2)/2) / (2  *Math.sqrt(3.14));
 	}
-	
-	
+
+
 	@Override
 	public Image getImage(){
 
@@ -459,9 +468,9 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 		return chart.createBufferedImage(200, 200);
 	}
 
-	
 
-	
+
+
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub

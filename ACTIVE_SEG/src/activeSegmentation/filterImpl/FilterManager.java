@@ -1,31 +1,27 @@
 package activeSegmentation.filterImpl;
 
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
-
-
-
-
-
-
+import activeSegmentation.Common;
+import activeSegmentation.IDataManager;
 import activeSegmentation.IFilter;
 import activeSegmentation.IFilterManager;
 import weka.core.Instance;
-
-
-
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 
@@ -36,7 +32,8 @@ public class FilterManager implements IFilterManager {
 	private Map<String,IFilter> filterMap= new HashMap<String, IFilter>();
 	private Map<Integer,ImageStack> featurStackMap= new HashMap<Integer, ImageStack>();
 	private FilterUtil filterUtil= new FilterUtil();
-	private ImageStack finalImageStack;
+	private ImagePlus finalImage;
+	private IDataManager dataManager;
 	/** flag to specify the use of color features */
 	private  boolean colorFeatures;
 
@@ -44,6 +41,10 @@ public class FilterManager implements IFilterManager {
 
 	/** flag to specify the use of the old color format (using directly the RGB values as float) */
 	private boolean oldColorFormat = false; 
+	
+	public FilterManager(IDataManager dataManager){
+		this.dataManager= dataManager;
+	}
 
 	public  void loadFilters(String home) throws InstantiationException, IllegalAccessException, 
 	IOException, ClassNotFoundException {
@@ -65,11 +66,11 @@ public class FilterManager implements IFilterManager {
 		}
 
 		ClassLoader classLoader= FilterManager.class.getClassLoader();
-		IJ.log("IN FILTER");
+		//IJ.log("IN FILTER");
 
 		for(String plugin: classes){		
 
-			IJ.log(plugin);
+			//IJ.log(plugin);
 			Class<?>[] classesList=(classLoader.loadClass(plugin)).getInterfaces();
 			for(Class<?> cs:classesList){
 
@@ -89,7 +90,9 @@ public class FilterManager implements IFilterManager {
 
 
 	public void applyFilters(ImagePlus image){
-		checkColorFeatures(image);
+		//checkColorFeatures(image);
+		originalImage=image.duplicate();
+		System.out.println(originalImage.getImageStackSize());
 		for(int i=1; i<=originalImage.getImageStackSize(); i++){
 			List<ImageStack> tempStack= new ArrayList<ImageStack>();
 			for(IFilter filter: filterMap.values()){
@@ -99,7 +102,7 @@ public class FilterManager implements IFilterManager {
 					tempStack.add(featureStack);
 					//	new ImagePlus(" stack", featureStack).show();
 				}
-				
+
 			}
 
 			System.out.println("temp size"+tempStack.size());
@@ -107,6 +110,7 @@ public class FilterManager implements IFilterManager {
 			featurStackMap.put(i, combineStacks(tempStack));
 
 		}
+		
 
 	}
 
@@ -124,8 +128,26 @@ public class FilterManager implements IFilterManager {
 			}
 		}
 
-		this.finalImageStack= finalStack;
 		return finalStack;
+	}
+
+
+	private void generateFinalImage(){
+		ImageStack classified = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
+		int numChannels=featurStackMap.get(1).getSize();
+		for (int i = 1; i <= originalImage.getStackSize(); i++){
+			for (int c = 1; c <= numChannels; c++){
+				classified.addSlice("", featurStackMap.get(i).getProcessor(c));	
+			}
+		}
+
+		finalImage = new ImagePlus("Classification result", classified);
+		finalImage.setDimensions(numChannels, originalImage.getImageStack().getSize(), originalImage.getNFrames());
+		System.out.println(originalImage.getNSlices());
+		System.out.println(originalImage.getNFrames());
+		if (originalImage.getImageStack().getSize()*originalImage.getNFrames() > 1)
+			finalImage.setOpenAsHyperStack(true);
+		
 	}
 
 	public Set<String> getFilters(){
@@ -137,10 +159,6 @@ public class FilterManager implements IFilterManager {
 		return filterMap.get(key).getDefaultSettings();
 	}
 
-	public IFilter getFilter(String key){
-
-		return filterMap.get(key);
-	}
 
 	public boolean isFilterEnabled(String key){
 
@@ -203,21 +221,6 @@ public class FilterManager implements IFilterManager {
 	}
 
 
-	private void checkColorFeatures(ImagePlus image)
-	{
-		if( image.getType() == ImagePlus.COLOR_RGB)
-		{
-			originalImage = new ImagePlus("original image", image.getProcessor() );
-			colorFeatures = true;
-		}
-		else
-		{
-			originalImage = new ImagePlus("original image", image.getProcessor().duplicate());
-			colorFeatures = false;
-		}
-	}
-
-
 	@Override
 	public int getOriginalImageSize() {
 		// TODO Auto-generated method stub
@@ -226,24 +229,23 @@ public class FilterManager implements IFilterManager {
 
 
 	@Override
-	public boolean setImageStack(ImageStack featureStack) {
-		// TODO Auto-generated method stub
-		this.finalImageStack= featureStack;
+	public ImagePlus getFinalImage() {
+		generateFinalImage();
+		return this.finalImage;
+	}
 
-		return true;
+	@Override
+	public void setFinalImage(ImagePlus finalImage) {
+		this.finalImage = finalImage;
 	}
 
 
 	@Override
-	public ImageStack getFeatureStack() {
+	public boolean setDefault(String key) {
 		// TODO Auto-generated method stub
-		return this.finalImageStack;
-	}
+		if(filterMap.get(key).reset())
+			return true;
 
-
-	@Override
-	public boolean setDefault() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -257,6 +259,44 @@ public class FilterManager implements IFilterManager {
 		else{
 			filterMap.get(key).setEnabled(true);	
 		}
+	}
+
+
+	@Override
+	public void saveFilters(String path){
+		JSONArray jsonArr=new JSONArray();
+		for(String key: getFilters()){
+		JSONObject obj = new JSONObject();
+		Map<String,String> filtersetting =getFilterSetting(key);
+		obj.put(Common.FILTER, key);
+		for(String setting: filtersetting.keySet()){
+		obj.put(setting, filtersetting.get(setting));		
+		}
+		jsonArr.add(obj);
+		}
+		JSONObject finalObj = new JSONObject();
+		finalObj.put(Common.FILTERS, jsonArr);
+		dataManager.writeFile(path, finalObj);
+
+	}
+	
+	@Override
+	public void setFilterSettings(String file){
+		JSONObject filterObj=dataManager.readFile(file);
+		JSONArray filters = (JSONArray) filterObj.get(Common.FILTERS);
+		Iterator<Map<String,String>> iterator = filters.iterator();	
+		while (iterator.hasNext()) {
+			Map<String,String> filter=iterator.next();
+			String filterName=filter.remove(Common.FILTER);
+			updateFilterSetting(filterName, filter);
+		}
+
+	}
+
+	@Override
+	public Image getFilterImage(String key) {
+		
+		return filterMap.get(key).getImage();
 	}
 
 }

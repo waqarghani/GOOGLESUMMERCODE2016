@@ -1,0 +1,11 @@
+{"Filters":[
+{"Filter":"FilterName","IsEnabled":"false", "Setting1":"true","Setting2":"2","Setting3":"false","Setting4":"16"},
+{"Filter":"FilterName","IsEnabled":"true","Setting1":"true","Setting2":"2","Setting3":"false,"},
+]}
+----------------
+FILTERED FILE 
+----------------------
+{"classes":["class1","class2"],
+"features":[{"zipfile":"path\\ROISET10.zip","class":0,"Slice":1},
+{"zipfile":"path\\ROISET11.zip","class":1,"Slice":1}]
+}
