@@ -229,27 +229,15 @@ public class TabbedFilterPanel implements Runnable {
 				settingsMap.put(settingsKey, textMap.get(key).get(i).getText());	
 				i++;
 			}
-
-			filterManager.updateFilterSetting(key, settingsMap);
-
-
-			/*	SaveDialog sd = new SaveDialog("Save Feature...", "FilterImage", ".tiff");
-			String name = sd.getFileName();
-			ImageStack imageStack= filterManager.getFeatureStack();
-			if (name == null & imageStack!=null){
-
-				IJ.saveAsTiff( new ImagePlus("FILTERED IMAGE", imageStack),name);
-			}*/
+			filterManager.updateFilterSetting(key, settingsMap);		
+			filterManager.saveFiltersMetaData();
 
 		}
 
 		if(event==LOAD_BUTTON_PRESSED){
-			/*ImagePlus loadedImage= IJ.openImage();
-			filterManager.setFinalImage(loadedImage);*/
 			OpenDialog od = new OpenDialog("Choose filter File", OpenDialog.getLastDirectory(), "filter.txt");
 			if (od.getFileName()==null)
 				return;
-			filterManager.setFilterSettings(od.getDirectory()+od.getFileName());
 			for(String filter: filterManager.getFilters()){
 				updateTabbedGui(filter);
 			}

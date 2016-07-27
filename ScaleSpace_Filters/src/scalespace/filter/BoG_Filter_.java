@@ -25,6 +25,7 @@ import ijaux.scale.GScaleSpace;
 
 
 
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -475,6 +476,16 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 	public void setEnabled(boolean isEnabled) {
 		// TODO Auto-generated method stub
 		this.isEnabled= isEnabled;
+	}
+	@Override
+	public ImageStack getImageStack() {
+		return imageStack;
+	}
+
+
+	@Override
+	public void setImageStack(ImageStack imageStack) {
+		this.imageStack = imageStack;
 	}
 
 

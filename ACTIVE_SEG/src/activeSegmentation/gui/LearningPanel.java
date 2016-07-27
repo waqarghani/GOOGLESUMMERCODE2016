@@ -23,8 +23,11 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import activeSegmentation.Common;
+import activeSegmentation.IClassifier;
 import activeSegmentation.IDataManager;
+import activeSegmentation.ILearningManager;
 import activeSegmentation.learning.SMO;
+import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.OptionHandler;
 import weka.core.Utils;
@@ -33,9 +36,12 @@ import weka.gui.PropertyPanel;
 
 public class LearningPanel  implements Runnable {
 
-	private IDataManager dataManager;
 	private JList classifierList;
-
+	private GenericObjectEditor m_ClassifierEditor = new GenericObjectEditor();
+	String originalOptions;
+	String originalClassifierName;
+   private  ILearningManager learningManager;
+	
 
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
 
@@ -47,14 +53,16 @@ public class LearningPanel  implements Runnable {
 	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 4, "Save" );
 	Dimension dimension=new Dimension(100, 25);
 
-	public LearningPanel(IDataManager dataManager) {
-		this.dataManager= dataManager;
+	public LearningPanel() {
+		
 		this.classifierList= Util.model();
 	}
 
 	public void doAction( final ActionEvent event )
 	{
 		if(event==COMPUTE_BUTTON_PRESSED){
+
+    
 
 		}
 		if(event==SAVE_BUTTON_PRESSED){
@@ -71,7 +79,7 @@ public class LearningPanel  implements Runnable {
 			OpenDialog od = new OpenDialog("Choose data file", OpenDialog.getLastDirectory(), "data.arff");
 			if (od.getFileName()!=null){
 
-				dataManager.loadTrainingData(od.getFileName());	
+				//learningManager.loadTrainingData(od.getFileName());	
 			}
 		}
 
@@ -94,16 +102,16 @@ public class LearningPanel  implements Runnable {
 		learningJPanel.setBorder(BorderFactory.createTitledBorder("Learning"));	
 
 		// Add Weka panel for selecting the classifier and its options
-		GenericObjectEditor m_ClassifierEditor = new GenericObjectEditor();
+
 		PropertyPanel m_CEPanel = new PropertyPanel(m_ClassifierEditor);
 		m_ClassifierEditor.setClassType(Classifier.class);
 		m_ClassifierEditor.setValue(new SMO());
 
-	
+
 
 		Object c = (Object)m_ClassifierEditor.getValue();
 		String originalOptions = "";
-		String originalClassifierName = c.getClass().getName();
+		originalClassifierName = c.getClass().getName();
 		if (c instanceof OptionHandler) 
 		{
 			originalOptions = Utils.joinOptions(((OptionHandler)c).getOptions());
@@ -115,12 +123,12 @@ public class LearningPanel  implements Runnable {
 		JPanel options = new JPanel(new GridBagLayout());
 		options.setBorder(BorderFactory.createTitledBorder("Options"));
 		CheckboxGroup checkboxGroup= new CheckboxGroup();
-		Checkbox checkbox= new Checkbox("K Cross Validation", checkboxGroup, true);
-		Checkbox checkbox1= new Checkbox("Hold out Validation", checkboxGroup, true);
-		Checkbox activeLearning= new Checkbox("Active Learning", checkboxGroup, true);
-		options.add(checkbox,Util.getGbc(0,0, 1, false, false ));
-		options.add(checkbox1,Util.getGbc(1,0, 1, false, false ) );
-		options.add(activeLearning,Util.getGbc(0,1, 1, false, false ));
+		//Checkbox checkbox= new Checkbox("K Cross Validation", checkboxGroup, true);
+		Checkbox pasiveLearning= new Checkbox(Common.PASSIVELEARNING, checkboxGroup, true);
+		Checkbox activeLearning= new Checkbox(Common.ACTIVELEARNING, checkboxGroup, true);
+		options.add(pasiveLearning,Util.getGbc(0,0, 1, false, false ));
+		options.add(activeLearning,Util.getGbc(1,0, 1, false, false ) );
+
 
 
 		JPanel resetJPanel = new JPanel(new GridBagLayout());
@@ -145,6 +153,35 @@ public class LearningPanel  implements Runnable {
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);	
+	}
+
+	private AbstractClassifier setClassifier(){
+		// Set classifier and options
+		Object c = (Object)m_ClassifierEditor.getValue();
+		String options = "";
+		final String[] optionsArray = ((OptionHandler)c).getOptions();
+		if (c instanceof OptionHandler) 
+		{
+			options = Utils.joinOptions( optionsArray );
+		}
+		//System.out.println("Classifier after choosing: " + c.getClass().getName() + " " + options);
+		if(originalClassifierName.equals( c.getClass().getName() ) == false
+				|| originalOptions.equals( options ) == false)
+		{
+			AbstractClassifier cls;
+			try{
+				cls = (AbstractClassifier) (c.getClass().newInstance());
+				cls.setOptions( optionsArray );
+				return cls;
+			}
+			catch(Exception ex)
+			{
+				ex.printStackTrace();
+
+			}
+		}
+
+		return null;
 	}
 
 	private JButton addButton( final String label, final Icon icon,JComponent panel, 

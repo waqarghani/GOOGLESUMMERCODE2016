@@ -12,21 +12,29 @@ import java.util.ArrayList;
 
 
 
+
+
+
+
 import activeSegmentation.Common;
+import activeSegmentation.IDataSet;
 import activeSegmentation.IExampleManager;
+import activeSegmentation.IFeature;
 import activeSegmentation.IFilterManager;
+import activeSegmentation.learning.WekaDataSet;
 import weka.core.Attribute;
 import weka.core.Instances;
 import ij.IJ;
 import ij.gui.Roi;
 
-public class FeatureExtraction {
+public class FeatureExtraction implements IFeature {
 
 
 	private IFilterManager filterManager;
 	private IExampleManager exampleManager;
-	private Instances loadedTrainingData;
+	private Instances trainingData;
 
+	private String featureName="pixelLevel";
 
 	public FeatureExtraction(IFilterManager filterManager, IExampleManager exampleManager){
 
@@ -37,13 +45,14 @@ public class FeatureExtraction {
 	 * Create training instances out of the user markings
 	 * @return set of instances (feature vectors in Weka format)
 	 */
-	public Instances createTrainingInstance()
+	@Override
+	public void createTrainingInstance()
 	{
 		ArrayList<Attribute> attributes = createFeatureHeader();
 		attributes.add(new Attribute(Common.CLASS, addClasstoHeader()));
 
 		// create initial set of instances
-		final Instances trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
+		 trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
 		// Set the index of the class attribute
 		trainingData.setClassIndex(filterManager.getNumOfFeatures());
 		for(int classIndex = 0; classIndex < exampleManager.getNumOfClasses(); classIndex++)
@@ -60,11 +69,7 @@ public class FeatureExtraction {
 			IJ.log("# of pixels selected as " + exampleManager.getClassLabels().get(classIndex) + ": " +nl);
 		}
 
-		if (trainingData.numInstances() == 0)
-			return null;	
 		
-
-		return trainingData;
 
 	}
 
@@ -123,7 +128,7 @@ public class FeatureExtraction {
 	private ArrayList<String> addClasstoHeader(){
 		ArrayList<String> classes=null;
 
-		if(null == this.loadedTrainingData)
+		if(null == this.trainingData)
 		{
 			classes = new ArrayList<String>();
 			for(int i = 0; i < exampleManager.getNumOfClasses() ; i ++)
@@ -138,6 +143,24 @@ public class FeatureExtraction {
 
 		return classes;
 
+	}
+	
+	
+	@Override
+	public String getFeatureName() {
+		// TODO Auto-generated method stub
+		return featureName;
+	}
+	@Override
+	public IDataSet getDataSet() {
+		// TODO Auto-generated method stub
+		return new WekaDataSet(trainingData);
+	}
+	@Override
+	public void setDataset(IDataSet trainingData) {
+		// TODO Auto-generated method stub
+		this.trainingData= trainingData.getDataset();
+		
 	}
 
 

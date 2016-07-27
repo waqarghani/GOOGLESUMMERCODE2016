@@ -70,11 +70,29 @@ public interface IFilter {
 	 * @return Image
 	 */
 	public Image getImage();
-		
+	
+	/**
+	 * Get ive image
+	 * @return Image
+	 */
 	public boolean isEnabled();
+	/**
+	 * Get ive image
+	 * @return Image
+	 */
 	public boolean reset();
+	/**
+	 * Get ive image
+	 * @return Image
+	 */
 
 	public void setEnabled(boolean isEnabled);
+
+	public ImageStack getImageStack();
+
+	public void setImageStack(ImageStack imageStack);
+	
+	
 	
 
 }

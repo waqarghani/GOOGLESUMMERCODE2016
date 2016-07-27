@@ -29,6 +29,7 @@ import java.util.Properties;
 
 
 
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -419,6 +420,16 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 		this.isEnabled= isEnabled;
 	}
 
+	@Override
+	public ImageStack getImageStack() {
+		return imageStack;
+	}
+
+
+	@Override
+	public void setImageStack(ImageStack imageStack) {
+		this.imageStack = imageStack;
+	}
 
 
 }

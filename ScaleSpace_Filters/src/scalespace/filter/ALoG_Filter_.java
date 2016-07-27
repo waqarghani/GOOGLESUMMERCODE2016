@@ -483,4 +483,14 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 		this.isEnabled= isEnabled;
 	}
 
+	@Override
+	public ImageStack getImageStack() {
+		return imageStack;
+	}
+
+
+	@Override
+	public void setImageStack(ImageStack imageStack) {
+		this.imageStack = imageStack;
+	}
 }

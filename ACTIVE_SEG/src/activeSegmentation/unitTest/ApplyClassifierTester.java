@@ -22,7 +22,8 @@ public class ApplyClassifierTester {
 
 		IDataManager dataManager= new DataManagerImp();
 
-		Instances instance= dataManager.readDataFromARFF("C:/Users/HP/Desktop/DataImages/aav_samples/aav_samples/test/LIBSVM/LIBSVM/Training1.arff");
+		Instances instance=null;
+		//dataManager.readDataFromARFF("C:/Users/HP/Desktop/DataImages/aav_samples/aav_samples/test/LIBSVM/LIBSVM/Training1.arff");
 
 		int percent=80;
 		instance.randomize(new Random(1));
@@ -31,7 +32,8 @@ public class ApplyClassifierTester {
 		int testSize = instance.numInstances() - trainSize;
 		Instances train = new Instances(instance, 0, trainSize);
 		Instances test = new Instances(instance, trainSize, testSize);
-		IClassifier iclassifier= new WekaClassifier();
+		IClassifier iclassifier=null; 
+				//new WekaClassifier();
 
 		iclassifier.setClassifier(new SMO());
 		try {

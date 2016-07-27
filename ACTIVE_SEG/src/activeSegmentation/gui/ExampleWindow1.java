@@ -354,15 +354,14 @@ public class ExampleWindow1 extends StackWindow
 	public void doAction( final ActionEvent event )	{
 		if(event==COMPUTE_BUTTON_PRESSED){
 
-			Instances instance=featureExtraction.createTrainingInstance();
+			featureExtraction.createTrainingInstance();
 
 
 		}
 		if(event==SAVE_BUTTON_PRESSED){
 
-			//saveInstanceFile();
-			SaveDialog sd = new SaveDialog("Save Samples", "data", " ");
-			exampleManager.saveExamples(sd.getDirectory(), sd.getFileName());
+			//saveInstanceFile();		
+			exampleManager.saveFeatureMetadata();
 
 		}
 		if(event==ADD_BUTTON_PRESSED ){
@@ -518,7 +517,8 @@ public class ExampleWindow1 extends StackWindow
 			name = name + ".arff";
 		String dir = sd.getDirectory();
 		path = dir+name;
-		return dataManager.writeDataToARFF(featureExtraction.createTrainingInstance(), path);
+		return false;
+		//return dataManager.writeDataToARFF(featureExtraction.createTrainingInstance(), path);
 	}
 	
 	/**

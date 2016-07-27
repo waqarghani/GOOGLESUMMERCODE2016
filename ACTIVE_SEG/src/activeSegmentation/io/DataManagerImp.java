@@ -23,7 +23,10 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
@@ -35,38 +38,59 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import activeSegmentation.Common;
 import activeSegmentation.IClassifier;
 import activeSegmentation.IDataManager;
+import activeSegmentation.IDataSet;
+import activeSegmentation.learning.WekaDataSet;
 import weka.core.Instances;
 
 public class DataManagerImp implements IDataManager {
-	
 
-	
+
+	private Instances data;
+	private String path;
+	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+
 	/**
 	 * Read ARFF file
 	 * @param filename ARFF file name
 	 * @return set of instances read from the file
 	 */
-	public Instances readDataFromARFF(String filename){
+	public IDataSet readDataFromARFF(String filename){
 		try{
 			BufferedReader reader = new BufferedReader(
 					new FileReader(filename));
 			try{
-				Instances data = new Instances(reader);
+				data = new Instances(reader);
 				// setting class attribute
 				data.setClassIndex(data.numAttributes() - 1);
 				reader.close();
-				return data;
+				return getDataSet();
 			}
 			catch(IOException e){IJ.showMessage("IOException");}
 		}
 		catch(FileNotFoundException e){IJ.showMessage("File not found!");}
 		return null;
 	}
-	
-	
-	
+
+
+	public IDataSet getDataSet() {
+
+		IDataSet dataSet= new WekaDataSet(data);
+		return  dataSet;
+	}
+
+
+	public void setData(Instances data) {
+		this.data = data;
+	}
+
 	@Override
 	/**
 	 * Write current instances into an ARFF file
@@ -152,11 +176,11 @@ public class DataManagerImp implements IDataManager {
 	@Override
 	public List<Roi> openZip(String path) {
 		// TODO Auto-generated method stub
-		
+
 		return openZip1(path);
-		
+
 	}
-	
+
 	private List<Roi> openZip1(String path) { 
 		Hashtable rois = new Hashtable();
 		ZipInputStream in = null; 
@@ -190,7 +214,7 @@ public class DataManagerImp implements IDataManager {
 			} 
 			in.close(); 
 		} catch (IOException e) {
-			
+
 		} finally {
 			if (in!=null)
 				try {in.close();} catch (IOException e) {}
@@ -198,11 +222,11 @@ public class DataManagerImp implements IDataManager {
 				try {out.close();} catch (IOException e) {}
 		}
 		if(nRois==0)
-				System.out.println("ERROR OCCURED");
-		
+			System.out.println("ERROR OCCURED");
+
 		return roiList;
 	} 
-	
+
 	private String getUniqueName(String name,Hashtable rois) {
 		String name2 = name;
 		int n = 1;
@@ -225,27 +249,27 @@ public class DataManagerImp implements IDataManager {
 
 	@Override
 	public boolean saveExamples(String filename, List<Roi> rois) {
-		
+
 		DataOutputStream out = null;
 		try {
 			ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(filename));
 			out = new DataOutputStream(new BufferedOutputStream(zos));
 			RoiEncoder re = new RoiEncoder(out);
 			for (Roi roi:rois) {
-				
+
 				zos.putNextEntry(new ZipEntry(roi.getName()+".roi"));
 				re.write(roi);
 				out.flush();
 			}
 			out.close();
 		} catch (IOException e) {
-			
+
 			return false;
 		} finally {
 			if (out!=null)
 				try {out.close();} catch (IOException e) {}
 		}
-		
+
 		return true;
 	}
 
@@ -258,44 +282,66 @@ public class DataManagerImp implements IDataManager {
 	}
 
 
-    @Override
-	public void writeFile(String path, JSONObject obj){
+
+	@Override
+	public void writeMetaInfo( MetaInfo metaInfo) {
+		ObjectMapper mapper = new ObjectMapper();
+
 		try {
+			metaInfo.setModifyDate(dateFormat.format(new Date()));
+			if(metaInfo.getCreatedDate()==null){
+				metaInfo.setCreatedDate(dateFormat.format(new Date()));
+			}
+			metaInfo.setPath(path);
+			// Convert object to JSON string and save into a file directly
+			System.out.println("SAVING");
+			mapper.writeValue(new File(path+Common.FILENAME), metaInfo);
 
-			FileWriter file = new FileWriter(path);
-			file.write(obj.toJSONString());
-			file.flush();
-			file.close();
+			System.out.println("DONE");
 
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		System.out.print(obj);
-
 	}
-	
-	
-    @Override
-	public JSONObject readFile(String file){
-		JSONParser parser = new JSONParser();
-		try {
-			Object obj = parser.parse(new FileReader(file));
 
-			JSONObject jsonObject = (JSONObject) obj;
-			
-			return jsonObject;
+
+	@Override
+	public MetaInfo getMetaInfo() {
+		ObjectMapper mapper = new ObjectMapper();
+		MetaInfo metaInfo;
+		try {
+		  metaInfo= mapper.readValue(new File(path+Common.FILENAME), MetaInfo.class);
+			//metaInfo.setPath(path);
+			return metaInfo;
+
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
-		return null;
-
+		
+		metaInfo= new MetaInfo();
+		metaInfo.setPath(path);
+		return metaInfo;
 	}
 
 
-	
+	@Override
+	public String getPath() {
+		return path;
+	}
+
+	@Override
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+
+
 }

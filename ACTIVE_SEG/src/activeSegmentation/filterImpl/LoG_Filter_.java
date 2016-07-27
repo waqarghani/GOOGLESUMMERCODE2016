@@ -366,6 +366,7 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 		return this.FILTER_NAME;
 	}
 
+	
 
 	/**
 	 * Get stack size
@@ -410,6 +411,18 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	max_sz= Prefs.getInt(MAX_LEN, 8);
 	sep= Prefs.getBoolean(ISSEP, true);
 		return true;
+	}
+
+
+	@Override
+	public ImageStack getImageStack() {
+		return imageStack;
+	}
+
+
+	@Override
+	public void setImageStack(ImageStack imageStack) {
+		this.imageStack = imageStack;
 	}
 
 

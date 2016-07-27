@@ -4,6 +4,7 @@ import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,8 @@ import org.json.simple.JSONObject;
 import activeSegmentation.Common;
 import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
+import activeSegmentation.io.FeatureInfo;
+import activeSegmentation.io.MetaInfo;
 
 
 
@@ -26,6 +29,7 @@ public class ExampleManagerImpl implements IExampleManager {
 	 * and each class (arraylist index) of the training image */
 	private List<Vector<ArrayList<Roi>>> examples;
 	private IDataManager dataManager;
+	private MetaInfo metaInfo;
 
 	/** maximum number of classes (labels) allowed */
 	/** names of the current classes */
@@ -36,11 +40,13 @@ public class ExampleManagerImpl implements IExampleManager {
 	private int numOfClasses = 0;
 	private int stackSize=0;
 
-	public ExampleManagerImpl(int stackSize, int numOfClasses,IDataManager dataManager)
+	public ExampleManagerImpl(int stackSize, int numOfClasses,IDataManager dataManager, MetaInfo metaInfo)
 	{
 		this.stackSize=stackSize;
 		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
 		this.dataManager= dataManager;
+		this.metaInfo= metaInfo;
+		setFeatureMetadata();
 		// update list of examples
 		for(int i=0; i < stackSize; i++)
 		{
@@ -66,7 +72,6 @@ public class ExampleManagerImpl implements IExampleManager {
 		// TODO Auto-generated method stub
 		for(Roi roi: roiList){
 			if(processibleRoi(roi)){
-
 				addExample(classNum, roi, n);
 			}
 
@@ -185,39 +190,24 @@ public class ExampleManagerImpl implements IExampleManager {
 
 	@Override
 	/*
-	 *The  path is pending
+	 *
 	 */
 
-	public void loadExamples(String file){
+	public void setFeatureMetadata(){
 
-		JSONObject featureList=dataManager.readFile(file);
-		JSONArray features = (JSONArray) featureList.get(Common.FEATURESLIST);
-		Iterator<Map<String,String>> iterator = features.iterator();
-		while (iterator.hasNext()) {
-			Map<String,String> feature=iterator.next();
-			int classNum=Integer.parseInt(feature.get(Common.CLASS));
-			String zipFile= feature.get(Common.ROI_ZIP_PATH);
-			List<Roi> classRoiList=dataManager.openZip(zipFile);
-			JSONArray slices = (JSONArray) featureList.get(Common.ROILIST);
-			Iterator<JSONArray> sliceiterator = slices.iterator();
-			int sliceNum=1;
-			while (sliceiterator.hasNext()) {
-				
-				List<String> sliceRois= new ArrayList<String>();
-				JSONArray roiList= (JSONArray) sliceiterator.next();
-				Iterator<String> roiItrerator = roiList.iterator();
-				while (sliceiterator.hasNext()) {
-					String roiName= roiItrerator.next();
-					sliceRois.add(roiName);
-				}
-			
+		for(FeatureInfo featureInfo : metaInfo.getFeatureList() ){
+			int classNum=featureInfo.getClassLabel();
+			List<Roi> classRoiList=dataManager.openZip(featureInfo.getZipFile());
+			for( String s: featureInfo.getSliceList().keySet()){
+				Integer sliceNum= Integer.parseInt(s.substring(s.length()-1));
+				List<String> sliceRois= featureInfo.getSliceList().get(s);	
 				addExampleList(classNum, getRois(classRoiList, sliceRois), sliceNum);
-				sliceNum++;
 			}
-
 		}
+
+
 	}
-	
+
 	private List<Roi> getRois(List<Roi> classRoiList, List<String> roiNames){
 		List<Roi> roiList= new ArrayList<Roi>();
 		for(String name: roiNames){
@@ -227,49 +217,51 @@ public class ExampleManagerImpl implements IExampleManager {
 				}
 			}
 		}
-		
+
 		return roiList;
 	}
 
 	@Override
-	public void saveExamples(String path,String name){
-		JSONArray featureArr=new JSONArray();
+	public void saveFeatureMetadata(){
+		metaInfo.resetFeatureInfo();
 		for(int classIndex = 0; classIndex <
 				getNumOfClasses(); classIndex++)
 		{
-			JSONObject featureObj = new JSONObject();
+			FeatureInfo featureInfo= new FeatureInfo();
 			List<Roi>  classRois= new ArrayList<Roi>();
-			featureObj.put(Common.CLASS, classIndex);	
-			JSONArray sliceArr=new JSONArray();
+			featureInfo.setClassLabel(classIndex);
+
 			for(int sliceNum = 1; sliceNum <= 
 					stackSize; sliceNum ++){
 				List<Roi> rois=getExamples(classIndex, sliceNum);
 				if(rois!=null & rois.size()>0){
 					classRois.addAll(rois);
-					JSONArray roiArr=new JSONArray();
+					List<String> roiArr=new ArrayList<String>();
 					for(Roi roi: rois){
 						roiArr.add(roi.getName());
-					}
-					sliceArr.add(roiArr);		
-				}	
-				featureObj.put(Common.ROILIST, sliceArr);
+					}	
+					featureInfo.addSlice(Common.SLICE+sliceNum, roiArr);
+				}
+
 			}
 
 			String fileName=Common.ROISET+classIndex+Common.FORMAT;
 			if(classRois!=null & classRois.size()>0){
-				dataManager.saveExamples(path+fileName,classRois );
-				featureObj.put(Common.ROI_ZIP_PATH,fileName);
+				System.out.println("examples");
+				dataManager.saveExamples(metaInfo.getPath()+fileName,classRois );
+				featureInfo.setZipFile(fileName);
 			}
 
-			featureArr.add(featureObj);
+			metaInfo.addFeature(featureInfo);
 		}			
 
-		JSONObject finalObj = new JSONObject();
-		finalObj.put(Common.FEATURESLIST, featureArr);
-		dataManager.writeFile(path+name, finalObj);
+		System.out.println("IN");
+		System.out.println(metaInfo.toString());
+		dataManager.writeMetaInfo(metaInfo);
 
 
 	}
+
 
 
 }

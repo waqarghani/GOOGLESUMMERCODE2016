@@ -442,6 +442,16 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 		this.isEnabled= isEnabled;
 	}
 
+	@Override
+	public ImageStack getImageStack() {
+		return imageStack;
+	}
+
+
+	@Override
+	public void setImageStack(ImageStack imageStack) {
+		this.imageStack = imageStack;
+	}
 
 
 }

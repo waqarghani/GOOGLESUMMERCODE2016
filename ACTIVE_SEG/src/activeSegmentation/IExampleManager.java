@@ -2,6 +2,8 @@ package activeSegmentation;
 
 import java.util.List;
 
+
+
 import ij.gui.Roi;
 
 public interface IExampleManager {
@@ -15,6 +17,6 @@ public interface IExampleManager {
 	public void setNumOfClasses(int numOfClasses);
 	public int getNumOfClasses();
 	public void addClass(int classId);
-	public void loadExamples(String file);
-	public void saveExamples(String path,String name);
+	public void setFeatureMetadata();
+	public void saveFeatureMetadata();
 }

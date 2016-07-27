@@ -26,6 +26,7 @@ import java.util.Properties;
 
 
 
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -408,6 +409,17 @@ public class LoG_Filter1_ implements ExtendedPlugInFilter, DialogListener,IFilte
 	max_sz= Prefs.getInt(MAX_LEN, 8);
 	sep= Prefs.getBoolean(ISSEP, true);
 		return true;
+	}
+	
+	@Override
+	public ImageStack getImageStack() {
+		return imageStack;
+	}
+
+
+	@Override
+	public void setImageStack(ImageStack imageStack) {
+		this.imageStack = imageStack;
 	}
 
 }

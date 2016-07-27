@@ -143,7 +143,7 @@ public class Gui {
 		}
 
 		if(event==LEARNING_BUTTON_PRESSED){
-			LearningPanel learningPanel = new LearningPanel(dataManager);
+			LearningPanel learningPanel = new LearningPanel();
 			SwingUtilities.invokeLater(learningPanel);
 		}
 		

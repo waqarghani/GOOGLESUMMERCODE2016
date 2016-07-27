@@ -1,6 +1,5 @@
 package activeSegmentation.metadatamodel;
 
-import ij.gui.Roi;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -9,8 +8,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -18,103 +15,83 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import activeSegmentation.Common;
-import activeSegmentation.IDataManager;
 import activeSegmentation.IExampleManager;
 import activeSegmentation.IFilterManager;
+import activeSegmentation.ILearningManager;
 
 public class FilterMetadata {
 
 	private IFilterManager filterManager;
 	private IExampleManager exampleManager;
-	private IDataManager dataManager;
+	private ILearningManager learningManager;
 	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	
-	public FilterMetadata(IFilterManager filterManager){
+	public FilterMetadata(IFilterManager filterManager,IExampleManager exampleManager , ILearningManager learningManager ){
 		this.filterManager=filterManager;
+		this.exampleManager= exampleManager;
+		this.learningManager= learningManager;
 	}
 
-	public void createDescription(String path){
+	private JSONObject createDescription(String path){
 		JSONObject descObj = new JSONObject();
 		descObj.put(Common.COMMENT,Common.DEFAULTCOMMENT);
 		descObj.put(Common.CREATEDATE,dateFormat.format(new Date()));
 		descObj.put(Common.MODIFYDATE,dateFormat.format(new Date()));
 		descObj.put(Common.PATH,path);
-		
+		return descObj;
 	}
 
-	public void saveFilters(String path){
-		JSONArray jsonArr=new JSONArray();
-	
-		for(String key: filterManager.getFilters()){
-		JSONObject obj = new JSONObject();
-		Map<String,String> filtersetting =filterManager.getFilterSetting(key);
-		obj.put(Common.FILTER, key);
-		for(String setting: filtersetting.keySet()){
-		obj.put(setting, filtersetting.get(setting));		
-		}
-		jsonArr.add(obj);
-		}
-		JSONObject finalObj = new JSONObject();
-		finalObj.put(Common.FILTERS, jsonArr);
-		writeFile(path, finalObj);
-
+	private JSONObject setDescription(JSONObject descObj){
+		descObj.put(Common.COMMENT,Common.DEFAULTCOMMENT);
+		descObj.put(Common.MODIFYDATE,dateFormat.format(new Date()));
+		//descObj.put(Common.PATH,path);
+		return descObj;
 	}
 	
-	public void saveLearning(String path,String arffName, String classifierName){
-		JSONArray jsonArr=new JSONArray();		
-		JSONObject finalObj = new JSONObject();	
-		finalObj.put(Common.ARFF, arffName);
-		finalObj.put(Common.CLASSIFIER, classifierName);
-		writeFile(path, finalObj);
+	public void storeMetadata(String path){
+	
+		JSONObject finalObject = new JSONObject();
+		JSONArray finalData = new JSONArray();
+		finalData.add(createDescription(path));
+		//finalData.add(filterManager.saveFilters(path));
+		//finalData.add(exampleManager.saveExamples(path));
+	  //  finalData.add(learningManager.saveLearning());
+	    
+	    finalObject.put("MetaData",finalData);
+	    writeFile(path, finalObject);
 	}
 	
-	public void setFilterSettings(String file){
+	public void setMetadataFile(String path){
+		JSONObject jsonObject= readFile(path);
 		
-		JSONObject filterObj=readFile(file);
-		JSONArray filters = (JSONArray) filterObj.get(Common.FILTERS);
-		Iterator<Map<String,String>> iterator = filters.iterator();
-	
+		JSONArray metaData = (JSONArray) jsonObject.get("MetaData");
+		Iterator<JSONObject> iterator = metaData.iterator();
+		int i=0;
 		while (iterator.hasNext()) {
-			Map<String,String> filter=iterator.next();
-			String filterName=filter.remove(Common.FILTER);
-			filterManager.updateFilterSetting(filterName, filter);
+			JSONObject obj=iterator.next();
+			if(i==0){
+				setDescription(obj);
+			}
+			if(i==1){
+				//filterManager.setFilterSettings(obj);
+			}
+			
+			if(i==2){
+			//	exampleManager.loadExamples(obj);
+			}
+			if(i==3){
+				//learningManager.
+			}
+			i++;
 		}
-
+				
 	}
-	
-	
-	public void loadExamples(String file){
-		
-		JSONObject featureList=readFile(file);
-		JSONArray classes = (JSONArray) featureList.get(Common.CLASSES);	
-		Iterator<String> classIterator = classes.iterator();
-		int classId=0;
-		while (classIterator.hasNext()) {
-			String classLabel= classIterator.next();
-			exampleManager.addClass(classId);
-			exampleManager.setClassLabel(classId, classLabel);
-			classId++;
-		}
-
-		JSONArray features = (JSONArray) featureList.get(Common.FEATURESLIST);
-		Iterator<Map<String,String>> iterator = features.iterator();
-		
-		while (iterator.hasNext()) {
-			Map<String,String> feature=iterator.next();
-			int classNum=Integer.parseInt(feature.get(Common.CLASS));
-			int sliceNum=Integer.parseInt(feature.get(Common.SLICE));
-			String zipFile= feature.get(Common.ROI_ZIP_PATH);
-			List<Roi> rois=dataManager.openZip(zipFile);
-			exampleManager.addExampleList(classNum, rois, sliceNum);
-		}
-	}
-	
-	
 
 	private void writeFile(String path, JSONObject obj){
 		try {
 
 			FileWriter file = new FileWriter(path);
+			
 			file.write(obj.toJSONString());
 			file.flush();
 			file.close();
@@ -148,6 +125,8 @@ public class FilterMetadata {
 		return null;
 
 	}
+	
+	
 
 }
 

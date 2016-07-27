@@ -5,6 +5,14 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+
+
+
+
+
+import org.json.simple.JSONObject;
+
+import activeSegmentation.io.MetaInfo;
 import weka.core.Instance;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -28,6 +36,6 @@ public interface IFilterManager {
 	public void enableFilter(String key);
 	public ImagePlus getFinalImage();
 	public void setFinalImage(ImagePlus finalImage);
-	public void setFilterSettings(String file);
-	public void saveFilters(String path);
+	public void setFiltersMetaData();
+	public void saveFiltersMetaData();
 }

@@ -40,6 +40,11 @@ public class WekaClassifier implements IClassifier, Serializable {
 	 * Classifier from Weka.
 	 */
 	private Classifier classifier;
+	
+   public WekaClassifier(Classifier iClassifier) {
+		// TODO Auto-generated constructor stub
+	   this.classifier= iClassifier;
+	}
 
 	/**
 	 * Constructs the learning model from the dataset.

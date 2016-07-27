@@ -8,14 +8,11 @@ import ij.WindowManager;
 import ij.plugin.PlugIn;
 
 import java.awt.Panel;
-import java.awt.BufferCapabilities.FlipContents;
-import java.beans.FeatureDescriptor;
 import java.io.File;
 import java.net.URL;
 import java.util.Set;
 
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import activeSegmentation.IDataManager;
 import activeSegmentation.IEvaluation;
@@ -23,12 +20,10 @@ import activeSegmentation.IExampleManager;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.evaluation.EvaluationMetrics;
 import activeSegmentation.feature.ExampleManagerImpl;
-import activeSegmentation.feature.FeatureExtraction;
 import activeSegmentation.filterImpl.FilterManager;
 import activeSegmentation.gui.Gui;
-import activeSegmentation.gui.TabbedFilterPanel;
 import activeSegmentation.io.DataManagerImp;
-import activeSegmentation.metadatamodel.FilterMetadata;
+import activeSegmentation.io.MetaInfo;
 
 
 
@@ -71,13 +66,17 @@ public class Weka_Segmentation_ implements PlugIn {
 				new ImageJ();
 				Weka_Segmentation_ test_Gui_ = new Weka_Segmentation_();
 				IDataManager dataManager= new DataManagerImp();
-				IFilterManager filterManager=test_Gui_.runProcess(home,dataManager);
+				dataManager.setPath(home);
+				MetaInfo metaInfo= dataManager.getMetaInfo();
+				IFilterManager filterManager=new FilterManager(dataManager,metaInfo);
+				filterManager.loadFilters(home);
+			
 				/*FilterMetadata filterMetadata= new FilterMetadata(filterManager);
 				filterMetadata.setFilterSettings("filter.txt");*/
 				
 				IEvaluation evaluation= new EvaluationMetrics();
 				IExampleManager exampleManager = new ExampleManagerImpl(
-						test_Gui_.getTrainingImage().getImageStackSize(),2,dataManager);
+						test_Gui_.getTrainingImage().getImageStackSize(),2,dataManager,metaInfo);
 				Gui gui= new Gui(filterManager,exampleManager,dataManager,evaluation,test_Gui_.getTrainingImage() );
 				gui.showGridBagLayoutDemo();
 				
@@ -99,14 +98,17 @@ public class Weka_Segmentation_ implements PlugIn {
 	public void run(String arg0) {
 		// TODO Auto-generated method stub
 		String home = "C://Program Files//ImageJ//plugins//activeSegmentation//";
-		
+		String path = "C://Users//HP//Desktop//DataImages//aav_samples//json//";
 		try {
 
 			IDataManager dataManager= new DataManagerImp();
-			IFilterManager filterManager=runProcess(home, dataManager);
+			dataManager.setPath(home);
+			MetaInfo metaInfo= dataManager.getMetaInfo();
+			IFilterManager filterManager=new FilterManager(dataManager,metaInfo);
+			filterManager.loadFilters(path);
 			IEvaluation evaluation= new EvaluationMetrics();
 			IExampleManager exampleManager = new ExampleManagerImpl(
-					trainingImage.getImageStackSize(),2,dataManager);
+					trainingImage.getImageStackSize(),2,dataManager,metaInfo);
 			//FeatureExtraction featureExtraction= new FeatureExtraction(filterManager,exampleManager);
 			Gui gui= new Gui(filterManager,exampleManager,dataManager,evaluation,trainingImage );
 			gui.showGridBagLayoutDemo();
@@ -118,35 +120,7 @@ public class Weka_Segmentation_ implements PlugIn {
 		
 	}
 
-	public  IFilterManager runProcess(String home, IDataManager dataManager) throws Exception{
-		
-		try {
-			
-			/*-------------- LOADING FILTERS* ------------------*/
-			System.out.println("-------------- LOADING FILTERS* ------------------");
-			IFilterManager filterManager=new FilterManager(dataManager);
-			filterManager.loadFilters(home);
-			
-			
-			/*-------------- GETTING AVAILABLE FILTER LIST* ------------------*/
 
-			Set<String> filterList= filterManager.getFilters();
-			System.out.println("-------------- AVAIL FILTERS* --------------------");
-			System.out.println(filterList.size());
-			System.out.println();
-			
-			
-			IJ.log(String.valueOf(filterList.size()));
-			return filterManager;
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			IJ.log(e.getMessage());
-		}
-		return null;	
-
-	}
 	
 	private  ImagePlus loadFromResource(final String path) {
 		final URL url = Weka_Segmentation_.class.getResource(path);
