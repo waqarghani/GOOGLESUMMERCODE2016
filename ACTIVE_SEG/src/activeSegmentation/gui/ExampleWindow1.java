@@ -175,7 +175,11 @@ public class ExampleWindow1 extends StackWindow
 		}
 
 
+		
 		createPanel();
+		drawExamples();
+		updateExampleLists();
+		updateallExampleLists();
 		Panel all = new Panel();
 		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
 		all.setLayout(box);

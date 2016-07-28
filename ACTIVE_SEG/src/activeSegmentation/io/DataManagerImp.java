@@ -103,7 +103,7 @@ public class DataManagerImp implements IDataManager {
 		try{
 			out = new BufferedWriter(
 					new OutputStreamWriter(
-							new FileOutputStream( filename ) ) );
+							new FileOutputStream( path+filename ) ) );
 
 			final Instances header = new Instances(data, 0);
 			out.write(header.toString());

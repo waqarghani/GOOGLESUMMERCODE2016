@@ -68,11 +68,7 @@ public class Weka_Segmentation_ implements PlugIn {
 				IDataManager dataManager= new DataManagerImp();
 				dataManager.setPath(home);
 				MetaInfo metaInfo= dataManager.getMetaInfo();
-				IFilterManager filterManager=new FilterManager(dataManager,metaInfo);
-				filterManager.loadFilters(home);
-			
-				/*FilterMetadata filterMetadata= new FilterMetadata(filterManager);
-				filterMetadata.setFilterSettings("filter.txt");*/
+				IFilterManager filterManager=new FilterManager(dataManager,metaInfo, home);
 				
 				IEvaluation evaluation= new EvaluationMetrics();
 				IExampleManager exampleManager = new ExampleManagerImpl(
@@ -104,8 +100,7 @@ public class Weka_Segmentation_ implements PlugIn {
 			IDataManager dataManager= new DataManagerImp();
 			dataManager.setPath(home);
 			MetaInfo metaInfo= dataManager.getMetaInfo();
-			IFilterManager filterManager=new FilterManager(dataManager,metaInfo);
-			filterManager.loadFilters(path);
+			IFilterManager filterManager=new FilterManager(dataManager,metaInfo, home);
 			IEvaluation evaluation= new EvaluationMetrics();
 			IExampleManager exampleManager = new ExampleManagerImpl(
 					trainingImage.getImageStackSize(),2,dataManager,metaInfo);

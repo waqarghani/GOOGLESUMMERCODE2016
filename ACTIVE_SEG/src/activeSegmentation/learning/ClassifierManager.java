@@ -17,7 +17,7 @@ import activeSegmentation.io.MetaInfo;
 
 public class ClassifierManager implements ILearningManager {
 
-	
+
 	private IClassifier currentClassifier;
 	Map<String,IClassifier> classifierMap= new HashMap<String, IClassifier>();
 	private IDataManager dataManager;
@@ -25,19 +25,19 @@ public class ClassifierManager implements ILearningManager {
 	private List<String> learningList= new ArrayList<String>();
 	private String selectedType=Common.PASSIVELEARNING;
 	private IDataSet dataset;
-	
-	
+
+
 	public ClassifierManager(){
-		
-	learningList.add(Common.ACTIVELEARNING);
-	learningList.add(Common.PASSIVELEARNING);
-		
+
+		learningList.add(Common.ACTIVELEARNING);
+		learningList.add(Common.PASSIVELEARNING);
+
 	}
-	
+
 
 
 	public void trainClassifier(IDataSet dataSet){
-		
+
 		try {
 			currentClassifier.buildClassifier(dataSet);
 			classifierMap.put(currentClassifier.getClass().getCanonicalName(), currentClassifier);
@@ -46,26 +46,33 @@ public class ClassifierManager implements ILearningManager {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 
 	@Override
-	public void saveLearning(String path){	
+	public void saveLearningMetaData(){	
 		Map<String,String> learningMap = new HashMap<String, String>();
-		learningMap.put(Common.ARFF, Common.ARFFFILENAME);
+		if(dataset!=null){
+			learningMap.put(Common.ARFF, Common.ARFFFILENAME);
+			dataManager.writeDataToARFF(dataset.getDataset(), Common.ARFFFILENAME);
+		}
+		
 		learningMap.put(Common.CLASSIFIER, Common.CLASSIFIERNAME);  
 		learningMap.put(Common.LEARNINGTYPE, selectedType);
 		metaInfo.setLearning(learningMap);
-        dataManager.writeMetaInfo(metaInfo);		
+		dataManager.writeMetaInfo(metaInfo);		
 	}
 
 
 
 	@Override
-	public void setLearning(MetaInfo metaInfo) {
+	public void loadLearningMetaData() {
 		// TODO Auto-generated method stub
-	dataset= dataManager.readDataFromARFF(metaInfo.getLearning().get(Common.ARFF));
-	selectedType=metaInfo.getLearning().get(Common.LEARNINGTYPE);
+		if(metaInfo.getLearning()!=null){
+			dataset= dataManager.readDataFromARFF(metaInfo.getLearning().get(Common.ARFF));
+			selectedType=metaInfo.getLearning().get(Common.LEARNINGTYPE);
+		}
+
 	}
 
 
@@ -73,11 +80,11 @@ public class ClassifierManager implements ILearningManager {
 
 	@Override
 	public void setClassifier(Object classifier) {
-		
-		 if (classifier instanceof AbstractClassifier) {
-			 currentClassifier = new WekaClassifier((AbstractClassifier)classifier);		 		
+
+		if (classifier instanceof AbstractClassifier) {
+			currentClassifier = new WekaClassifier((AbstractClassifier)classifier);		 		
 		}
-		 
+
 	}
 
 
@@ -87,14 +94,14 @@ public class ClassifierManager implements ILearningManager {
 	@Override
 	public void trainClassifier() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 }

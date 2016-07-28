@@ -49,10 +49,18 @@ public class FilterManager implements IFilterManager {
 	/** flag to specify the use of the old color format (using directly the RGB values as float) */
 	private boolean oldColorFormat = false; 
 
-	public FilterManager(IDataManager dataManager, MetaInfo metaInfo){
+	public FilterManager(IDataManager dataManager, MetaInfo metaInfo, String path){
 		this.dataManager= dataManager;
 		this.metaInfo= metaInfo;
+		try {
+			loadFilters(path);
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setFiltersMetaData();
+		
 	}
 
 	public  void loadFilters(String home) throws InstantiationException, IllegalAccessException, 
@@ -268,6 +276,7 @@ public class FilterManager implements IFilterManager {
 	@Override
 	public void saveFiltersMetaData(){
 		
+		
 		List<Map<String,String>> filterObj= new ArrayList<Map<String,String>>();
 		for(String key: getFilters()){
 			Map<String,String> filters = new HashMap<String,String>();
@@ -300,7 +309,10 @@ public class FilterManager implements IFilterManager {
 			updateFilterSetting(filterName, filter);
 			if(filter.get(Common.FILEPATH)!=null){
 				String fileName=filter.get(Common.FILEPATH);
-				filterMap.get(filterName).setImageStack(new ImagePlus(metaInfo.getPath()+fileName).getImageStack());
+				System.out.println(metaInfo.getPath()+fileName);
+				ImagePlus image=new ImagePlus(metaInfo.getPath()+fileName);
+				image.show();
+				filterMap.get(filterName).setImageStack(image.getImageStack());
 
 			}
 		}

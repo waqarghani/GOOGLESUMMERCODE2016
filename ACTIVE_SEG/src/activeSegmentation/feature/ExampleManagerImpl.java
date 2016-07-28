@@ -46,7 +46,7 @@ public class ExampleManagerImpl implements IExampleManager {
 		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
 		this.dataManager= dataManager;
 		this.metaInfo= metaInfo;
-		setFeatureMetadata();
+		
 		// update list of examples
 		for(int i=0; i < stackSize; i++)
 		{
@@ -56,6 +56,8 @@ public class ExampleManagerImpl implements IExampleManager {
 		for(int i=0; i<numOfClasses;i++ ){
 			addClass(i);
 		}
+		
+		setFeatureMetadata();
 	}
 
 
@@ -197,14 +199,18 @@ public class ExampleManagerImpl implements IExampleManager {
 
 		for(FeatureInfo featureInfo : metaInfo.getFeatureList() ){
 			int classNum=featureInfo.getClassLabel();
-			List<Roi> classRoiList=dataManager.openZip(featureInfo.getZipFile());
+			List<Roi> classRoiList=dataManager.openZip(metaInfo.getPath()+featureInfo.getZipFile());
+			System.out.println(classRoiList.size());
 			for( String s: featureInfo.getSliceList().keySet()){
 				Integer sliceNum= Integer.parseInt(s.substring(s.length()-1));
+				System.out.println(sliceNum);
 				List<String> sliceRois= featureInfo.getSliceList().get(s);	
 				addExampleList(classNum, getRois(classRoiList, sliceRois), sliceNum);
 			}
 		}
 
+		System.out.println(examples.size());
+		System.out.println(metaInfo.toString());
 
 	}
 
