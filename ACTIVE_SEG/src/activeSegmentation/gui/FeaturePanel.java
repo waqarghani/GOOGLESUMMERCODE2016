@@ -42,12 +42,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 
-import weka.core.Instances;
 import activeSegmentation.Common;
 import activeSegmentation.IDataManager;
-import activeSegmentation.IExampleManager;
-import activeSegmentation.IFilterManager;
-import activeSegmentation.feature.FeatureExtraction;
+import activeSegmentation.IFeatureManager;
+
 
 
 /**
@@ -56,7 +54,7 @@ import activeSegmentation.feature.FeatureExtraction;
  * @author
  *
  */
-public class ExampleWindow1 extends StackWindow 
+public class FeaturePanel extends StackWindow 
 {
 	/** Generated serial version UID */
 	private static final long serialVersionUID = -1037100741242680537L;
@@ -82,10 +80,8 @@ public class ExampleWindow1 extends StackWindow
 	byte[] green = new byte[ 256 ];
 	byte[] blue = new byte[ 256 ];
 
-	IExampleManager exampleManager;
+	IFeatureManager exampleManager;
 	IDataManager dataManager;
-	IFilterManager filterManager;
-	FeatureExtraction featureExtraction;
 	private List<JList> exampleList;
 	private List<JList> allexampleList;
 	private List<Color> colors ;
@@ -100,8 +96,8 @@ public class ExampleWindow1 extends StackWindow
 	/** array of roi list overlays to paint the transparent rois of each class */
 	private List<RoiListOverlay> roiOverlayList;
 
-	private static final Icon uploadIcon = new ImageIcon(ExampleWindow1.class.getResource("/activeSegmentation/images/upload.png"));
-	private static final Icon downloadIcon = new ImageIcon(ExampleWindow1.class.getResource("/activeSegmentation/images/download.png"));
+	private static final Icon uploadIcon = new ImageIcon(FeaturePanel.class.getResource("/activeSegmentation/images/upload.png"));
+	private static final Icon downloadIcon = new ImageIcon(FeaturePanel.class.getResource("/activeSegmentation/images/download.png"));
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 21, "TRAIN" );
@@ -123,15 +119,13 @@ public class ExampleWindow1 extends StackWindow
 
 
 
-	public ExampleWindow1(ImagePlus imp,IExampleManager exampleManager, 
-			IDataManager dataManager, IFilterManager filterManager)
+	public FeaturePanel(ImagePlus imp,IFeatureManager exampleManager, 
+			IDataManager dataManager)
 	{
 		super(imp, new OverlayedImageCanvas(imp) );	
 		this.displayImage= imp;
 		this.exampleManager= exampleManager;
 		this.dataManager= dataManager;
-		this.filterManager= filterManager;
-		this.featureExtraction= new FeatureExtraction(filterManager, exampleManager);
 		this.setTitle("Active Segmentation");
 		this.exampleList = new ArrayList<JList>();
 		this.allexampleList = new ArrayList<JList>();
@@ -358,13 +352,12 @@ public class ExampleWindow1 extends StackWindow
 	public void doAction( final ActionEvent event )	{
 		if(event==COMPUTE_BUTTON_PRESSED){
 
-			featureExtraction.createTrainingInstance();
+			
 
 
 		}
 		if(event==SAVE_BUTTON_PRESSED){
-
-			//saveInstanceFile();		
+	
 			exampleManager.saveFeatureMetadata();
 
 		}
@@ -511,19 +504,6 @@ public class ExampleWindow1 extends StackWindow
 	}
 
 
-	private boolean saveInstanceFile(){
-		String path;
-		SaveDialog sd = new SaveDialog("Save Insances...", "data", ".arff");
-		String name = sd.getFileName();
-		if (name == null)
-			return false;
-		if (!(name.endsWith(".arff") || name.endsWith(".arff")))
-			name = name + ".arff";
-		String dir = sd.getDirectory();
-		path = dir+name;
-		return false;
-		//return dataManager.writeDataToARFF(featureExtraction.createTrainingInstance(), path);
-	}
 	
 	/**
 	 * Update the example lists in the GUI

@@ -139,7 +139,7 @@ public class Gui {
 
 		}
 		if(event==FEATURE_BUTTON_PRESSED){
-			new ExampleWindow1( trainingImage.duplicate(),exampleManager,dataManager,filterManager);
+			new FeaturePanel( trainingImage.duplicate(),exampleManager,dataManager);
 		}
 
 		if(event==LEARNING_BUTTON_PRESSED){
