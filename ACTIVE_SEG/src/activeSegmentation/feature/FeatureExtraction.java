@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import activeSegmentation.Common;
 import activeSegmentation.IDataSet;
-import activeSegmentation.IExampleManager;
+import activeSegmentation.IFeatureManager;
 import activeSegmentation.IFeature;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.learning.WekaDataSet;
@@ -31,12 +31,12 @@ public class FeatureExtraction implements IFeature {
 
 
 	private IFilterManager filterManager;
-	private IExampleManager exampleManager;
+	private IFeatureManager exampleManager;
 	private Instances trainingData;
 
 	private String featureName="pixelLevel";
 
-	public FeatureExtraction(IFilterManager filterManager, IExampleManager exampleManager){
+	public FeatureExtraction(IFilterManager filterManager, IFeatureManager exampleManager){
 
 		this.filterManager= filterManager;
 		this.exampleManager= exampleManager;

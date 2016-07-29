@@ -22,7 +22,7 @@ import javax.swing.plaf.metal.OceanTheme;
 
 import activeSegmentation.IDataManager;
 import activeSegmentation.IEvaluation;
-import activeSegmentation.IExampleManager;
+import activeSegmentation.IFeatureManager;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.feature.FeatureExtraction;
 
@@ -30,7 +30,7 @@ public class Gui {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
 	private IFilterManager filterManager;
-	private IExampleManager exampleManager;
+	private IFeatureManager exampleManager;
 	private IDataManager dataManager;
 	private IEvaluation evaluation;
 	private ImagePlus trainingImage;
@@ -50,7 +50,7 @@ public class Gui {
 	final static String LOOKANDFEEL = "Metal";
 	final static String THEME = "Test";
 	public static final Font FONT = new Font( "Arial", Font.BOLD, 13 );
-	public Gui(IFilterManager filterManager, IExampleManager exampleManager,
+	public Gui(IFilterManager filterManager, IFeatureManager exampleManager,
 			IDataManager dataManager,IEvaluation evaluation, ImagePlus trainingImage){
 
 		this.filterManager= filterManager;

@@ -6,7 +6,7 @@ import java.util.List;
 
 import ij.gui.Roi;
 
-public interface IExampleManager {
+public interface IFeatureManager {
 
 	public void addExample(int classNum, Roi roi, int n) ;
 	public void addExampleList(int classNum, List<Roi> roi, int n) ;

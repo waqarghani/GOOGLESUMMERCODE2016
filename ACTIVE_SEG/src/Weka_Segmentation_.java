@@ -16,10 +16,10 @@ import javax.swing.JTextArea;
 
 import activeSegmentation.IDataManager;
 import activeSegmentation.IEvaluation;
-import activeSegmentation.IExampleManager;
+import activeSegmentation.IFeatureManager;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.evaluation.EvaluationMetrics;
-import activeSegmentation.feature.ExampleManagerImpl;
+import activeSegmentation.feature.FeatureManager;
 import activeSegmentation.filterImpl.FilterManager;
 import activeSegmentation.gui.Gui;
 import activeSegmentation.io.DataManagerImp;
@@ -71,7 +71,7 @@ public class Weka_Segmentation_ implements PlugIn {
 				IFilterManager filterManager=new FilterManager(dataManager,metaInfo, home);
 				
 				IEvaluation evaluation= new EvaluationMetrics();
-				IExampleManager exampleManager = new ExampleManagerImpl(
+				IFeatureManager exampleManager = new FeatureManager(
 						test_Gui_.getTrainingImage().getImageStackSize(),2,dataManager,metaInfo);
 				Gui gui= new Gui(filterManager,exampleManager,dataManager,evaluation,test_Gui_.getTrainingImage() );
 				gui.showGridBagLayoutDemo();
@@ -102,7 +102,7 @@ public class Weka_Segmentation_ implements PlugIn {
 			MetaInfo metaInfo= dataManager.getMetaInfo();
 			IFilterManager filterManager=new FilterManager(dataManager,metaInfo, home);
 			IEvaluation evaluation= new EvaluationMetrics();
-			IExampleManager exampleManager = new ExampleManagerImpl(
+			IFeatureManager exampleManager = new FeatureManager(
 					trainingImage.getImageStackSize(),2,dataManager,metaInfo);
 			//FeatureExtraction featureExtraction= new FeatureExtraction(filterManager,exampleManager);
 			Gui gui= new Gui(filterManager,exampleManager,dataManager,evaluation,trainingImage );
