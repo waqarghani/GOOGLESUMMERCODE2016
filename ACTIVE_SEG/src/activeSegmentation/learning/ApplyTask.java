@@ -39,6 +39,7 @@ public class ApplyTask extends RecursiveAction{
 			classifyPixels();
 			return;
 		}
+		//System.out.println("mLength"+mLength);
 
 		int split = mLength / 2;
 
@@ -57,13 +58,16 @@ public class ApplyTask extends RecursiveAction{
 			e.printStackTrace();
 		}
 
-		System.out.println(mStart+"---"+mLength);
+		//System.out.println(mStart+"---"+mLength);
 		Instances testInstances= new Instances(dataSet.getDataset(), mStart, mLength);
 		for (int index = 0; index < testInstances.size(); index++)
 		{
 			try {
+				//double value=classifierCopy.
+				//		classifyInstance(testInstances.get(index));
+				//System.out.println(value);
 				classificationResult[mStart+index]=classifierCopy.
-						classifyInstance(testInstances.get(index));
+				classifyInstance(testInstances.get(index));
 			} catch (Exception e) {
 
 				e.printStackTrace();

@@ -38,4 +38,5 @@ public interface IFilterManager {
 	public void setFinalImage(ImagePlus finalImage);
 	public void setFiltersMetaData();
 	public void saveFiltersMetaData();
+	public ImagePlus getOriginalImage();
 }

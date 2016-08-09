@@ -56,6 +56,7 @@ public class WekaClassifier implements IClassifier, Serializable {
 	public void buildClassifier(IDataSet instances) throws Exception {
 
 		classifier.buildClassifier(instances.getDataset());
+		System.out.println(classifier.toString());
 	}
 
 	/**

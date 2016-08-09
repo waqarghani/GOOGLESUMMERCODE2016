@@ -7,69 +7,65 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 
-
-
-
-
-
-
-
-
+import java.util.List;
+import java.util.Vector;
 
 import activeSegmentation.Common;
 import activeSegmentation.IDataSet;
-import activeSegmentation.IFeatureManager;
 import activeSegmentation.IFeature;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.learning.WekaDataSet;
 import weka.core.Attribute;
 import weka.core.Instances;
 import ij.IJ;
+import ij.ImagePlus;
 import ij.gui.Roi;
 
 public class FeatureExtraction implements IFeature {
 
 
-	private IFilterManager filterManager;
-	private IFeatureManager exampleManager;
+	private IFilterManager filterManager;	
+
 	private Instances trainingData;
 
 	private String featureName="pixelLevel";
+	private ImagePlus originalImage;
 
-	public FeatureExtraction(IFilterManager filterManager, IFeatureManager exampleManager){
+	public FeatureExtraction(IFilterManager filterManager, ImagePlus originalImage){
 
 		this.filterManager= filterManager;
-		this.exampleManager= exampleManager;
+		this.originalImage= originalImage;
 	}
 	/**
 	 * Create training instances out of the user markings
 	 * @return set of instances (feature vectors in Weka format)
 	 */
 	@Override
-	public void createTrainingInstance()
+	public void createTrainingInstance(List<String> classLabels,
+			int classes, List<Vector<ArrayList<Roi>>> examples)
 	{
 		ArrayList<Attribute> attributes = createFeatureHeader();
-		attributes.add(new Attribute(Common.CLASS, addClasstoHeader()));
+		attributes.add(new Attribute(Common.CLASS, addClasstoHeader(classes, classLabels)));
 
 		// create initial set of instances
-		 trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
+		trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
 		// Set the index of the class attribute
 		trainingData.setClassIndex(filterManager.getNumOfFeatures());
-		for(int classIndex = 0; classIndex < exampleManager.getNumOfClasses(); classIndex++)
+		for(int classIndex = 0; classIndex < classes; classIndex++)
 		{
 			int nl = 0;
 
 			// Read all lists of examples
 			for(int sliceNum = 1; sliceNum <= filterManager.getOriginalImageSize(); sliceNum ++)
-				for(int j=0; j < exampleManager.getExamples(classIndex, sliceNum).size(); j++)
+				for(int j=0; j < examples.get(sliceNum-1).get(classIndex).size(); j++)
 				{       
-					Roi r=  exampleManager.getExamples(classIndex, sliceNum).get(j);					
+					Roi r=  examples.get(sliceNum-1).get(classIndex).get(j);					
 					nl += addRectangleRoiInstances( trainingData, classIndex, sliceNum, r );
 				}
-			IJ.log("# of pixels selected as " + exampleManager.getClassLabels().get(classIndex) + ": " +nl);
+			IJ.log("# of pixels selected as " + classLabels.get(classIndex) + ": " +nl);
 		}
 
-		
+
 
 	}
 
@@ -92,7 +88,7 @@ public class FeatureExtraction implements IFeature {
 		int numInstances = 0;
 
 		final Rectangle rect = r.getBounds();
-        final Polygon poly=r.getPolygon();
+		final Polygon poly=r.getPolygon();
 		final int x0 = rect.x;
 		final int y0 = rect.y;
 
@@ -102,7 +98,7 @@ public class FeatureExtraction implements IFeature {
 		for( int x = x0; x < lastX; x++ )
 			for( int y = y0; y < lastY; y++ )				
 			{
-				
+
 				if(poly.contains(new Point(x0, y0))){
 					trainingData.add( filterManager.createInstance(x, y, classIndex, sliceNum) );
 				}				
@@ -125,27 +121,80 @@ public class FeatureExtraction implements IFeature {
 		return attributes;
 	}
 
-	private ArrayList<String> addClasstoHeader(){
+	private ArrayList<String> addClasstoHeader(int numClasses,List<String> classLabels){
 		ArrayList<String> classes=null;
 
-		if(null == this.trainingData)
-		{
 			classes = new ArrayList<String>();
-			for(int i = 0; i < exampleManager.getNumOfClasses() ; i ++)
+			for(int i = 0; i < numClasses ; i ++)
 			{			
 				for(int n=0; n<filterManager.getOriginalImageSize(); n++)
 				{
-					if(classes.contains(exampleManager.getClassLabels().get(i)) == false)
-						classes.add(exampleManager.getClassLabels().get(i));
+					if(classes.contains(classLabels.get(i)) == false)
+						classes.add(classLabels.get(i));
 				}
 			}			
-		}
-
+		
 		return classes;
 
 	}
-	
-	
+
+	@Override
+	public List<IDataSet> createAllInstance(List<String> classLabels,
+			int classes)
+			{
+		List<IDataSet> dataSets= new ArrayList<IDataSet>();
+
+		// Read all lists of examples
+		for(int sliceNum = 1; sliceNum <= filterManager.getOriginalImageSize(); sliceNum ++){
+
+			dataSets.add(new WekaDataSet(addRectangleRoiInstances(sliceNum, classLabels, classes)));
+
+		}
+
+		return dataSets;
+			}
+
+	/**
+	 * Add training samples from a rectangular roi
+	 * 
+	 * @param trainingData set of instances to add to
+	 * @param classIndex class index value
+	 * @param sliceNum number of 2d slice being processed
+	 * @param r shape roi
+	 * @return number of instances added
+	 */
+	private Instances addRectangleRoiInstances(
+			int sliceNum,List<String> classLabels,
+			int classes) 
+	{		
+
+		Instances testingData;
+		ArrayList<Attribute> attributes = createFeatureHeader();
+		attributes.add(new Attribute(Common.CLASS, addClasstoHeader(classes, classLabels)));
+        System.out.println(attributes.toString());
+		// create initial set of instances
+		testingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
+		// Set the index of the class attribute
+		testingData.setClassIndex(filterManager.getNumOfFeatures());
+
+		for( int x = 0; x < originalImage.getWidth(); x++ ){
+			for( int y = 0; y < originalImage.getHeight(); y++ )				
+			{
+
+				testingData.add( filterManager.createInstance(x, y, 0, sliceNum) );
+				
+			}		
+		}
+		// increase number of instances for this class
+
+		System.out.println("SIZe"+testingData.size());
+		System.out.println(testingData.get(1).toString());
+		return testingData;		
+	}
+
+
+
+
 	@Override
 	public String getFeatureName() {
 		// TODO Auto-generated method stub
@@ -154,13 +203,15 @@ public class FeatureExtraction implements IFeature {
 	@Override
 	public IDataSet getDataSet() {
 		// TODO Auto-generated method stub
+		
+		System.out.println(trainingData.toString());
 		return new WekaDataSet(trainingData);
 	}
 	@Override
 	public void setDataset(IDataSet trainingData) {
 		// TODO Auto-generated method stub
 		this.trainingData= trainingData.getDataset();
-		
+
 	}
 
 

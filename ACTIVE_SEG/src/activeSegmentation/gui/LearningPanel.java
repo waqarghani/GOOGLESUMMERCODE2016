@@ -40,7 +40,12 @@ public class LearningPanel  implements Runnable {
 	private GenericObjectEditor m_ClassifierEditor = new GenericObjectEditor();
 	String originalOptions;
 	String originalClassifierName;
-   private  ILearningManager learningManager;
+	private GuiController controller;
+  
+	public LearningPanel(GuiController controller){
+		
+		this.controller= controller;
+	}
 	
 
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );

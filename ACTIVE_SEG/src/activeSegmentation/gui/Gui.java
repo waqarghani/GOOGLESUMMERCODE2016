@@ -30,10 +30,9 @@ public class Gui {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
 	private IFilterManager filterManager;
-	private IFeatureManager exampleManager;
-	private IDataManager dataManager;
 	private IEvaluation evaluation;
 	private ImagePlus trainingImage;
+	private GuiController controller;
 
 	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
 	final ActionEvent FEATURE_BUTTON_PRESSED = new ActionEvent( this, 0, "Feature" );
@@ -50,15 +49,13 @@ public class Gui {
 	final static String LOOKANDFEEL = "Metal";
 	final static String THEME = "Test";
 	public static final Font FONT = new Font( "Arial", Font.BOLD, 13 );
-	public Gui(IFilterManager filterManager, IFeatureManager exampleManager,
-			IDataManager dataManager,IEvaluation evaluation, ImagePlus trainingImage){
+	public Gui(IFilterManager filterManager,GuiController controller, ImagePlus trainingImage){
 
 		this.filterManager= filterManager;
-		this.exampleManager= exampleManager;
-		this.dataManager= dataManager;
 		this.trainingImage= trainingImage;
-		this.evaluation = evaluation;
+		this.controller= controller;
 		prepareGUI();
+		
 	}
 
 
@@ -134,12 +131,12 @@ public class Gui {
 		System.out.println("IN DO ACTION");
 		System.out.println(event.toString());
 		if(event ==FILTER_BUTTON_PRESSED ){
-			TabbedFilterPanel filterPanel=new TabbedFilterPanel(filterManager,trainingImage);
+			FilterPanel filterPanel=new FilterPanel(filterManager,trainingImage);
 			SwingUtilities.invokeLater(filterPanel);
 
 		}
 		if(event==FEATURE_BUTTON_PRESSED){
-			new FeaturePanel( trainingImage.duplicate(),exampleManager,dataManager);
+			new FeaturePanel(trainingImage.duplicate(),controller);
 		}
 
 		if(event==LEARNING_BUTTON_PRESSED){
@@ -149,8 +146,8 @@ public class Gui {
 		
 		if(event==EVALUATION_BUTTON_PRESSED){
 			
-			EvaluationPanel evaluationPanel = new EvaluationPanel(dataManager, evaluation);
-			SwingUtilities.invokeLater(evaluationPanel);
+		//	EvaluationPanel evaluationPanel = new EvaluationPanel(dataManager, evaluation);
+		//	SwingUtilities.invokeLater(evaluationPanel);
 		}
 
 	}

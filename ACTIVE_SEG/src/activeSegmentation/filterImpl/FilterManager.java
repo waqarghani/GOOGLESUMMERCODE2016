@@ -46,6 +46,8 @@ public class FilterManager implements IFilterManager {
 
 	private ImagePlus originalImage;
 
+	
+
 	/** flag to specify the use of the old color format (using directly the RGB values as float) */
 	private boolean oldColorFormat = false; 
 
@@ -324,5 +326,12 @@ public class FilterManager implements IFilterManager {
 
 		return filterMap.get(key).getImage();
 	}
+	
+	@Override
+	public ImagePlus getOriginalImage() {
+		return originalImage;
+	}
+
+	
 
 }

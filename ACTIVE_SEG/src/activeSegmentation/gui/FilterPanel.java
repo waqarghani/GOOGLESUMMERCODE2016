@@ -53,7 +53,7 @@ import activeSegmentation.filterImpl.FilterManager;
 
 
 
-public class TabbedFilterPanel implements Runnable {
+public class FilterPanel implements Runnable {
 
 
 	private IFilterManager filterManager;
@@ -83,7 +83,7 @@ public class TabbedFilterPanel implements Runnable {
 	final ActionEvent VIEW_BUTTON_PRESSED = new ActionEvent( this, 6, "View" );
 
 
-	public TabbedFilterPanel(IFilterManager filterManager, ImagePlus trainingImage) {
+	public FilterPanel(IFilterManager filterManager, ImagePlus trainingImage) {
 
 		this.filterManager = filterManager;
 		this.trainingImage= trainingImage;

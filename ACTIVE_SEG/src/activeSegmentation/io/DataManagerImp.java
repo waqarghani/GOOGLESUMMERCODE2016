@@ -52,7 +52,7 @@ import weka.core.Instances;
 public class DataManagerImp implements IDataManager {
 
 
-	private Instances data;
+	private IDataSet dataSet;
 	private String path;
 	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
@@ -67,11 +67,11 @@ public class DataManagerImp implements IDataManager {
 			BufferedReader reader = new BufferedReader(
 					new FileReader(filename));
 			try{
-				data = new Instances(reader);
+				Instances data = new Instances(reader);
 				// setting class attribute
 				data.setClassIndex(data.numAttributes() - 1);
 				reader.close();
-				return getDataSet();
+				return new WekaDataSet(data);
 			}
 			catch(IOException e){IJ.showMessage("IOException");}
 		}
@@ -80,15 +80,16 @@ public class DataManagerImp implements IDataManager {
 	}
 
 
+	@Override
 	public IDataSet getDataSet() {
 
-		IDataSet dataSet= new WekaDataSet(data);
 		return  dataSet;
 	}
 
 
-	public void setData(Instances data) {
-		this.data = data;
+	@Override
+	public void setData(IDataSet data) {
+		this.dataSet = data.copy();
 	}
 
 	@Override

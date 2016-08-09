@@ -1,13 +1,18 @@
 package activeSegmentation.learning;
 
+
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.simple.JSONObject;
+
+
+import java.util.concurrent.ForkJoinPool;
 
 import weka.classifiers.AbstractClassifier;
+import weka.classifiers.functions.SMO;
 import activeSegmentation.Common;
 import activeSegmentation.IClassifier;
 import activeSegmentation.IDataManager;
@@ -18,31 +23,35 @@ import activeSegmentation.io.MetaInfo;
 public class ClassifierManager implements ILearningManager {
 
 
-	private IClassifier currentClassifier;
+	private IClassifier currentClassifier= new WekaClassifier(new SMO());
 	Map<String,IClassifier> classifierMap= new HashMap<String, IClassifier>();
 	private IDataManager dataManager;
 	private MetaInfo metaInfo;
 	private List<String> learningList= new ArrayList<String>();
 	private String selectedType=Common.PASSIVELEARNING;
 	private IDataSet dataset;
+	private ForkJoinPool pool; 
+	
 
 
-	public ClassifierManager(){
-
+	public ClassifierManager(IDataManager dataManager){
 		learningList.add(Common.ACTIVELEARNING);
 		learningList.add(Common.PASSIVELEARNING);
+		this.dataManager= dataManager;
+		pool=  new ForkJoinPool();
 
 	}
 
 
-
-	public void trainClassifier(IDataSet dataSet){
+    @Override
+	public void trainClassifier(){
 
 		try {
-			currentClassifier.buildClassifier(dataSet);
+			currentClassifier.buildClassifier(dataManager.getDataSet());
+			System.out.println(currentClassifier.toString());
 			classifierMap.put(currentClassifier.getClass().getCanonicalName(), currentClassifier);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		
 			e.printStackTrace();
 		}
 	}
@@ -87,18 +96,27 @@ public class ClassifierManager implements ILearningManager {
 
 	}
 
+    @Override
+	public List<double[]> applyClassifier(List<IDataSet> testDataSet){
+		List<double[]> results= new ArrayList<double[]>();
+		int size= testDataSet.size();
+		
+		
+		/*ApplyTask applyTask= new ApplyTask(testDataSet.get(0), 0, testDataSet.get(0).getNumInstances(), 
+				classificationResult, currentClassifier);
+		pool.invoke(applyTask);*/
+		for(IDataSet dataSet: testDataSet){
 
-
-
-
-	@Override
-	public void trainClassifier() {
-		// TODO Auto-generated method stub
-
+			double[] classificationResult = new double[testDataSet.get(0).getNumInstances()];		
+			ApplyTask applyTask= new ApplyTask(dataSet, 0, dataSet.getNumInstances(), 
+					classificationResult, currentClassifier);
+			pool.invoke(applyTask);
+			results.add(classificationResult);			
+		}
+		
+		
+		return results;
 	}
-
-
-
 
 
 

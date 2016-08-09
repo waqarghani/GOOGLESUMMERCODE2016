@@ -3,6 +3,8 @@ package activeSegmentation.gui;
 import ij.ImagePlus;
 import ij.gui.Roi;
 import ij.gui.StackWindow;
+import ij.io.OpenDialog;
+import ij.io.SaveDialog;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 
@@ -41,6 +43,8 @@ import javax.swing.JTextArea;
 
 
 import activeSegmentation.Common;
+import activeSegmentation.IDataManager;
+import activeSegmentation.IFeatureManager;
 
 
 
@@ -50,7 +54,7 @@ import activeSegmentation.Common;
  * @author
  *
  */
-public class FeaturePanel extends StackWindow 
+public class FeaturePanel1 extends StackWindow 
 {
 	/** Generated serial version UID */
 	private static final long serialVersionUID = -1037100741242680537L;
@@ -65,6 +69,7 @@ public class FeaturePanel extends StackWindow
 	JPanel imagePanel;
 	JPanel controlsBox;
 	private JFrame frame = new JFrame("CONFIGURE");
+	private int numberofClasses;
 	private ImagePlus classifiedImage;
 	Panel all;
 	/** 50% alpha composite */
@@ -75,7 +80,8 @@ public class FeaturePanel extends StackWindow
 	byte[] green = new byte[ 256 ];
 	byte[] blue = new byte[ 256 ];
 
-	GuiController controller;
+	IFeatureManager exampleManager;
+	IDataManager dataManager;
 	private List<JList> exampleList;
 	private List<JList> allexampleList;
 	private List<Color> colors ;
@@ -86,15 +92,15 @@ public class FeaturePanel extends StackWindow
 	int originajFrameJ=0, originalFrameK=0;
 	LUT overlayLUT;
 
+
 	/** array of roi list overlays to paint the transparent rois of each class */
 	private List<RoiListOverlay> roiOverlayList;
 
-	private static final Icon uploadIcon = new ImageIcon(FeaturePanel.class.getResource("/activeSegmentation/images/upload.png"));
-	private static final Icon downloadIcon = new ImageIcon(FeaturePanel.class.getResource("/activeSegmentation/images/download.png"));
+	private static final Icon uploadIcon = new ImageIcon(FeaturePanel1.class.getResource("/activeSegmentation/images/upload.png"));
+	private static final Icon downloadIcon = new ImageIcon(FeaturePanel1.class.getResource("/activeSegmentation/images/download.png"));
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 21, "TRAIN" );
-
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent LOAD_BUTTON_PRESSED = new ActionEvent( this, 22, "Load" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -111,15 +117,18 @@ public class FeaturePanel extends StackWindow
 	ImageOverlay resultOverlay;
 
 
-	public FeaturePanel(ImagePlus imp, GuiController controller)
+
+	public FeaturePanel1(ImagePlus imp,IFeatureManager exampleManager, 
+			IDataManager dataManager)
 	{
 		super(imp, new OverlayedImageCanvas(imp) );	
 		this.displayImage= imp;
+		this.exampleManager= exampleManager;
+		this.dataManager= dataManager;
 		this.setTitle("Active Segmentation");
 		this.exampleList = new ArrayList<JList>();
 		this.allexampleList = new ArrayList<JList>();
-		this.controller= controller;
-	
+		this.numberofClasses= 2;
 		colors=Util.setDefaultColors();
 		roiOverlayList = new ArrayList<RoiListOverlay>();
 		setOverlay();
@@ -142,11 +151,14 @@ public class FeaturePanel extends StackWindow
 					if(e.getSource() == sliceSelector)
 					{
 						displayImage.killRoi();
-						updateGui();
+						drawExamples();
+						updateExampleLists();
+						updateallExampleLists();	
+					
 						if(showColorOverlay)
 						{
 							updateResultOverlay();
-							//displayImage.updateAndDraw();							
+							displayImage.updateAndDraw();							
 						}						
 					}
 
@@ -154,15 +166,20 @@ public class FeaturePanel extends StackWindow
 			});
 
 		}
-	
+
+
+		
 		createPanel();
-		updateGui();
+		drawExamples();
+		updateExampleLists();
+		updateallExampleLists();
 		Panel all = new Panel();
 		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
 		all.setLayout(box);
 		all.add(imagePanel);
 		all.add(controlsBox);
 		add(all);  	      	      	   
+
 		this.pack();	 	    
 		this.setVisible(true); 
 
@@ -187,7 +204,7 @@ public class FeaturePanel extends StackWindow
 		roiOverlayList.add(roiOverlay);
 		JPanel buttonsPanel = new JPanel(new GridBagLayout());
 		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddButton");
-		addButton( controller.getclassLabel(i),null ,labelsJPanel,
+		addButton( exampleManager.getClassLabels().get(i),null ,labelsJPanel,
 				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ , 1, false, false),null );
 
 		ActionEvent uploadAction= new ActionEvent(this, i,"UploadButton");
@@ -207,12 +224,6 @@ public class FeaturePanel extends StackWindow
 	}
 
 
-	private void updateGui(){
-		drawExamples();
-		updateExampleLists();
-		updateallExampleLists();	
-	
-	}
 
 	private void createPanel(){
 
@@ -223,7 +234,7 @@ public class FeaturePanel extends StackWindow
 
 		labelsJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
 
-		for(int i = 0; i < controller.getNumberofClasses(); i++){
+		for(int i = 0; i < numberofClasses; i++){
 			addSidePanel(i);
 		}
 
@@ -257,7 +268,7 @@ public class FeaturePanel extends StackWindow
 		classJPanel = new JPanel(new GridBagLayout());
 		classJPanel.setBorder(BorderFactory.createTitledBorder("CLASSES"));	
 
-		for(int i = 0; i < controller.getNumberofClasses(); i++){
+		for(int i = 0; i < numberofClasses; i++){
 
 			addclasses(i, originajFrameJ, originalFrameK);
 
@@ -272,6 +283,8 @@ public class FeaturePanel extends StackWindow
 		all.add(configureJPanel,Util.getGbc(0, 0, 1, false, true));
 		all.add(classJPanel,Util.getGbc(0, 1, 1, false, true));
 		all.add(resetJPanel,Util.getGbc(0, 2, 1, false, true));
+
+
 		frame.add(all);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -298,9 +311,7 @@ public class FeaturePanel extends StackWindow
 				if (index >= 0) {
 					String item =theList.getSelectedValue().toString();
 					String[] arr= item.split(" ");
-					int classId = exampleList.get(Integer.parseInt(arr[1])).getSelectedIndex();
-					controller.deleteExample(classId, displayImage.getCurrentSlice(), index);
-					updateGui();
+					deleteSelected(Integer.parseInt(arr[1]));
 				}
 			}
 		}
@@ -338,13 +349,15 @@ public class FeaturePanel extends StackWindow
 	}
 
 	public void doAction( final ActionEvent event )	{
-		int currentSlice= displayImage.getCurrentSlice();
 		if(event==COMPUTE_BUTTON_PRESSED){
-		classifiedImage=controller.computeFeatures("pixelLevel");
-		updateResultOverlay();
+
+			
+
+
 		}
 		if(event==SAVE_BUTTON_PRESSED){
-			controller.saveMetadata();
+	
+			exampleManager.saveFeatureMetadata();
 
 		}
 		if(event==ADD_BUTTON_PRESSED ){
@@ -356,13 +369,16 @@ public class FeaturePanel extends StackWindow
 		}
 
 		if(event.getActionCommand()== "ColorButton"){	
+
 			int id=event.getID();
 			Color c;
 			c = JColorChooser.showDialog( new JFrame(),
 					"CLASS COLOR", colors.get(id));
 			colors.add(id, c);
 			((Component)event.getSource()).setBackground(c);
+
 		}	
+
 
 		if(event==CONFIGURE_BUTTON_PRESSED){
 
@@ -371,24 +387,17 @@ public class FeaturePanel extends StackWindow
 
 
 		if(event.getActionCommand()== "AddButton"){	
-			final Roi r = displayImage.getRoi();
-			if (null == r)
-				return;
-			displayImage.killRoi();
-			controller.addExamples(event.getID(),r, currentSlice);			
-			updateGui();
-			
+			addExamples(event.getID());
 		}
 
 		if(event.getActionCommand()== "UploadButton"){	
 
-			controller.uploadExamples(event.getID(),currentSlice);
-			updateGui();
+			uploadExamples(event.getID());
 		}
 
 		if(event.getActionCommand()== "DownloadButton"){	
 
-			controller.saveRoi(event.getID(), currentSlice);
+			saveRoi(event.getID());
 		}
 
 	}	
@@ -406,7 +415,9 @@ public class FeaturePanel extends StackWindow
 		drawExamples();
 		displayImage.setColor(Color.YELLOW);
 		int index=exampleList.get(classId).getSelectedIndex();
-		final Roi newRoi = controller.getRoi(classId, displayImage.getCurrentSlice(), index);			
+		final Roi newRoi = 
+				exampleManager.getExamples(classId, displayImage.getCurrentSlice())
+				.get(index);
 		// Set selected trace as current ROI
 		newRoi.setImage(displayImage);
 		displayImage.setRoi(newRoi);
@@ -415,10 +426,40 @@ public class FeaturePanel extends StackWindow
 
 
 	private void addClass(final ActionEvent  event) {
-	   controller.addClass();
-		addclasses(controller.getNumberofClasses(), originajFrameJ, originalFrameK);
-		addSidePanel(controller.getNumberofClasses());
+		exampleManager.addClass(numberofClasses);
+		addclasses(numberofClasses, originajFrameJ, originalFrameK);
+		addSidePanel(numberofClasses);
+		numberofClasses++;
 		validateFrame();
+
+	}
+
+	/**
+	 * Delete one of the ROIs
+	 *
+	 * @param e action event
+	 */
+	private void deleteSelected(int classId){
+		int index = exampleList.get(classId).getSelectedIndex();
+		exampleManager.deleteExample(classId, displayImage.getCurrentSlice(), index);
+		drawExamples();
+		updateExampleLists();
+		updateallExampleLists();
+	}
+
+	private void addExamples(int i)
+	{
+		final Roi r = displayImage.getRoi();
+		if (null == r)
+			return;
+		final int n = displayImage.getCurrentSlice();
+		displayImage.killRoi();
+		exampleManager.addExample(i, r, n);
+		//traceCounter[i]++;
+		drawExamples();
+		this.updateExampleLists();
+		updateallExampleLists();
+
 	}
 
 
@@ -428,9 +469,13 @@ public class FeaturePanel extends StackWindow
 	protected void drawExamples(){
 		final int currentSlice = displayImage.getCurrentSlice();
 
-		for(int i = 0; i < controller.getRois(currentSlice).size(); i++){
+		for(int i = 0; i < numberofClasses; i++){
 			roiOverlayList.get(i).setColor(colors.get(i));
-			roiOverlayList.get(i).setRoi(controller.getRois(currentSlice).get(i));
+			final ArrayList< Roi > rois = new ArrayList<Roi>();
+			for (Roi r : exampleManager.getExamples(i, currentSlice)){
+				rois.add(r);
+			}
+			roiOverlayList.get(i).setRoi(rois);
 		}
 
 		displayImage.updateAndDraw();
@@ -443,10 +488,12 @@ public class FeaturePanel extends StackWindow
 	 */
 	private void updateExampleLists()	{
 		final int currentSlice = displayImage.getCurrentSlice();
-		for(int i = 0; i < controller.getNumberofClasses(); i++){
+		for(int i = 0; i < numberofClasses; i++){
 			exampleList.get(i).removeAll();
 			Vector listModel = new Vector();
-			for(int j=0; j<controller.getSize(i, currentSlice); j++){	
+
+			for(int j=0; j<exampleManager.getExamples(i, currentSlice).size(); j++){	
+
 				listModel.addElement("trace " + i + " "+ j + " " + currentSlice);
 			}
 			exampleList.get(i).setListData(listModel);
@@ -461,27 +508,65 @@ public class FeaturePanel extends StackWindow
 	 * Update the example lists in the GUI
 	 */
 	private void updateallExampleLists(){
-		for(int i = 0; i < controller.getNumberofClasses(); i++){
+		for(int i = 0; i < numberofClasses; i++){
 			allexampleList.get(i).removeAll();
 			Vector listModel = new Vector();
 			for(int currentSlice=1; currentSlice<=displayImage.getStackSize();currentSlice++){
-				for(int j=0; j<controller.getSize(i, currentSlice); j++){	
+				for(int j=0; j<exampleManager.getExamples(i, currentSlice).size(); j++){	
+
 					listModel.addElement("trace " + i + " "+ j + " " + currentSlice);
 				} 
 			}
+
 			allexampleList.get(i).setListData(listModel);
 			allexampleList.get(i).setForeground(colors.get(i));
 		}
+
 	}
 
 
+	private boolean saveRoi(int  i) {
+
+		String path;
+		SaveDialog sd = new SaveDialog("Save ROIs...", "RoiSet", ".zip");
+		String name = sd.getFileName();
+		if (name == null)
+			return false;
+		if (!(name.endsWith(".zip") || name.endsWith(".ZIP")))
+			name = name + ".zip";
+		String dir = sd.getDirectory();
+		path = dir+name;
+
+		final int n = displayImage.getCurrentSlice();
+		return dataManager.saveExamples(path, exampleManager.getExamples(i, n));
+
+	}
+
+
+	/**
+	 * Add examples defined by the user to the corresponding list
+	 * in the GUI and the example list in the segmentation object.
+	 * 
+	 * @param i GUI list index
+	 */
+	private void uploadExamples(int i){
+		//get selected pixel
+		OpenDialog od = new OpenDialog("Choose data file", OpenDialog.getLastDirectory(), "data.arff");
+		if (od.getFileName()==null)
+			return;
+		List<Roi> rois=dataManager.openZip(od.getDirectory() + od.getFileName());
+		exampleManager.addExampleList(i, rois, displayImage.getCurrentSlice());
+		drawExamples();
+		updateExampleLists();
+		updateallExampleLists();
+	}
 
 	private void addclasses(int i , int j, int k){
 		JCheckBox  checkBox = new JCheckBox("Class :"+ (i+1));
 		jCheckBoxList.add(checkBox);
 		JPanel classPanel= new JPanel();
 		JTextArea textArea= new JTextArea();
-		textArea.setText(controller.getclassLabel(i) );
+		textArea.setText(exampleManager.getClassLabels().get(i) );
 		textArea.setSize(dimension);
 		classPanel.add(checkBox);
 		classPanel.add(textArea);
@@ -507,10 +592,7 @@ public class FeaturePanel extends StackWindow
 		ImageProcessor overlay = classifiedImage.getImageStack().getProcessor(displayImage.getCurrentSlice()).duplicate();
 		overlay = overlay.convertToByte(false);
 		overlay.setColorModel(overlayLUT);
-		
-		new ImagePlus("overlay", overlay).show();
 		resultOverlay.setImage(overlay);
-		displayImage.updateAndDraw();
 	}
 
 	public LUT setLut(List<Color> colors ){

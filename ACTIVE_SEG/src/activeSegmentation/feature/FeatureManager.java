@@ -119,6 +119,13 @@ public class FeatureManager implements IFeatureManager {
 	{
 		return classLabels;
 	}
+	
+	@Override
+	public String getClassLabel(int index) {
+		// TODO Auto-generated method stub
+		return classLabels.get(index);
+	}
+
 
 
 	/**
@@ -271,20 +278,44 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 	
-
+   @Override
 	public IDataSet extractFeatures(String featureType){
 
-		featureMap.get(featureType).createTrainingInstance();
-		return featureMap.get(featureType).getDataSet();
+		featureMap.get(featureType).createTrainingInstance(classLabels,
+				numOfClasses, examples);
+		IDataSet dataset=featureMap.get(featureType).getDataSet();
+		dataManager.setData(dataset);
+		System.out.println("NUMBER OF INSTANCE"+dataset.toString());
+		return dataset;
 		
 	}
+   
+   @Override
+  	public List<IDataSet> extractAll(String featureType){
+	   List<IDataSet> dataset= featureMap.get(featureType).createAllInstance(classLabels,
+				numOfClasses);
+		//dataManager.writeDataToARFF(dataset.get(0).getDataset(), "testData.arff");
+		return dataset;
+  		
+  	}
 	
+	@Override
 	public Set<String> getFeatures(){
 		return featureMap.keySet();
 	}
 
+	@Override
 	public void addFeatures(IFeature feature){
 		featureMap.put(feature.getFeatureName(), feature);
 	}
 
+
+	@Override
+	public int getSize(int i, int currentSlice) {
+		// TODO Auto-generated method stub
+		return getExamples(i, currentSlice).size();
+	}
+
+
+	
 }

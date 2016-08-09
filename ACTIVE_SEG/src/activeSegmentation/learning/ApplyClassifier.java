@@ -1,14 +1,11 @@
 package activeSegmentation.learning;
 
-import ij.IJ;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import weka.core.Instances;
 import activeSegmentation.IClassifier;
 import activeSegmentation.IDataSet;
 

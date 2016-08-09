@@ -28,6 +28,8 @@ public interface IDataManager {
 	public MetaInfo getMetaInfo();
 	public String getPath();
 	public void setPath(String path);
+	public void setData(IDataSet data);
+	public IDataSet getDataSet();
 	
 
 }
