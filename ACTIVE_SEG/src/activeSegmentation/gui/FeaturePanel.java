@@ -123,6 +123,7 @@ public class FeaturePanel extends StackWindow
 		colors=Util.setDefaultColors();
 		roiOverlayList = new ArrayList<RoiListOverlay>();
 		setOverlay();
+		setLut(colors);
 		
 		imagePanel = new JPanel(new GridBagLayout());	
 		imagePanel.add(ic, Util.getGbc(0, 0, 1, false, false));
@@ -507,13 +508,11 @@ public class FeaturePanel extends StackWindow
 		ImageProcessor overlay = classifiedImage.getImageStack().getProcessor(displayImage.getCurrentSlice()).duplicate();
 		overlay = overlay.convertToByte(false);
 		overlay.setColorModel(overlayLUT);
-		
-		new ImagePlus("overlay", overlay).show();
 		resultOverlay.setImage(overlay);
 		displayImage.updateAndDraw();
 	}
 
-	public LUT setLut(List<Color> colors ){
+	public void setLut(List<Color> colors ){
 		int i=0;
 		for(Color color: colors){
 			red[i] = (byte) color.getRed();
@@ -522,7 +521,6 @@ public class FeaturePanel extends StackWindow
 			i++;
 		}
 		overlayLUT = new LUT(red, green, blue);
-		return overlayLUT;
 	}
 
 

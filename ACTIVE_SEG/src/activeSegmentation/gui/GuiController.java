@@ -159,7 +159,7 @@ public class GuiController {
 
 
 	public ImagePlus getOriginalImage() {
-		return originalImage;
+		return originalImage.duplicate();
 	}
 
 
