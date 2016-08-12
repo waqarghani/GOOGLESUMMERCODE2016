@@ -1,8 +1,10 @@
 package activeSegmentation;
 
+import ij.ImagePlus;
 import ij.gui.Roi;
 
 import java.util.List;
+
 
 
 
@@ -30,6 +32,8 @@ public interface IDataManager {
 	public void setPath(String path);
 	public void setData(IDataSet data);
 	public IDataSet getDataSet();
+	public ImagePlus getOriginalImage();
+	public void setOriginalImage(ImagePlus originalImage);
 	
 
 }

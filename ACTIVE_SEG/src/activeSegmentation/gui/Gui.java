@@ -29,9 +29,8 @@ import activeSegmentation.feature.FeatureExtraction;
 public class Gui {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
-	private IFilterManager filterManager;
 	private IEvaluation evaluation;
-	private ImagePlus trainingImage;
+	//private ImagePlus trainingImage;
 	private GuiController controller;
 
 	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
@@ -49,10 +48,7 @@ public class Gui {
 	final static String LOOKANDFEEL = "Metal";
 	final static String THEME = "Test";
 	public static final Font FONT = new Font( "Arial", Font.BOLD, 13 );
-	public Gui(IFilterManager filterManager,GuiController controller, ImagePlus trainingImage){
-
-		this.filterManager= filterManager;
-		this.trainingImage= trainingImage;
+	public Gui(GuiController controller){
 		this.controller= controller;
 		prepareGUI();
 		
@@ -131,12 +127,12 @@ public class Gui {
 		System.out.println("IN DO ACTION");
 		System.out.println(event.toString());
 		if(event ==FILTER_BUTTON_PRESSED ){
-			FilterPanel filterPanel=new FilterPanel(filterManager,trainingImage);
+			FilterPanel filterPanel=new FilterPanel(controller);
 			SwingUtilities.invokeLater(filterPanel);
 
 		}
 		if(event==FEATURE_BUTTON_PRESSED){
-			new FeaturePanel(trainingImage.duplicate(),controller);
+			new FeaturePanel(controller);
 		}
 
 		if(event==LEARNING_BUTTON_PRESSED){
@@ -161,10 +157,6 @@ public class Gui {
 		mainFrame = new JFrame("ACTIVE SEGMENTATION");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setSize(500,300);
-
-
-
-		trainingImage.show();
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout(null);

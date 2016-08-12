@@ -44,13 +44,11 @@ public class FeatureManager implements IFeatureManager {
 	private int numOfClasses = 0;
 	private int stackSize=0;
 
-	public FeatureManager(int stackSize, int numOfClasses,IDataManager dataManager, MetaInfo metaInfo)
+	public FeatureManager(int stackSize, int numOfClasses,IDataManager dataManager)
 	{
 		this.stackSize=stackSize;
 		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
-		this.dataManager= dataManager;
-		this.metaInfo= metaInfo;
-		
+		this.dataManager= dataManager;	
 		// update list of examples
 		for(int i=0; i < stackSize; i++)
 		{
@@ -61,13 +59,14 @@ public class FeatureManager implements IFeatureManager {
 			addClass(i);
 		}
 		
-		setFeatureMetadata();
 	}
 
 
 	public void addExample(int classNum, Roi roi, int n) 
 	{
 
+		System.out.println(roi);
+		System.out.println("ADD EXAMLE");
 		examples.get(n-1).get(classNum).add(roi);
 		roiman.addRoi(roi);
 
@@ -207,14 +206,15 @@ public class FeatureManager implements IFeatureManager {
 	 */
 
 	public void setFeatureMetadata(){
-
+		metaInfo= dataManager.getMetaInfo();
 		for(FeatureInfo featureInfo : metaInfo.getFeatureList() ){
 			int classNum=featureInfo.getClassLabel();
+			System.out.println(metaInfo.getPath()+featureInfo.getZipFile());
 			List<Roi> classRoiList=dataManager.openZip(metaInfo.getPath()+featureInfo.getZipFile());
 			System.out.println(classRoiList.size());
 			for( String s: featureInfo.getSliceList().keySet()){
 				Integer sliceNum= Integer.parseInt(s.substring(s.length()-1));
-				System.out.println(sliceNum);
+				System.out.println("slicenum-"+sliceNum);
 				List<String> sliceRois= featureInfo.getSliceList().get(s);	
 				addExampleList(classNum, getRois(classRoiList, sliceRois), sliceNum);
 			}
@@ -228,7 +228,9 @@ public class FeatureManager implements IFeatureManager {
 	private List<Roi> getRois(List<Roi> classRoiList, List<String> roiNames){
 		List<Roi> roiList= new ArrayList<Roi>();
 		for(String name: roiNames){
+			System.out.println(name);
 			for(Roi roi: classRoiList){
+				System.out.println(roi.getName());
 				if(roi.getName().equalsIgnoreCase(name)){
 					roiList.add(roi);
 				}
@@ -240,7 +242,9 @@ public class FeatureManager implements IFeatureManager {
 
 	@Override
 	public void saveFeatureMetadata(){
+		metaInfo= dataManager.getMetaInfo();
 		metaInfo.resetFeatureInfo();
+		
 		for(int classIndex = 0; classIndex <
 				getNumOfClasses(); classIndex++)
 		{

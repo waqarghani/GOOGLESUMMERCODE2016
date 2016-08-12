@@ -19,7 +19,6 @@ import activeSegmentation.IDataManager;
 import activeSegmentation.IFeatureManager;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.ILearningManager;
-import activeSegmentation.learning.ApplyClassifier;
 
 public class GuiController {
 
@@ -31,11 +30,12 @@ public class GuiController {
 	private ImagePlus originalImage;
 
 	public GuiController(IFilterManager filterManager, 
-			IFeatureManager featureManager, ILearningManager learningManager,ImagePlus originalImage){
+			IFeatureManager featureManager, ILearningManager learningManager,IDataManager dataManager){
 		this.filterManager=filterManager;
 		this.featureManager= featureManager;
 		this.learningManager= learningManager;
-		this.originalImage= originalImage;
+		this.dataManager= dataManager;
+		this.originalImage= dataManager.getOriginalImage();
 
 	}
 
@@ -87,6 +87,17 @@ public class GuiController {
 				.get(index);
 	}
 
+	public void  setMetadata(boolean filterFlag,boolean featureFlag, boolean learningFlag) {
+		System.out.println("filterFlag"+filterFlag);
+		System.out.println("featureFlag"+featureFlag);
+		System.out.println("learingFlag"+learningFlag);
+		if(filterFlag)
+		filterManager.setFiltersMetaData();
+		if(featureFlag)
+		featureManager.setFeatureMetadata();
+		if(learningFlag)
+		learningManager.loadLearningMetaData();
+	}
 	public void  saveMetadata() {
 		filterManager.saveFiltersMetaData();
 		featureManager.saveFeatureMetadata();
@@ -125,7 +136,6 @@ public class GuiController {
 
 
 	public ImagePlus computeFeatures(String featureType) {
-		// TODO Auto-generated method stub
 		ImagePlus classifiedImage= null;
 		featureManager.extractFeatures(featureType);
 		learningManager.trainClassifier();
@@ -145,6 +155,26 @@ public class GuiController {
 		classifiedImage.show();
 		return classifiedImage;
 
+	}
+
+
+	public ImagePlus getOriginalImage() {
+		return originalImage;
+	}
+
+
+	public void setOriginalImage(ImagePlus originalImage) {
+		this.originalImage = originalImage;
+	}
+
+
+	public IFilterManager getFilterManager() {
+		return filterManager;
+	}
+
+
+	public void setFilterManager(IFilterManager filterManager) {
+		this.filterManager = filterManager;
 	}
 
 

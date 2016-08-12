@@ -294,10 +294,6 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 
 
 
-	// Called after modifications to the dialog. Returns true if valid input.
-	/* (non-Javadoc)
-	 * @see ij.gui.DialogListener#dialogItemChanged(ij.gui.GenericDialog, java.awt.AWTEvent)
-	 */
 	public boolean dialogItemChanged(GenericDialog gd, AWTEvent e) {
 		sz = (int)(gd.getNextNumber());
 		debug = gd.getNextBoolean();

@@ -1,6 +1,7 @@
 package activeSegmentation.io;
 
 import ij.IJ;
+import ij.ImagePlus;
 import ij.Macro;
 import ij.gui.Roi;
 import ij.io.RoiDecoder;
@@ -54,7 +55,9 @@ public class DataManagerImp implements IDataManager {
 
 	private IDataSet dataSet;
 	private String path;
+	private MetaInfo metaInfo;
 	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	private ImagePlus originalImage;
 
 
 	/**
@@ -286,14 +289,17 @@ public class DataManagerImp implements IDataManager {
 
 	@Override
 	public void writeMetaInfo( MetaInfo metaInfo) {
+		this.metaInfo= metaInfo;
 		ObjectMapper mapper = new ObjectMapper();
-
 		try {
 			metaInfo.setModifyDate(dateFormat.format(new Date()));
 			if(metaInfo.getCreatedDate()==null){
 				metaInfo.setCreatedDate(dateFormat.format(new Date()));
 			}
 			metaInfo.setPath(path);
+			metaInfo.setTrainingStack(Common.TRAININGIMAGE);
+			// metaInfo.setTrainingStack(originalImage.getShortTitle());
+			IJ.save(originalImage, metaInfo.getPath()+Common.TRAININGIMAGE+".tif" );
 			// Convert object to JSON string and save into a file directly
 			System.out.println("SAVING");
 			mapper.writeValue(new File(path+Common.FILENAME), metaInfo);
@@ -312,23 +318,25 @@ public class DataManagerImp implements IDataManager {
 
 	@Override
 	public MetaInfo getMetaInfo() {
-		ObjectMapper mapper = new ObjectMapper();
-		MetaInfo metaInfo;
-		try {
-		  metaInfo= mapper.readValue(new File(path+Common.FILENAME), MetaInfo.class);
-			//metaInfo.setPath(path);
-			return metaInfo;
+		if(metaInfo==null){
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				metaInfo= mapper.readValue(new File(path+Common.FILENAME), MetaInfo.class);
+				originalImage= IJ.openImage(metaInfo.getPath()+Common.TRAININGIMAGE+".tif");
+				//metaInfo.setPath(path);
+				return metaInfo;
 
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			metaInfo= new MetaInfo();
+			metaInfo.setPath(path);
 		}
-		
-		metaInfo= new MetaInfo();
-		metaInfo.setPath(path);
 		return metaInfo;
 	}
 
@@ -341,6 +349,16 @@ public class DataManagerImp implements IDataManager {
 	@Override
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	@Override
+	public ImagePlus getOriginalImage() {
+		return originalImage.duplicate();
+	}
+
+	@Override
+	public void setOriginalImage(ImagePlus originalImage) {
+		this.originalImage = originalImage;
 	}
 
 

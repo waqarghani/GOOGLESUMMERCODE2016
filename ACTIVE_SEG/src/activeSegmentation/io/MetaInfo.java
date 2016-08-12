@@ -13,6 +13,7 @@ public class MetaInfo {
 	private String createdDate;
 	private String modifyDate;
 	private String path;
+	private String trainingStack;
 	private List<Map<String,String>> filters= new ArrayList<Map<String,String>>();
 	private Map<String,String> keywordList= new HashMap<String, String>();
 	private List<FeatureInfo> featureList= new ArrayList<FeatureInfo>();
@@ -74,18 +75,28 @@ public class MetaInfo {
 		featureList.add(featureInfo);
 	}
 
+	
+	public String getTrainingStack() {
+		return trainingStack;
+	}
+	public void setTrainingStack(String trainingStack) {
+		this.trainingStack = trainingStack;
+	}
+	
 	public void resetFeatureInfo(){
 
 		featureList.clear();
 	}
+	
 	@Override
 	public String toString() {
 		return "MetaInfo [comment=" + comment + ", createdDate=" + createdDate
 				+ ", modifyDate=" + modifyDate + ", path=" + path
-				+ ", filters=" + filters + ", keywordList=" + keywordList
-				+ ", featureList=" + featureList + ", learning=" + learning
-				+ "]";
+				+ ", trainingStack=" + trainingStack + ", filters=" + filters
+				+ ", keywordList=" + keywordList + ", featureList="
+				+ featureList + ", learning=" + learning + "]";
 	}
+	
 
 
 

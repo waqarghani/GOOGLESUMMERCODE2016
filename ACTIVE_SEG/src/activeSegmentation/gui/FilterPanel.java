@@ -62,6 +62,7 @@ public class FilterPanel implements Runnable {
 
 	private Map<String,List<JTextField>> textMap;
 	private ImagePlus trainingImage;
+	
 
 
 
@@ -83,10 +84,10 @@ public class FilterPanel implements Runnable {
 	final ActionEvent VIEW_BUTTON_PRESSED = new ActionEvent( this, 6, "View" );
 
 
-	public FilterPanel(IFilterManager filterManager, ImagePlus trainingImage) {
+	public FilterPanel(GuiController controller) {
 
-		this.filterManager = filterManager;
-		this.trainingImage= trainingImage;
+		this.filterManager = controller.getFilterManager();
+		this.trainingImage= controller.getOriginalImage();
 		this.filterList =Util.model();
 		this.filterList.setForeground(Color.GREEN);
 		textMap= new HashMap<String, List<JTextField>>();

@@ -36,5 +36,6 @@ public class Common {
 	public static final String CLASSIFIERNAME="classifier.model";
 	public static final String LEARNINGTYPE="learningType";
 	public static final String FILENAME="session.json";
+	public static final String TRAININGIMAGE="trainingstack";
 	
 }

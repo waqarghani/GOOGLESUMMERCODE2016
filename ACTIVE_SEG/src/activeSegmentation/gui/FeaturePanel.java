@@ -111,9 +111,9 @@ public class FeaturePanel extends StackWindow
 	ImageOverlay resultOverlay;
 
 
-	public FeaturePanel(ImagePlus imp, GuiController controller)
+	public FeaturePanel(GuiController controller)
 	{
-		super(imp, new OverlayedImageCanvas(imp) );	
+		super(controller.getOriginalImage(), new OverlayedImageCanvas(controller.getOriginalImage()) );	
 		this.displayImage= imp;
 		this.setTitle("Active Segmentation");
 		this.exampleList = new ArrayList<JList>();
