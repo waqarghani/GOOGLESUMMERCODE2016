@@ -75,7 +75,7 @@ public class FilterPanel implements Runnable {
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 2, "Compute" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
-	final ActionEvent LOAD_BUTTON_PRESSED = new ActionEvent( this, 3, "Load" );
+	//final ActionEvent LOAD_BUTTON_PRESSED = new ActionEvent( this, 3, "Load" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 4, "Save" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -124,7 +124,6 @@ public class FilterPanel implements Runnable {
 		panel.add(scrollPane);
 		updateFiterList();
 		addButton( new JButton(),"COMPUTE",null , 20, 320, 100, 50,panel,COMPUTE_BUTTON_PRESSED,null );
-		addButton(new JButton(), "LOAD",null , 130, 320, 100, 50,panel,LOAD_BUTTON_PRESSED,null );
 		addButton(new JButton(), "DEFAULT",null , 240, 320, 100, 50,panel,DEFAULT_BUTTON_PRESSED,null );
 		addButton(new JButton(), "SAVE",null , 350, 320, 100, 50,panel,SAVE_BUTTON_PRESSED,null );
 		addButton(new JButton(), "VIEW",null , 460, 320, 100, 50,panel,VIEW_BUTTON_PRESSED,null );
@@ -235,7 +234,7 @@ public class FilterPanel implements Runnable {
 
 		}
 
-		if(event==LOAD_BUTTON_PRESSED){
+		/*if(event==LOAD_BUTTON_PRESSED){
 			OpenDialog od = new OpenDialog("Choose filter File", OpenDialog.getLastDirectory(), "filter.txt");
 			if (od.getFileName()==null)
 				return;
@@ -244,7 +243,7 @@ public class FilterPanel implements Runnable {
 			}
 			
 
-		}
+		}*/
 		if(event==DEFAULT_BUTTON_PRESSED){
 
 			String key= pane.getTitleAt( pane.getSelectedIndex());

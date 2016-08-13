@@ -101,6 +101,9 @@ public class FeaturePanel extends StackWindow
 	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 23, "Save" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent CONFIGURE_BUTTON_PRESSED = new ActionEvent( this, 24, "CONFIGURE" );
+	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
+	final ActionEvent TOGGLE_BUTTON_PRESSED = new ActionEvent( this, 26, "TRAIN" );
+
 	final ActionEvent ADD_BUTTON_PRESSED = new ActionEvent( this, 25, "ADDCLASS" );
 	final ActionEvent DELETE_BUTTON_PRESSED = new ActionEvent( this, 2, "Delete" );
 	/** opacity (in %) of the result overlay image */
@@ -118,13 +121,12 @@ public class FeaturePanel extends StackWindow
 		this.setTitle("Active Segmentation");
 		this.exampleList = new ArrayList<JList>();
 		this.allexampleList = new ArrayList<JList>();
-		this.controller= controller;
-	
+		this.controller= controller;	
 		colors=Util.setDefaultColors();
 		roiOverlayList = new ArrayList<RoiListOverlay>();
 		setOverlay();
 		setLut(colors);
-		
+
 		imagePanel = new JPanel(new GridBagLayout());	
 		imagePanel.add(ic, Util.getGbc(0, 0, 1, false, false));
 		if(null != sliceSelector){
@@ -146,8 +148,7 @@ public class FeaturePanel extends StackWindow
 						updateGui();
 						if(showColorOverlay)
 						{
-							updateResultOverlay();
-							//displayImage.updateAndDraw();							
+							updateResultOverlay();		
 						}						
 					}
 
@@ -155,7 +156,7 @@ public class FeaturePanel extends StackWindow
 			});
 
 		}
-	
+
 		createPanel();
 		updateGui();
 		Panel all = new Panel();
@@ -167,7 +168,7 @@ public class FeaturePanel extends StackWindow
 		this.pack();	 	    
 		this.setVisible(true); 
 
-	}// end ControlJPanel constructor
+	}
 
 	private void setOverlay(){
 		resultOverlay = new ImageOverlay();
@@ -212,7 +213,7 @@ public class FeaturePanel extends StackWindow
 		drawExamples();
 		updateExampleLists();
 		updateallExampleLists();	
-	
+
 	}
 
 	private void createPanel(){
@@ -230,11 +231,10 @@ public class FeaturePanel extends StackWindow
 
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
-		addButton( "LOAD",null ,resetJPanel,
-				LOAD_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false),null );
+		addButton( "TOGGLE",null ,resetJPanel,
+				TOGGLE_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false),null );
 		addButton( "SAVE",null ,resetJPanel,
 				SAVE_BUTTON_PRESSED,dimension,Util.getGbc(2, 0, 1, false, false), null );
-
 		controlsBox.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
 		controlsBox.add(Util.addScrollPanel(labelsJPanel, 
 				labelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
@@ -248,13 +248,10 @@ public class FeaturePanel extends StackWindow
 	private void configureFrame(){
 
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
 		JPanel all = new JPanel(new GridBagLayout());
-
 		JPanel configureJPanel = new JPanel(new GridBagLayout());
 		addButton( "ADDCLASS",null ,configureJPanel,
 				ADD_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
-
 		classJPanel = new JPanel(new GridBagLayout());
 		classJPanel.setBorder(BorderFactory.createTitledBorder("CLASSES"));	
 
@@ -341,8 +338,8 @@ public class FeaturePanel extends StackWindow
 	public void doAction( final ActionEvent event )	{
 		int currentSlice= displayImage.getCurrentSlice();
 		if(event==COMPUTE_BUTTON_PRESSED){
-		classifiedImage=controller.computeFeatures("pixelLevel");
-		updateResultOverlay();
+			classifiedImage=controller.computeFeatures("pixelLevel");
+			toggleOverlay();
 		}
 		if(event==SAVE_BUTTON_PRESSED){
 			controller.saveMetadata();
@@ -352,8 +349,9 @@ public class FeaturePanel extends StackWindow
 			addClass(event);
 		}
 
-		if(event==LOAD_BUTTON_PRESSED){
+		if(event==TOGGLE_BUTTON_PRESSED){
 
+			toggleOverlay();
 		}
 
 		if(event.getActionCommand()== "ColorButton"){	
@@ -378,7 +376,7 @@ public class FeaturePanel extends StackWindow
 			displayImage.killRoi();
 			controller.addExamples(event.getID(),r, currentSlice);			
 			updateGui();
-			
+
 		}
 
 		if(event.getActionCommand()== "UploadButton"){	
@@ -416,7 +414,7 @@ public class FeaturePanel extends StackWindow
 
 
 	private void addClass(final ActionEvent  event) {
-	   controller.addClass();
+		controller.addClass();
 		addclasses(controller.getNumberofClasses(), originajFrameJ, originalFrameK);
 		addSidePanel(controller.getNumberofClasses());
 		validateFrame();
@@ -457,7 +455,7 @@ public class FeaturePanel extends StackWindow
 	}
 
 
-	
+
 	/**
 	 * Update the example lists in the GUI
 	 */
@@ -510,6 +508,22 @@ public class FeaturePanel extends StackWindow
 		overlay.setColorModel(overlayLUT);
 		resultOverlay.setImage(overlay);
 		displayImage.updateAndDraw();
+	}
+
+	/**
+	 * Toggle between overlay and original image with markings
+	 */
+	void toggleOverlay()
+	{
+		showColorOverlay = !showColorOverlay;
+		if (showColorOverlay && null != classifiedImage)
+		{
+			updateResultOverlay();
+		}
+		else{
+			resultOverlay.setImage(null);
+			displayImage.updateAndDraw();
+		}
 	}
 
 	public void setLut(List<Color> colors ){
