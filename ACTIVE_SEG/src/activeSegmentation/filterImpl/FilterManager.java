@@ -288,7 +288,7 @@ public class FilterManager implements IFilterManager {
 			if(filterMap.get(key).getImageStack()!= null && 
 					filterMap.get(key).getImageStack().size()>0 ){
 				IJ.save(new ImagePlus(key,filterMap.get(key).getImageStack()), metaInfo.getPath()+key+".tif" );
-				filters.put(Common.FILEPATH,key+".tif" );
+				filters.put(Common.FILTERFILELIST,key+".tif" );
 			}
 				
 			filterObj.add(filters);
@@ -306,8 +306,8 @@ public class FilterManager implements IFilterManager {
 		for(Map<String, String> filter: filterObj){
 			String filterName=filter.get(Common.FILTER);
 			updateFilterSetting(filterName, filter);
-			if(filter.get(Common.FILEPATH)!=null){
-				String fileName=filter.get(Common.FILEPATH);
+			if(null!=filter.get(Common.FILTERFILELIST)){
+				String fileName=filter.get(Common.FILTERFILELIST);
 				System.out.println(metaInfo.getPath()+fileName);
 				ImagePlus image=new ImagePlus(metaInfo.getPath()+fileName);
 				image.show();

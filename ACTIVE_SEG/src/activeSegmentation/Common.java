@@ -29,7 +29,7 @@ public class Common {
 	public static final String  PATH="Path";
 	public static final String  FORMAT=".zip";
 	public static final String ROILIST="RoiList";
-	public static final String FILEPATH="filePath";
+	public static final String FILTERFILELIST="FilterFileList";
 	public static final String PASSIVELEARNING="Passive Learning";
 	public static final String ACTIVELEARNING="Active Learning";
 	public static final String ARFFFILENAME="trainingData";

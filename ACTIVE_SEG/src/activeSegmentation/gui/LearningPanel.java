@@ -1,6 +1,5 @@
 package activeSegmentation.gui;
 
-import ij.io.OpenDialog;
 
 import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
@@ -9,11 +8,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -23,9 +19,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import activeSegmentation.Common;
-import activeSegmentation.IClassifier;
-import activeSegmentation.IDataManager;
-import activeSegmentation.ILearningManager;
 import activeSegmentation.learning.SMO;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
@@ -41,25 +34,23 @@ public class LearningPanel  implements Runnable {
 	String originalOptions;
 	String originalClassifierName;
 	private GuiController controller;
-  
+
 	public LearningPanel(GuiController controller){
-		
+
 		this.controller= controller;
 	}
-	
+
 
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
-	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 2, "Compute" );
+	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 1, "Compute" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
-	final ActionEvent LOAD_BUTTON_PRESSED = new ActionEvent( this, 3, "Load" );
-	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
-	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 4, "Save" );
+	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 2, "Save" );
 	Dimension dimension=new Dimension(100, 25);
 
 	public LearningPanel() {
-		
+
 		this.classifierList= Util.model();
 	}
 
@@ -67,28 +58,13 @@ public class LearningPanel  implements Runnable {
 	{
 		if(event==COMPUTE_BUTTON_PRESSED){
 
-    
+			controller.setClassifier(setClassifier());
+
 
 		}
 		if(event==SAVE_BUTTON_PRESSED){
-
-			//get selected pixels
-
-
-
-
+			controller.saveMetadata();
 		}
-
-		if(event==LOAD_BUTTON_PRESSED){
-
-			OpenDialog od = new OpenDialog("Choose data file", OpenDialog.getLastDirectory(), "data.arff");
-			if (od.getFileName()!=null){
-
-				//learningManager.loadTrainingData(od.getFileName());	
-			}
-		}
-
-
 
 	}
 
@@ -139,8 +115,8 @@ public class LearningPanel  implements Runnable {
 		JPanel resetJPanel = new JPanel(new GridBagLayout());
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
-		addButton( "LOAD",null ,resetJPanel,
-				LOAD_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false),null );
+		/*addButton( "LOAD",null ,resetJPanel,
+				LOAD_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false),null );*/
 		addButton( "SAVE",null ,resetJPanel,
 				SAVE_BUTTON_PRESSED,dimension,Util.getGbc(2, 0, 1, false, false), null );
 
@@ -185,6 +161,7 @@ public class LearningPanel  implements Runnable {
 
 			}
 		}
+
 
 		return null;
 	}

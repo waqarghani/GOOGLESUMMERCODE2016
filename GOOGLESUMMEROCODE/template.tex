@@ -93,6 +93,7 @@
 	  \node [rblock]  (start) {Start};
 	  \node [block, right =1cm of start] (filter) {Apply Filters};
 	  \node [block, right =1cm of filter] (feature) {Feature Extraction};
+	  \node [block, below =2cm of feature] (save) {Save Meta Data};
 	  \node [block, right =1cm of feature ] (learning) {Learning};
 	  \node [block, right =2cm of learning] (closing) {Evaluation};
 	 
@@ -100,7 +101,10 @@
 	  %% paths
 	  \path[draw,->] (start) edge (filter)
 	  (filter) edge (feature)
+	  (filter) edge (save)
+	  (feature) edge (save)
 	  (feature) edge (learning)
+	  (learning) edge (save)
 	  (learning) edge (closing)
 	  ;
 	  \end{tikzpicture}

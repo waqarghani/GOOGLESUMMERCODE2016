@@ -157,6 +157,12 @@ public class GuiController {
 
 	}
 
+	public void setClassifier(Object classifier){
+		if(classifier!=null){
+			learningManager.setClassifier(classifier);
+		}
+		
+	}
 
 	public ImagePlus getOriginalImage() {
 		return originalImage.duplicate();
