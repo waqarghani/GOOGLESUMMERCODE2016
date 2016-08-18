@@ -248,6 +248,7 @@ public class FilterPanel implements Runnable {
 		if(event==DEFAULT_BUTTON_PRESSED){
 
 			String key= pane.getTitleAt( pane.getSelectedIndex());
+			System.out.println(key);
 			filterManager.setDefault(key);
 			updateTabbedGui(key);
 			

@@ -148,7 +148,8 @@ public class FilterManager implements IFilterManager {
 		int numChannels=featurStackMap.get(1).getSize();
 		for (int i = 1; i <= originalImage.getStackSize(); i++){
 			for (int c = 1; c <= numChannels; c++){
-				classified.addSlice("", featurStackMap.get(i).getProcessor(c));	
+				classified.addSlice(featurStackMap.get(i).getSliceLabel(c), 
+						featurStackMap.get(i).getProcessor(c));	
 			}
 		}
 
@@ -254,6 +255,7 @@ public class FilterManager implements IFilterManager {
 	@Override
 	public boolean setDefault(String key) {
 		// TODO Auto-generated method stub
+		System.out.println("IN SET DEFAULT");
 		if(filterMap.get(key).reset())
 			return true;
 

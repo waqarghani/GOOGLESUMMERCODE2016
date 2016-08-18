@@ -408,6 +408,7 @@ public class LoG_Filter1_ implements ExtendedPlugInFilter, DialogListener,IFilte
 	sz= Prefs.getInt(LEN, 2);
 	max_sz= Prefs.getInt(MAX_LEN, 8);
 	sep= Prefs.getBoolean(ISSEP, true);
+	scnorm= Prefs.getBoolean(SCNORM, false);
 		return true;
 	}
 	
