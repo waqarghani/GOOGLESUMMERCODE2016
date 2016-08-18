@@ -6,6 +6,9 @@ public class Common {
 
 
 	public static final String CLASS="class";
+	public static final String JAR=".jar";
+	public static final String DOTCLASS=".class";
+	public static final String IFILTER="IFilter";
 	public static final String INSTANCE_NAME="segment";
 	public static int WORKLOAD = 10000;
 	public static int DEFAULT_CLASSES=2;

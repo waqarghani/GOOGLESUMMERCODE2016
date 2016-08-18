@@ -72,11 +72,11 @@ public class FilterManager implements IFilterManager {
 		String[] plugins = f.list();
 		List<String> classes=new ArrayList<String>();
 		for(String plugin: plugins){
-			if(plugin.endsWith(".jar"))
+			if(plugin.endsWith(Common.JAR))
 			{ 
 				classes.addAll(installJarPlugins(home+plugin));
 			}
-			else if (plugin.endsWith(".class")){
+			else if (plugin.endsWith(Common.DOTCLASS)){
 				classes.add(plugin);
 			}
 
@@ -88,7 +88,7 @@ public class FilterManager implements IFilterManager {
 		for(String plugin: classes){		
 			Class<?>[] classesList=(classLoader.loadClass(plugin)).getInterfaces();
 			for(Class<?> cs:classesList){
-				if(cs.getSimpleName().equals("IFilter")){
+				if(cs.getSimpleName().equals(Common.IFILTER)){
 					IFilter	thePlugIn =(IFilter) (classLoader.loadClass(plugin)).newInstance(); 
 					filterMap.put(thePlugIn.getKey(), thePlugIn);
 				}
@@ -116,7 +116,7 @@ public class FilterManager implements IFilterManager {
 
 			}
 
-			System.out.println("temp size"+tempStack.size());
+			//System.out.println("temp size"+tempStack.size());
 
 			featurStackMap.put(i, combineStacks(tempStack));
 
@@ -211,10 +211,10 @@ public class FilterManager implements IFilterManager {
 		List<String> classNames = new ArrayList<String>();
 		ZipInputStream zip = new ZipInputStream(new FileInputStream(home));
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-			if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+			if (!entry.isDirectory() && entry.getName().endsWith(Common.DOTCLASS)) {
 				// This ZipEntry represents a class. Now, what class does it represent?
 				String className = entry.getName().replace('/', '.'); // including ".class"
-				classNames.add(className.substring(0, className.length() - ".class".length()));
+				classNames.add(className.substring(0, className.length() - Common.DOTCLASS.length()));
 			}
 		}
 
