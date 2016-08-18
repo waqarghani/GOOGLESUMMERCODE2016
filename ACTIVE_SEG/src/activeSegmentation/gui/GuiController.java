@@ -168,6 +168,7 @@ public class GuiController {
 		return originalImage.duplicate();
 	}
 
+	
 
 	public void setOriginalImage(ImagePlus originalImage) {
 		this.originalImage = originalImage;

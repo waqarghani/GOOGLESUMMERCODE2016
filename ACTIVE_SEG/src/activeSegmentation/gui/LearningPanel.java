@@ -34,6 +34,7 @@ public class LearningPanel  implements Runnable {
 	String originalOptions;
 	String originalClassifierName;
 	private GuiController controller;
+	final JFrame frame = new JFrame("LEARNING");
 
 	public LearningPanel(GuiController controller){
 
@@ -73,7 +74,7 @@ public class LearningPanel  implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		final JFrame frame = new JFrame("LEARNING");
+		
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		JPanel all = new JPanel(new GridBagLayout());

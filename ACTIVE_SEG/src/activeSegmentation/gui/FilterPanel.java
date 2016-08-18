@@ -82,6 +82,7 @@ public class FilterPanel implements Runnable {
 	final ActionEvent DEFAULT_BUTTON_PRESSED = new ActionEvent( this, 5, "Default" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent VIEW_BUTTON_PRESSED = new ActionEvent( this, 6, "View" );
+	final JFrame frame = new JFrame("FILTER");
 
 
 	public FilterPanel(GuiController controller) {
@@ -96,7 +97,7 @@ public class FilterPanel implements Runnable {
 
 	@Override
 	public void run() {
-		final JFrame frame = new JFrame("FILTER");
+		
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		pane = new JTabbedPane();
 		pane.setFont(Common.FONT);

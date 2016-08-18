@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -38,6 +40,7 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+
 
 
 import activeSegmentation.Common;
@@ -95,8 +98,7 @@ public class FeaturePanel extends StackWindow
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 21, "TRAIN" );
 
-	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
-	final ActionEvent LOAD_BUTTON_PRESSED = new ActionEvent( this, 22, "Load" );
+
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 23, "Save" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -113,10 +115,9 @@ public class FeaturePanel extends StackWindow
 	Dimension dimension=new Dimension(100, 25);
 	ImageOverlay resultOverlay;
 
-
-	public FeaturePanel(GuiController controller)
+	public FeaturePanel(GuiController controller, ImagePlus image)
 	{
-		super(controller.getOriginalImage(), new OverlayedImageCanvas(controller.getOriginalImage()) );	
+		super(image, new OverlayedImageCanvas(image));	
 		this.displayImage= imp;
 		this.setTitle("Active Segmentation");
 		this.exampleList = new ArrayList<JList>();
@@ -125,12 +126,12 @@ public class FeaturePanel extends StackWindow
 		colors=Util.setDefaultColors();
 		roiOverlayList = new ArrayList<RoiListOverlay>();
 		setOverlay();
+		// Remove the canvas from the window, to add it later
+		removeAll();
 		setLut(colors);
-
 		imagePanel = new JPanel(new GridBagLayout());	
 		imagePanel.add(ic, Util.getGbc(0, 0, 1, false, false));
 		if(null != sliceSelector){
-
 			sliceSelector.setEnabled(true);
 			imagePanel.add(zSelector,Util.getGbc(0, 0, 0, false, false));
 			imagePanel.add(sliceSelector,Util.getGbc(0, 1, 1, false, true));
@@ -141,7 +142,7 @@ public class FeaturePanel extends StackWindow
 			sliceSelector.addAdjustmentListener(new AdjustmentListener() 
 			{
 				public void adjustmentValueChanged(final AdjustmentEvent e) {
-
+              
 					if(e.getSource() == sliceSelector)
 					{
 						displayImage.killRoi();
@@ -151,9 +152,39 @@ public class FeaturePanel extends StackWindow
 							updateResultOverlay();		
 						}						
 					}
-
 				}
 			});
+
+			KeyListener keyListener = new KeyListener() {
+
+				@Override
+				public void keyTyped(KeyEvent e) {}
+
+				@Override
+				public void keyReleased(final KeyEvent e) {
+
+					if(e.getKeyCode() == KeyEvent.VK_LEFT ||
+							e.getKeyCode() == KeyEvent.VK_RIGHT ||
+							e.getKeyCode() == KeyEvent.VK_LESS ||
+							e.getKeyCode() == KeyEvent.VK_GREATER ||
+							e.getKeyCode() == KeyEvent.VK_COMMA ||
+							e.getKeyCode() == KeyEvent.VK_PERIOD)
+					{
+						//IJ.log("moving scroll");
+						displayImage.killRoi();
+						updateGui();
+						if(showColorOverlay)
+						{
+							updateResultOverlay();
+						}
+					}
+				}
+
+				@Override
+				public void keyPressed(KeyEvent e) {}
+			};
+			// add key listener to the window and the canvas
+			addKeyListener(keyListener);
 
 		}
 

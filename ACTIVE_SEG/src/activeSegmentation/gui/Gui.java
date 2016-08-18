@@ -43,6 +43,9 @@ public class Gui {
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent EVALUATION_BUTTON_PRESSED = new ActionEvent( this, 3, "Evaluation" );
+	private LearningPanel learningPanel;
+	private FilterPanel filterPanel;
+	private FeaturePanel featurePanel;
 
 
 	final static String LOOKANDFEEL = "Metal";
@@ -127,16 +130,19 @@ public class Gui {
 		System.out.println("IN DO ACTION");
 		System.out.println(event.toString());
 		if(event ==FILTER_BUTTON_PRESSED ){
-			FilterPanel filterPanel=new FilterPanel(controller);
+			if(filterPanel==null)
+			   filterPanel=new FilterPanel(controller);
 			SwingUtilities.invokeLater(filterPanel);
 
 		}
 		if(event==FEATURE_BUTTON_PRESSED){
-			new FeaturePanel(controller);
+			if(featurePanel== null)
+			    new FeaturePanel(controller, controller.getOriginalImage());
 		}
 
 		if(event==LEARNING_BUTTON_PRESSED){
-			LearningPanel learningPanel = new LearningPanel();
+			if(learningPanel==null)
+			   learningPanel = new LearningPanel();
 			SwingUtilities.invokeLater(learningPanel);
 		}
 		
