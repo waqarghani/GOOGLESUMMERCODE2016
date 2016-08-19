@@ -247,6 +247,7 @@ public class FeaturePanel extends StackWindow
 		labelsJPanel.add(buttonsPanel,Util.getGbc(1,originalJ , 1, false, false) );
 		originalJ++;
 		exampleList.get(i).addMouseListener(mouseListener);
+		allexampleList.get(i).addMouseListener(mouseListener);
 		labelsJPanel.add( Util.addScrollPanel(exampleList.get(i),null), 
 				Util.getGbc(0,originalJ, 1, false, false));
 		labelsJPanel.add( Util.addScrollPanel( allexampleList.get(i),null ),
@@ -324,31 +325,7 @@ public class FeaturePanel extends StackWindow
 	}
 
 
-	private  MouseListener mouseListener = new MouseAdapter() {
-		public void mouseClicked(MouseEvent mouseEvent) {
-			JList theList = ( JList) mouseEvent.getSource();
-			if (mouseEvent.getClickCount() == 1) {
-				int index = theList.getSelectedIndex();
-				if (index >= 0) {
-					String item =theList.getSelectedValue().toString();
-					String[] arr= item.split(" ");
-					showSelected( Integer.parseInt(arr[1]));
-				}
-
-			}
-
-			if (mouseEvent.getClickCount() == 2) {
-				int index = theList.getSelectedIndex();
-				if (index >= 0) {
-					String item =theList.getSelectedValue().toString();
-					String[] arr= item.split(" ");
-					int classId = exampleList.get(Integer.parseInt(arr[1])).getSelectedIndex();
-					controller.deleteExample(classId, displayImage.getCurrentSlice(), index);
-					updateGui();
-				}
-			}
-		}
-	};
+	
 
 	private JButton addButton( final String label, final Icon icon,JComponent panel, 
 			final ActionEvent action, Dimension dimension,GridBagConstraints labelsConstraints,Color color ){
@@ -495,14 +472,39 @@ public class FeaturePanel extends StackWindow
 			exampleList.get(i).removeAll();
 			Vector listModel = new Vector();
 			for(int j=0; j<controller.getSize(i, currentSlice); j++){	
-				listModel.addElement("trace " + i + " "+ j + " " + currentSlice);
+				listModel.addElement(controller.getclassLabel(i)+ " " + i + " "+ j + " " + currentSlice);
 			}
 			exampleList.get(i).setListData(listModel);
 			exampleList.get(i).setForeground(colors.get(i));
 		}
 
 	}
+	private  MouseListener mouseListener = new MouseAdapter() {
+		public void mouseClicked(MouseEvent mouseEvent) {
+			JList theList = ( JList) mouseEvent.getSource();
+			if (mouseEvent.getClickCount() == 1) {
+				int index = theList.getSelectedIndex();
+				if (index >= 0) {
+					String item =theList.getSelectedValue().toString();
+					String[] arr= item.split(" ");
+					showSelected( Integer.parseInt(arr[1]));
+				}
 
+			}
+
+			if (mouseEvent.getClickCount() == 2) {
+				int index = theList.getSelectedIndex();
+				if (index >= 0) {
+					String item =theList.getSelectedValue().toString();
+					System.out.println("ITEM : "+ item);
+					String[] arr= item.split(" ");
+					int classId = exampleList.get(Integer.parseInt(arr[1])).getSelectedIndex();
+					controller.deleteExample(classId, displayImage.getCurrentSlice(), index);
+					updateGui();
+				}
+			}
+		}
+	};
 
 
 	/**
@@ -514,7 +516,7 @@ public class FeaturePanel extends StackWindow
 			Vector listModel = new Vector();
 			for(int currentSlice=1; currentSlice<=displayImage.getStackSize();currentSlice++){
 				for(int j=0; j<controller.getSize(i, currentSlice); j++){	
-					listModel.addElement("trace " + i + " "+ j + " " + currentSlice);
+					listModel.addElement(controller.getclassLabel(i)+ " " + i + " "+ j + " " + currentSlice);
 				} 
 			}
 			allexampleList.get(i).setListData(listModel);
