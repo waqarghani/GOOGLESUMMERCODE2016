@@ -136,46 +136,7 @@ public class DataManagerImp implements IDataManager {
 
 	}
 
-	/**
-	 * Write current classifier into a file
-	 *
-	 * @param filename name (with complete path) of the destination file
-	 * @return false if error
-	 */
-	public boolean saveClassifier(String filename,IClassifier classifier,Instances trainHeader )
-	{
-		File sFile = null;
-		boolean saveOK = true;
-
-
-		IJ.log("Saving model to file...");
-
-		try {
-			sFile = new File(filename);
-			OutputStream os = new FileOutputStream(sFile);
-			if (sFile.getName().endsWith(".gz"))
-			{
-				os = new GZIPOutputStream(os);
-			}
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(os);
-			objectOutputStream.writeObject(classifier);
-			if (trainHeader != null)
-				objectOutputStream.writeObject(trainHeader);
-			objectOutputStream.flush();
-			objectOutputStream.close();
-		}
-		catch (Exception e)
-		{
-			IJ.error("Save Failed", "Error when saving classifier into a file");
-			saveOK = false;
-		}
-		if (saveOK)
-			IJ.log("Saved model into " + filename );
-
-		return saveOK;
-	}
-
-
+	
 
 	@Override
 	public List<Roi> openZip(String path) {
