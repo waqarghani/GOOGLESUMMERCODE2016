@@ -105,7 +105,8 @@ public class FeaturePanel extends StackWindow
 	final ActionEvent CONFIGURE_BUTTON_PRESSED = new ActionEvent( this, 24, "CONFIGURE" );
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent TOGGLE_BUTTON_PRESSED = new ActionEvent( this, 26, "TRAIN" );
-
+	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
+	final ActionEvent SAVE_CONFIGURE_BUTTON_PRESSED = new ActionEvent( this, 27, "SaveConfigure" );
 	final ActionEvent ADD_BUTTON_PRESSED = new ActionEvent( this, 25, "ADDCLASS" );
 	final ActionEvent DELETE_BUTTON_PRESSED = new ActionEvent( this, 2, "Delete" );
 	/** opacity (in %) of the result overlay image */
@@ -294,7 +295,7 @@ public class FeaturePanel extends StackWindow
 
 		JPanel resetJPanel = new JPanel(new GridBagLayout());
 		addButton( "SAVE",null ,resetJPanel,
-				SAVE_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false),null );
+				SAVE_CONFIGURE_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false),null );
 		addButton( "DELTE",null ,resetJPanel,
 				DELETE_BUTTON_PRESSED,dimension,Util.getGbc(2, 0, 1, false, false),null );
 
@@ -376,6 +377,9 @@ public class FeaturePanel extends StackWindow
 			controller.saveMetadata();
 
 		}
+		if(event==SAVE_CONFIGURE_BUTTON_PRESSED){
+			updateGui();
+		}
 		if(event==ADD_BUTTON_PRESSED ){
 			addClass(event);
 		}
@@ -446,8 +450,8 @@ public class FeaturePanel extends StackWindow
 
 	private void addClass(final ActionEvent  event) {
 		controller.addClass();
-		addclasses(controller.getNumberofClasses(), originajFrameJ, originalFrameK);
-		addSidePanel(controller.getNumberofClasses());
+		addclasses(controller.getNumberofClasses()-1, originajFrameJ, originalFrameK);
+		addSidePanel(controller.getNumberofClasses()-1);
 		validateFrame();
 	}
 

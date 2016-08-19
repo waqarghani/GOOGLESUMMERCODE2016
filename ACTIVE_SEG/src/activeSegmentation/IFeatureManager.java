@@ -21,7 +21,7 @@ public interface IFeatureManager {
 	public void setClassLabel(int classNum, String label);
 	public void setNumOfClasses(int numOfClasses);
 	public int getNumOfClasses();
-	public void addClass(int classId);
+	public void addClass();
 	public void setFeatureMetadata();
 	public void saveFeatureMetadata();
 	public IDataSet extractFeatures(String featureType);

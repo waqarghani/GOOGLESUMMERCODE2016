@@ -9,7 +9,6 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -26,7 +25,6 @@ public class GuiController {
 	private IFeatureManager featureManager;
 	private IDataManager dataManager;
 	private  ILearningManager learningManager;
-	private int numberofClasses=2;
 	private ImagePlus originalImage;
 
 	public GuiController(IFilterManager filterManager, 
@@ -43,7 +41,7 @@ public class GuiController {
 	public List<ArrayList<Roi>> getRois(int currentSlice){
 		List<ArrayList< Roi >> roiList= new ArrayList<ArrayList<Roi>>();
 
-		for(int i = 0; i < numberofClasses; i++){
+		for(int i = 0; i < featureManager.getNumOfClasses(); i++){
 			ArrayList< Roi > rois = new ArrayList<Roi>();
 			for (Roi r : featureManager.getExamples(i, currentSlice)){
 				rois.add(r);
@@ -54,8 +52,7 @@ public class GuiController {
 	}
 
 	public void addClass(){
-		featureManager.addClass(numberofClasses);
-		numberofClasses++;
+		featureManager.addClass();
 	}
 
 	public String getclassLabel(int index){
@@ -119,12 +116,9 @@ public class GuiController {
 
 	}
 	public int getNumberofClasses() {
-		return numberofClasses;
+		return featureManager.getNumOfClasses();
 	}
-	public void setNumberofClasses(int numberofClasses) {
-		this.numberofClasses = numberofClasses;
-	}
-
+	
 	public int getSize(int i, int currentSlice ){
 		return featureManager.getSize(i, currentSlice);
 	}

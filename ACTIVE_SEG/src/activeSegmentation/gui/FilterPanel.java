@@ -15,6 +15,9 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,6 +103,7 @@ public class FilterPanel implements Runnable {
 		
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		pane = new JTabbedPane();
+		pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		pane.setFont(Common.FONT);
 		pane.setBackground(Color.WHITE);
 
@@ -199,6 +203,8 @@ public class FilterPanel implements Runnable {
 					((JButton)event.getSource()).setText(Common.DISABLED);
 				}
 
+				//pane.remove(pane.getSelectedIndex());
+				//pane.setEnabledAt(, false);
 				updateFiterList();
 			}
 		}
@@ -235,16 +241,6 @@ public class FilterPanel implements Runnable {
 
 		}
 
-		/*if(event==LOAD_BUTTON_PRESSED){
-			OpenDialog od = new OpenDialog("Choose filter File", OpenDialog.getLastDirectory(), "filter.txt");
-			if (od.getFileName()==null)
-				return;
-			for(String filter: filterManager.getFilters()){
-				updateTabbedGui(filter);
-			}
-			
-
-		}*/
 		if(event==DEFAULT_BUTTON_PRESSED){
 
 			String key= pane.getTitleAt( pane.getSelectedIndex());
@@ -278,7 +274,7 @@ public class FilterPanel implements Runnable {
 		Set<String> filters= filterManager.getFilters();  
 		Vector listModel = new Vector();
 		for(String filter : filters){
-			if(filterManager.isFilterEnabled(filter)){
+			if(!filterManager.isFilterEnabled(filter)){
 
 				listModel.addElement(filter);
 			}
@@ -288,6 +284,22 @@ public class FilterPanel implements Runnable {
 
 	}
 
+	private  MouseListener mouseListener = new MouseAdapter() {
+		public void mouseClicked(MouseEvent mouseEvent) {
+			JList theList = ( JList) mouseEvent.getSource();
+			if (mouseEvent.getClickCount() == 2) {
+				int index = theList.getSelectedIndex();
+				if (index >= 0) {
+					String item =theList.getSelectedValue().toString();
+					String[] arr= item.split(" ");
+					int classId =filterList.getSelectedIndex();
+					String filter=(String)filterList.getSelectedValue();
+				    
+					
+				}
+			}
+		}
+	};
 
 	private JButton addButton(final JButton button ,final String label, final Icon icon, final int x,
 			final int y, final int width, final int height,

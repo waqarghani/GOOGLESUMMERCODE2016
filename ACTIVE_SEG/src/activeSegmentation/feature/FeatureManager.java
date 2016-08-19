@@ -55,10 +55,10 @@ public class FeatureManager implements IFeatureManager {
 			examples.add(new Vector<ArrayList<Roi>>());			
 		}
 
-		for(int i=0; i<numOfClasses;i++ ){
-			addClass(i);
+		for(int i=1; i<=numOfClasses;i++ ){
+			addClass();
 		}
-		
+
 	}
 
 
@@ -118,7 +118,7 @@ public class FeatureManager implements IFeatureManager {
 	{
 		return classLabels;
 	}
-	
+
 	@Override
 	public String getClassLabel(int index) {
 		// TODO Auto-generated method stub
@@ -136,7 +136,7 @@ public class FeatureManager implements IFeatureManager {
 	@Override
 	public void setClassLabel(int classNum, String label) 
 	{
-		classLabels.add(classNum, label);
+		classLabels.add(classNum-1, label);
 	}
 
 	/**
@@ -164,16 +164,18 @@ public class FeatureManager implements IFeatureManager {
 	/**
 	 * Add new segmentation class.
 	 */
-	public void addClass(int classId)
+	public void addClass()
 	{
 
 		for(int i=1; i <= stackSize; i++)
 			examples.get(i-1).add(new ArrayList<Roi>());
 
-		classLabels.add( new String(Common.CLASS + (classId+1)));
-		// increase number of available classes
 		numOfClasses ++;
+		classLabels.add( new String(Common.CLASS + (numOfClasses)));
+		// increase number of available classes
+		
 	}
+
 
 	private boolean processibleRoi(Roi roi) {
 		boolean ret=(roi!=null && !(roi.getType()==Roi.LINE || 
@@ -207,6 +209,24 @@ public class FeatureManager implements IFeatureManager {
 
 	public void setFeatureMetadata(){
 		metaInfo= dataManager.getMetaInfo();
+		Map<String,String> keywordList= metaInfo.getKeywordList();
+		if(keywordList!=null){
+			for(String key:keywordList.keySet()){
+				Integer classId=Integer.parseInt(key);	
+				if(numOfClasses>=classId){
+					setClassLabel(classId, keywordList.get(key));	
+					System.out.println("classId"+classId);
+					System.out.println("No.ofClasses "+numOfClasses);
+				}
+				else{
+					addClass();
+					System.out.println("classId 1"+classId);
+					System.out.println("No.ofClasses "+numOfClasses);
+					setClassLabel(classId, keywordList.get(key));	
+				}
+			}
+		}
+
 		for(FeatureInfo featureInfo : metaInfo.getFeatureList() ){
 			int classNum=featureInfo.getClassLabel();
 			System.out.println(metaInfo.getPath()+featureInfo.getZipFile());
@@ -244,7 +264,13 @@ public class FeatureManager implements IFeatureManager {
 	public void saveFeatureMetadata(){
 		metaInfo= dataManager.getMetaInfo();
 		metaInfo.resetFeatureInfo();
-		
+		Integer i=1;
+		Map<String, String> keywordList = new HashMap<String, String>();
+		for(String className: classLabels){
+			keywordList.put(i.toString(), className);
+			i++;
+		}
+		metaInfo.setKeywordList(keywordList);		
 		for(int classIndex = 0; classIndex <
 				getNumOfClasses(); classIndex++)
 		{
@@ -281,8 +307,8 @@ public class FeatureManager implements IFeatureManager {
 		dataManager.writeMetaInfo(metaInfo);
 
 	}
-	
-   @Override
+
+	@Override
 	public IDataSet extractFeatures(String featureType){
 
 		featureMap.get(featureType).createTrainingInstance(classLabels,
@@ -291,18 +317,18 @@ public class FeatureManager implements IFeatureManager {
 		dataManager.setData(dataset);
 		System.out.println("NUMBER OF INSTANCE"+dataset.toString());
 		return dataset;
-		
+
 	}
-   
-   @Override
-  	public List<IDataSet> extractAll(String featureType){
-	   List<IDataSet> dataset= featureMap.get(featureType).createAllInstance(classLabels,
+
+	@Override
+	public List<IDataSet> extractAll(String featureType){
+		List<IDataSet> dataset= featureMap.get(featureType).createAllInstance(classLabels,
 				numOfClasses);
 		//dataManager.writeDataToARFF(dataset.get(0).getDataset(), "testData.arff");
 		return dataset;
-  		
-  	}
-	
+
+	}
+
 	@Override
 	public Set<String> getFeatures(){
 		return featureMap.keySet();
@@ -321,5 +347,5 @@ public class FeatureManager implements IFeatureManager {
 	}
 
 
-	
+
 }
