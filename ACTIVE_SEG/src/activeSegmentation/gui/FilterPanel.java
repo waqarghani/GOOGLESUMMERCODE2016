@@ -124,6 +124,7 @@ public class FilterPanel implements Runnable {
 
 
 		pane.setSize(600, 300);
+		filterList.addMouseListener(mouseListener);
 		JScrollPane scrollPane = Util.addScrollPanel(filterList,null);
 		scrollPane.setBounds(605,20,100,280);
 		panel.add(scrollPane);
@@ -204,7 +205,7 @@ public class FilterPanel implements Runnable {
 				}
 
 				//pane.remove(pane.getSelectedIndex());
-				//pane.setEnabledAt(, false);
+				pane.setEnabledAt(pane.getSelectedIndex(), false);
 				updateFiterList();
 			}
 		}
@@ -294,7 +295,7 @@ public class FilterPanel implements Runnable {
 					String[] arr= item.split(" ");
 					int classId =filterList.getSelectedIndex();
 					String filter=(String)filterList.getSelectedValue();
-				    
+					pane.setEnabledAt(classId, true);
 					
 				}
 			}

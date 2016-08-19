@@ -12,18 +12,23 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Panel;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -43,7 +48,12 @@ import javax.swing.JTextArea;
 
 
 
+
+
+
 import activeSegmentation.Common;
+
+
 
 
 
@@ -116,9 +126,11 @@ public class FeaturePanel extends StackWindow
 	Dimension dimension=new Dimension(100, 25);
 	ImageOverlay resultOverlay;
 
+
 	public FeaturePanel(GuiController controller, ImagePlus image)
 	{
-		super(image, new OverlayedImageCanvas(image));	
+		super(image, new CustomCanvas(image));	
+		final CustomCanvas canvas = (CustomCanvas) getCanvas();
 		this.displayImage= imp;
 		this.setTitle("Active Segmentation");
 		this.exampleList = new ArrayList<JList>();
@@ -132,11 +144,11 @@ public class FeaturePanel extends StackWindow
 		setLut(colors);
 		imagePanel = new JPanel(new GridBagLayout());	
 		imagePanel.add(ic, Util.getGbc(0, 0, 1, false, false));
+		imagePanel.add(zSelector,Util.getGbc(0, 0, 0, false, false));
+		imagePanel.add(sliceSelector,Util.getGbc(0, 1, 1, false, true));
+
 		if(null != sliceSelector){
 			sliceSelector.setEnabled(true);
-			imagePanel.add(zSelector,Util.getGbc(0, 0, 0, false, false));
-			imagePanel.add(sliceSelector,Util.getGbc(0, 1, 1, false, true));
-
 			// set slice selector to the correct number
 			sliceSelector.setValue( displayImage.getSlice() );
 			// add adjustment listener to the scroll bar
@@ -155,6 +167,7 @@ public class FeaturePanel extends StackWindow
 					}
 				}
 			});
+
 
 			KeyListener keyListener = new KeyListener() {
 
@@ -186,6 +199,7 @@ public class FeaturePanel extends StackWindow
 			};
 			// add key listener to the window and the canvas
 			addKeyListener(keyListener);
+			canvas.addKeyListener(keyListener);
 
 		}
 
