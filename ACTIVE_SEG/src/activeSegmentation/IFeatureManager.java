@@ -15,6 +15,7 @@ public interface IFeatureManager {
 	public void addExampleList(int classNum, List<Roi> roi, int n) ;
 	public void deleteExample(int classNum, int nSlice, int index);
 	public List<Roi> getExamples(int classNum, int n);
+	public int  getclassKey(String classNum);
 	public List<String> getClassLabels();
 	public String getClassLabel(int index);
 	public int getSize(int i, int currentSlice);

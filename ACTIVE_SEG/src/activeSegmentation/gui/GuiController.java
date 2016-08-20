@@ -62,6 +62,11 @@ public class GuiController {
 	public void deleteExample(int classId,int currentSlice, int index ){
 		featureManager.deleteExample(classId, currentSlice, index);
 	}
+	
+	public int getClassId(String classNum){
+		
+		return featureManager.getclassKey(classNum);
+	}
 
 	/**
 	 * Add examples defined by the user to the corresponding list

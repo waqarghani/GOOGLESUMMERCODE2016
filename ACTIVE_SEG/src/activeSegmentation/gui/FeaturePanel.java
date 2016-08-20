@@ -247,7 +247,7 @@ public class FeaturePanel extends StackWindow
 		labelsJPanel.add(buttonsPanel,Util.getGbc(1,originalJ , 1, false, false) );
 		originalJ++;
 		exampleList.get(i).addMouseListener(mouseListener);
-		allexampleList.get(i).addMouseListener(mouseListener);
+		//allexampleList.get(i).addMouseListener(mouseListener);
 		labelsJPanel.add( Util.addScrollPanel(exampleList.get(i),null), 
 				Util.getGbc(0,originalJ, 1, false, false));
 		labelsJPanel.add( Util.addScrollPanel( allexampleList.get(i),null ),
@@ -426,10 +426,11 @@ public class FeaturePanel extends StackWindow
 	 * @param e item event (originated by a list)
 	 * @param i list index
 	 */
-	private void showSelected(int classId ){
+	private void showSelected(String className ){
 		// find the right slice of the corresponding ROI
 		drawExamples();
 		displayImage.setColor(Color.YELLOW);
+		int classId= controller.getClassId(className)-1;
 		int index=exampleList.get(classId).getSelectedIndex();
 		final Roi newRoi = controller.getRoi(classId, displayImage.getCurrentSlice(), index);			
 		// Set selected trace as current ROI
@@ -472,7 +473,7 @@ public class FeaturePanel extends StackWindow
 			exampleList.get(i).removeAll();
 			Vector listModel = new Vector();
 			for(int j=0; j<controller.getSize(i, currentSlice); j++){	
-				listModel.addElement(controller.getclassLabel(i)+ " " + i + " "+ j + " " + currentSlice);
+				listModel.addElement(controller.getclassLabel(i+1)+ " "+ j + " " + currentSlice);
 			}
 			exampleList.get(i).setListData(listModel);
 			exampleList.get(i).setForeground(colors.get(i));
@@ -487,7 +488,8 @@ public class FeaturePanel extends StackWindow
 				if (index >= 0) {
 					String item =theList.getSelectedValue().toString();
 					String[] arr= item.split(" ");
-					showSelected( Integer.parseInt(arr[1]));
+					System.out.println("Class Id"+ arr[0].trim());
+					showSelected( arr[0].trim());
 				}
 
 			}
@@ -516,7 +518,7 @@ public class FeaturePanel extends StackWindow
 			Vector listModel = new Vector();
 			for(int currentSlice=1; currentSlice<=displayImage.getStackSize();currentSlice++){
 				for(int j=0; j<controller.getSize(i, currentSlice); j++){	
-					listModel.addElement(controller.getclassLabel(i)+ " " + i + " "+ j + " " + currentSlice);
+					listModel.addElement(controller.getclassLabel(i+1)+ " "+ j + " " + currentSlice);
 				} 
 			}
 			allexampleList.get(i).setListData(listModel);
