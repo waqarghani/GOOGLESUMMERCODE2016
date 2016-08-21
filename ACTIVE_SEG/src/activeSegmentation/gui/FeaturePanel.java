@@ -235,7 +235,7 @@ public class FeaturePanel extends StackWindow
 		roiOverlayList.add(roiOverlay);
 		JPanel buttonsPanel = new JPanel(new GridBagLayout());
 		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddButton");
-		addButton( controller.getclassLabel(i),null ,labelsJPanel,
+		addButton( controller.getclassLabel(i+1),null ,labelsJPanel,
 				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ , 1, false, false),null );
 
 		ActionEvent uploadAction= new ActionEvent(this, i,"UploadButton");
@@ -420,24 +420,7 @@ public class FeaturePanel extends StackWindow
 
 
 
-	/**
-	 * Select a list and deselect the others
-	 * 
-	 * @param e item event (originated by a list)
-	 * @param i list index
-	 */
-	private void showSelected(String className ){
-		// find the right slice of the corresponding ROI
-		drawExamples();
-		displayImage.setColor(Color.YELLOW);
-		int classId= controller.getClassId(className)-1;
-		int index=exampleList.get(classId).getSelectedIndex();
-		final Roi newRoi = controller.getRoi(classId, displayImage.getCurrentSlice(), index);			
-		// Set selected trace as current ROI
-		newRoi.setImage(displayImage);
-		displayImage.setRoi(newRoi);
-		displayImage.updateAndDraw();
-	}  
+
 
 
 	private void addClass(final ActionEvent  event) {
@@ -489,7 +472,7 @@ public class FeaturePanel extends StackWindow
 					String item =theList.getSelectedValue().toString();
 					String[] arr= item.split(" ");
 					System.out.println("Class Id"+ arr[0].trim());
-					showSelected( arr[0].trim());
+					showSelected( arr[0].trim(),index ,Integer.parseInt(arr[2].trim()));
 				}
 
 			}
@@ -500,14 +483,34 @@ public class FeaturePanel extends StackWindow
 					String item =theList.getSelectedValue().toString();
 					System.out.println("ITEM : "+ item);
 					String[] arr= item.split(" ");
-					int classId = exampleList.get(Integer.parseInt(arr[1])).getSelectedIndex();
-					controller.deleteExample(classId, displayImage.getCurrentSlice(), index);
+					int classId= controller.getClassId(arr[0].trim())-1;
+					//int classId = exampleList.get(Integer.parseInt(arr[1])).getSelectedIndex();
+					controller.deleteExample(classId, Integer.parseInt(arr[2].trim()), index);
 					updateGui();
 				}
 			}
 		}
 	};
 
+	
+	/**
+	 * Select a list and deselect the others
+	 * 
+	 * @param e item event (originated by a list)
+	 * @param i list index
+	 */
+	private void showSelected(String className,int index, int sliceNum ){
+		// find the right slice of the corresponding ROI
+		drawExamples();
+		displayImage.setColor(Color.YELLOW);
+		int classId= controller.getClassId(className)-1;
+	//	int index=exampleList.get(classId).getSelectedIndex();
+		final Roi newRoi = controller.getRoi(classId, sliceNum, index);			
+		// Set selected trace as current ROI
+		newRoi.setImage(displayImage);
+		displayImage.setRoi(newRoi);
+		displayImage.updateAndDraw();
+	}  
 
 	/**
 	 * Update the example lists in the GUI
@@ -533,7 +536,7 @@ public class FeaturePanel extends StackWindow
 		jCheckBoxList.add(checkBox);
 		JPanel classPanel= new JPanel();
 		JTextArea textArea= new JTextArea();
-		textArea.setText(controller.getclassLabel(i) );
+		textArea.setText(controller.getclassLabel(i+1) );
 		textArea.setSize(dimension);
 		classPanel.add(checkBox);
 		classPanel.add(textArea);
