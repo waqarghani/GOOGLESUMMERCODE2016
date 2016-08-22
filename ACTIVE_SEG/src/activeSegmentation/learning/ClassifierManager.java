@@ -98,8 +98,11 @@ public class ClassifierManager implements ILearningManager {
 
     @Override
 	public List<double[]> applyClassifier(List<IDataSet> testDataSet){
+		
 		List<double[]> results= new ArrayList<double[]>();
 		for(IDataSet dataSet: testDataSet){
+			System.out.println("INSTANCE SIZE"+ dataSet.getNumInstances());
+			System.out.println("WORK LOAD : "+ Common.WORKLOAD);
 			double[] classificationResult = new double[testDataSet.get(0).getNumInstances()];		
 			ApplyTask applyTask= new ApplyTask(dataSet, 0, dataSet.getNumInstances(), 
 					classificationResult, currentClassifier);

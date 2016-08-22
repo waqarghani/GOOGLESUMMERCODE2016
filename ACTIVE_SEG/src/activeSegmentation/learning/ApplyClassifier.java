@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
+import activeSegmentation.Common;
 import activeSegmentation.IClassifier;
 import activeSegmentation.IDataSet;
 
@@ -27,6 +28,8 @@ public class ApplyClassifier {
 		for(IDataSet dataSet: testDataSet){
 
 			double[] classificationResult = new double[dataSet.getNumInstances()];
+			System.out.println("INSTANCE SIZE"+ dataSet.getNumInstances());
+			System.out.println("WORK LOAD : "+ Common.WORKLOAD);
 			ApplyTask applyTask= new ApplyTask(dataSet, 0, dataSet.getNumInstances(), classificationResult, iclassifier);
 			pool.invoke(applyTask);
 			classificationList.add(classificationResult);

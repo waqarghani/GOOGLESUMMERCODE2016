@@ -20,7 +20,6 @@ public class MetaInfo {
 	private Map<String,String> learning;
 
 
-	//private int stage;
 	public String getComment() {
 		return comment;
 	}

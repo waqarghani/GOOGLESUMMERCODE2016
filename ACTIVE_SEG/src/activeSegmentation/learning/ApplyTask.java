@@ -18,10 +18,10 @@ public class ApplyTask extends RecursiveAction{
 	private IDataSet dataSet;
 	private double[] classificationResult;
 	private IClassifier iClassifier;
-	private int mStart;
+	private Integer mStart;
 	private int mLength;
 
-	public ApplyTask(IDataSet dataSet,int mStart,int length, double[] classificationResult, 
+	public ApplyTask(IDataSet dataSet,Integer mStart,int length, double[] classificationResult, 
 			IClassifier classifier) {
 		this.dataSet = dataSet;
 		this.classificationResult= classificationResult;
@@ -41,7 +41,7 @@ public class ApplyTask extends RecursiveAction{
 		}
 		//System.out.println("mLength"+mLength);
 
-		int split = mLength / 2;
+		Integer split = mLength / 2;
 
 		invokeAll(new ApplyTask(dataSet, mStart, split, classificationResult,iClassifier),
 				new ApplyTask(dataSet, mStart + split, mLength - split, 
@@ -58,14 +58,11 @@ public class ApplyTask extends RecursiveAction{
 			e.printStackTrace();
 		}
 
-		//System.out.println(mStart+"---"+mLength);
 		Instances testInstances= new Instances(dataSet.getDataset(), mStart, mLength);
 		for (int index = 0; index < testInstances.size(); index++)
 		{
 			try {
-				//double value=classifierCopy.
-				//		classifyInstance(testInstances.get(index));
-				//System.out.println(value);
+				
 				classificationResult[mStart+index]=classifierCopy.
 				classifyInstance(testInstances.get(index));
 			} catch (Exception e) {
