@@ -6,30 +6,18 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import ij.ImagePlus;
-
-
-
-
-
-
-
 
 import javax.swing.*;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
-import activeSegmentation.IDataManager;
-import activeSegmentation.IEvaluation;
-import activeSegmentation.IFeatureManager;
-import activeSegmentation.IFilterManager;
-import activeSegmentation.feature.FeatureExtraction;
+
+
 
 public class Gui {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
-	private IEvaluation evaluation;
 	//private ImagePlus trainingImage;
 	private GuiController controller;
 

@@ -2,12 +2,9 @@ package activeSegmentation.io;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.Macro;
 import ij.gui.Roi;
 import ij.io.RoiDecoder;
 import ij.io.RoiEncoder;
-import ij.io.SaveDialog;
-import ij.plugin.frame.Recorder;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -19,10 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,21 +24,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import activeSegmentation.Common;
-import activeSegmentation.IClassifier;
 import activeSegmentation.IDataManager;
 import activeSegmentation.IDataSet;
 import activeSegmentation.learning.WekaDataSet;

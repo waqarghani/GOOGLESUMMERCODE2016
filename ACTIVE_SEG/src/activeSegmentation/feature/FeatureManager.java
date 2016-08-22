@@ -4,16 +4,13 @@ import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+
 
 import activeSegmentation.Common;
 import activeSegmentation.IDataManager;

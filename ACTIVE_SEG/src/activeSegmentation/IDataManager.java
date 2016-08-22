@@ -13,8 +13,6 @@ import java.util.List;
 
 
 
-import org.json.simple.JSONObject;
-
 import activeSegmentation.IClassifier;
 import activeSegmentation.io.MetaInfo;
 import weka.core.Instances;

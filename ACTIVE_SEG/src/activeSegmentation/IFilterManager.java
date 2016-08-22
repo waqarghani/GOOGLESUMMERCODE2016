@@ -10,9 +10,8 @@ import java.util.Set;
 
 
 
-import org.json.simple.JSONObject;
 
-import activeSegmentation.io.MetaInfo;
+
 import weka.core.Instance;
 import ij.ImagePlus;
 import ij.ImageStack;
