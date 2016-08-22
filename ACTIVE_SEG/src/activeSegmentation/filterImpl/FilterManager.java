@@ -67,14 +67,13 @@ public class FilterManager implements IFilterManager {
 	private ImagePlus finalImage;
 	private IDataManager dataManager;
 	private MetaInfo metaInfo;
-	/** flag to specify the use of color features */
 	private  boolean colorFeatures;
 
 	private ImagePlus originalImage;
 
 	
 
-	/** flag to specify the use of the old color format (using directly the RGB values as float) */
+	
 	private boolean oldColorFormat = false; 
 
 	public FilterManager(IDataManager dataManager, String path){
@@ -210,10 +209,7 @@ public class FilterManager implements IFilterManager {
 	}
 
 
-	/**
-	 * Get the number of features of the reference stack (consistent all along the array)
-	 * @return number of features on each feature stack of the array
-	 */
+	
 	public int getNumOfFeatures() {
 
 		return featurStackMap.get(featurStackMap.size()).getSize();
@@ -269,7 +265,7 @@ public class FilterManager implements IFilterManager {
 	@Override
 	public ImagePlus getFinalImage() {
 		generateFinalImage();
-		return this.finalImage;
+		return finalImage.duplicate();
 	}
 
 	@Override
