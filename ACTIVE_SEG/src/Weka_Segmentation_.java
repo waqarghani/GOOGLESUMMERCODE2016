@@ -39,7 +39,7 @@ public class Weka_Segmentation_ implements PlugIn {
 
 	private ImagePlus trainingImage;
 	private static String path;
-	private static String metaFileName;
+	//private static String metaFileName;
 	private static boolean[] defaultValue = new boolean[3];
 	/** main GUI panel (containing the buttons panel on the left,
 	 *  the image in the center and the annotations panel on the right */
@@ -195,7 +195,7 @@ public class Weka_Segmentation_ implements PlugIn {
 			return ;
 
 		path=od.getDirectory();
-		metaFileName= od.getFileName();
+		//metaFileName= od.getFileName();
 
 	}
 	public ImagePlus getTrainingImage() {
