@@ -472,7 +472,12 @@ public class FeaturePanel extends StackWindow
 					String item =theList.getSelectedValue().toString();
 					String[] arr= item.split(" ");
 					System.out.println("Class Id"+ arr[0].trim());
-					showSelected( arr[0].trim(),index ,Integer.parseInt(arr[2].trim()));
+					int sliceNum=Integer.parseInt(arr[2].trim());
+					
+					displayImage.setSlice(sliceNum);
+					sliceSelector.setValue(sliceNum);
+					showSelected( arr[0].trim(),index ,sliceNum);
+					
 				}
 
 			}
@@ -484,7 +489,6 @@ public class FeaturePanel extends StackWindow
 					System.out.println("ITEM : "+ item);
 					String[] arr= item.split(" ");
 					int classId= controller.getClassId(arr[0].trim())-1;
-					//int classId = exampleList.get(Integer.parseInt(arr[1])).getSelectedIndex();
 					controller.deleteExample(classId, Integer.parseInt(arr[2].trim()), index);
 					updateGui();
 				}
@@ -501,7 +505,7 @@ public class FeaturePanel extends StackWindow
 	 */
 	private void showSelected(String className,int index, int sliceNum ){
 		// find the right slice of the corresponding ROI
-		drawExamples();
+		updateGui();
 		displayImage.setColor(Color.YELLOW);
 		int classId= controller.getClassId(className)-1;
 	//	int index=exampleList.get(classId).getSelectedIndex();
