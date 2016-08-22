@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/weka-dev-3.7.11.jar" sourcepath="C:/Users/HP/.m2/repository/nz/ac/waikato/cms/weka/weka-dev/3.7.11/weka-dev-3.7.11-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/pentaho-package-manager-1.0.8.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/IJ"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/java-cup-0.11a.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/jackson-databind-2.3.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/jackson-annotations-2.3.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Documents/Jars/jackson-core-2.3.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
