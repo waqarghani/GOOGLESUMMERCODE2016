@@ -1,4 +1,4 @@
-#ACTIVE SEGMENTATION plugin for ImageJ
+#Active Segmentation plugin for ImageJ
 
 This project is sponsored by Google Inc. as a part of the Google Summer of Code 2016 program: 
 
