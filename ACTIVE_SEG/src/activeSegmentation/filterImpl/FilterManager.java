@@ -286,7 +286,8 @@ public class FilterManager implements IFilterManager {
 			}
 			if(filterMap.get(key).getImageStack()!= null && 
 					filterMap.get(key).getImageStack().size()>0 ){
-				IJ.save(new ImagePlus(key,filterMap.get(key).getImageStack()), metaInfo.getPath()+key+".tif" );
+				IJ.save(new ImagePlus(key,filterMap.get(key).getImageStack()), 
+						metaInfo.getPath()+key+".tif" );
 				filters.put(Common.FILTERFILELIST,key+".tif" );
 			}
 				

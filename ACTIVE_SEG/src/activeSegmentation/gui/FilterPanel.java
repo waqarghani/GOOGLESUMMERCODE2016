@@ -1,18 +1,12 @@
 package activeSegmentation.gui;
 
 
-import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
-import ij.io.OpenDialog;
-import ij.io.SaveDialog;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -47,12 +41,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import activeSegmentation.Common;
 import activeSegmentation.IFilterManager;
-import activeSegmentation.filterImpl.FilterManager;
 
 
 

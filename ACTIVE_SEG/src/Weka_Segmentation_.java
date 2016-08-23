@@ -35,6 +35,7 @@ import activeSegmentation.learning.ClassifierManager;
 
 
 
+
 public class Weka_Segmentation_ implements PlugIn {
 
 	private ImagePlus trainingImage;
@@ -51,7 +52,6 @@ public class Weka_Segmentation_ implements PlugIn {
 	public void getImage(){
 		if (null == WindowManager.getCurrentImage())
 		{
-			//IJ.error( "", "Please open an image before running Active Segmentation." );
 			trainingImage= IJ.openImage();
 
 		}
@@ -62,7 +62,7 @@ public class Weka_Segmentation_ implements PlugIn {
 
 	}
 	/**
-	 * Main method to test and debug the Trainable Weka
+	 * Main method to test and debug the Active Weka
 	 * Segmentation GUI
 	 *  
 	 * @param args
@@ -119,9 +119,7 @@ public class Weka_Segmentation_ implements PlugIn {
 
 	@Override
 	public void run(String arg0) {
-		// TODO Auto-generated method stub
 		String home = "C:\\Program Files\\ImageJ\\plugins\\activeSegmentation\\";
-		//String path = "C://Users//HP//Desktop//DataImages//aav_samples//json//";
 		try {
 			if(showSettingsDialog()){
 
@@ -188,6 +186,9 @@ public class Weka_Segmentation_ implements PlugIn {
 			defaultValue[i] = gd.getNextBoolean();
 		}	
 
+		if(path==null){
+			loadSessionFile();
+		}
 		return true;
 
 	}

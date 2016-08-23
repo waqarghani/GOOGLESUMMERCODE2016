@@ -365,7 +365,6 @@ public class FeatureManager implements IFeatureManager {
 		List<IDataSet> dataset= featureMap.get(featureType).
 				createAllInstance(new ArrayList<String>(classLabels.values()),
 						numOfClasses);
-		//dataManager.writeDataToARFF(dataset.get(0).getDataset(), "testData.arff");
 		return dataset;
 
 	}

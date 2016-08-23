@@ -17,7 +17,7 @@ public class MetaInfo {
 	private List<Map<String,String>> filters= new ArrayList<Map<String,String>>();
 	private Map<String,String> keywordList= new HashMap<String, String>();
 	private List<FeatureInfo> featureList= new ArrayList<FeatureInfo>();
-	private Map<String,String> learning;
+	private Map<String,String> learning= new HashMap<String, String>();
 
 
 	public String getComment() {
@@ -66,6 +66,7 @@ public class MetaInfo {
 		return learning;
 	}
 	public void setLearning(Map<String, String> learning) {
+		
 		this.learning = learning;
 	}
 

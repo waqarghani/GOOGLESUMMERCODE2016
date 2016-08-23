@@ -60,13 +60,14 @@ public class ClassifierManager implements ILearningManager {
 
 	@Override
 	public void saveLearningMetaData(){	
+		metaInfo= dataManager.getMetaInfo();
 		Map<String,String> learningMap = new HashMap<String, String>();
 		if(dataset!=null){
 			learningMap.put(Common.ARFF, Common.ARFFFILENAME);
-			dataManager.writeDataToARFF(dataset.getDataset(), Common.ARFFFILENAME);
+			dataManager.writeDataToARFF(dataset.getDataset(), Common.ARFFFILENAME);		
 		}
 		
-		learningMap.put(Common.CLASSIFIER, Common.CLASSIFIERNAME);  
+		//learningMap.put(Common.CLASSIFIER, Common.CLASSIFIERNAME);  
 		learningMap.put(Common.LEARNINGTYPE, selectedType);
 		metaInfo.setLearning(learningMap);
 		dataManager.writeMetaInfo(metaInfo);		

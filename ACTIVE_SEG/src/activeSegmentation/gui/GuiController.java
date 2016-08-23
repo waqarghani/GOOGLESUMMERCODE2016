@@ -100,7 +100,7 @@ public class GuiController {
 		if(learningFlag)
 		learningManager.loadLearningMetaData();
 	}
-	public void  saveMetadata() {
+	public void  saveMetadata() {	
 		filterManager.saveFiltersMetaData();
 		featureManager.saveFeatureMetadata();
 		learningManager.saveLearningMetaData();
