@@ -5,15 +5,6 @@ import ij.gui.Roi;
 
 import java.util.List;
 
-
-
-
-
-
-
-
-
-import activeSegmentation.IClassifier;
 import activeSegmentation.io.MetaInfo;
 import weka.core.Instances;
 

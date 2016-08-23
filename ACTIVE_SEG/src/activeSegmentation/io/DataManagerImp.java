@@ -249,7 +249,7 @@ public class DataManagerImp implements IDataManager {
 			metaInfo.setPath(path);
 			metaInfo.setTrainingStack(Common.TRAININGIMAGE);
 			// metaInfo.setTrainingStack(originalImage.getShortTitle());
-			IJ.save(originalImage, metaInfo.getPath()+Common.TRAININGIMAGE+".tif" );
+			IJ.save(originalImage, metaInfo.getPath()+Common.TRAININGIMAGE+Common.TIFFORMAT );
 			// Convert object to JSON string and save into a file directly
 			System.out.println("SAVING");
 			mapper.writeValue(new File(path+Common.FILENAME), metaInfo);
@@ -268,11 +268,11 @@ public class DataManagerImp implements IDataManager {
 
 	@Override
 	public MetaInfo getMetaInfo() {
-		if(metaInfo==null){
+		if(metaInfo==null && path != null){
 			ObjectMapper mapper = new ObjectMapper();
 			try {
 				metaInfo= mapper.readValue(new File(path+Common.FILENAME), MetaInfo.class);
-				originalImage= IJ.openImage(metaInfo.getPath()+Common.TRAININGIMAGE+".tif");
+				originalImage= IJ.openImage(metaInfo.getPath()+Common.TRAININGIMAGE+Common.TIFFORMAT);
 				//metaInfo.setPath(path);
 				return metaInfo;
 
@@ -284,6 +284,7 @@ public class DataManagerImp implements IDataManager {
 				e.printStackTrace();
 			}
 
+			
 			metaInfo= new MetaInfo();
 			metaInfo.setPath(path);
 		}
@@ -303,7 +304,10 @@ public class DataManagerImp implements IDataManager {
 
 	@Override
 	public ImagePlus getOriginalImage() {
+		if(originalImage!=null)
 		return originalImage.duplicate();
+		
+		return null;
 	}
 
 	@Override
