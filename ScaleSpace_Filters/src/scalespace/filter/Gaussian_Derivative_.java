@@ -30,7 +30,8 @@ import activeSegmentation.IFilter;
 import dsp.Conv;
 
 /**
- * @version 	3.0 20 Oct 2013
+ * @version   	23 Aug 2016
+ *              3.0 20 Oct 2013
  * 				- change of philosophy
  * 				- migration to the GScaleSpace package
  * 				2.1 18 Nov 2012
@@ -40,8 +41,7 @@ import dsp.Conv;
  * 				1.0	 8 Nov 2012
  *   
  * 
- * @author Dimiter Prodanov
- * 		  IMEC
+ * @author Dimiter Prodanov,IMEC , Sumit Kumar Vohra
  *
  *
  * @contents

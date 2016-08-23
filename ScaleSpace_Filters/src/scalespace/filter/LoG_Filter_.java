@@ -40,7 +40,8 @@ import activeSegmentation.IFilter;
 import dsp.Conv;
 
 /**
- * @version 	1.1	14 Oct 2013
+ * @version 	1.2 23 Aug 2016
+ *              1.1	14 Oct 2013
  * 				- moved contratAdjust -> Conv
  * 				- changed brightness adjustment factor to sigma^2		
  * 				1.1 	18 Jul 2013
@@ -51,8 +52,7 @@ import dsp.Conv;
  * 				
  *   
  * 
- * @author Dimiter Prodanov
- * 		  IMEC
+ * @author Dimiter Prodanov IMEC , Sumit Kumar Vohra
  *
  *
  * @contents

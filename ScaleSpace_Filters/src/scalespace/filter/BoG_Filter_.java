@@ -40,7 +40,8 @@ import activeSegmentation.IFilter;
 import dsp.Conv;
 
 /**
- * @version 	1.5		date 23 Sept 2013
+ * @version 	1.6    23 Aug 2016
+ *              1.5		date 23 Sept 2013
  *				- isotropic correction
  * 				1.0		date 23 Jul 2013 
  * 				Based on Mexican_Hat_Filter v 2.2

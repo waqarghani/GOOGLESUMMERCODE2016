@@ -30,13 +30,13 @@ import activeSegmentation.IFilter;
 import dsp.Conv;
 
 /**
- * @version 	1.1 27 Jun 2015
+ * @version 	1.2 23 Aug 2016
+ *              1.1 27 Jun 2015
  * 				1.0  6 Oct 2014 
  * 				
  *   
  * 
- * @author Dimiter Prodanov
- * 		  IMEC
+ * @author Dimiter Prodanov, IMEC , Sumit Kumar Vohra 
  *
  *
  * @contents
