@@ -9,9 +9,11 @@ public class Common {
 	public static final String JAR=".jar";
 	public static final String DOTCLASS=".class";
 	public static final String IFILTER="IFilter";
+	public static final String TIFFORMAT=".tif";
 	public static final String INSTANCE_NAME="segment";
-	public static int WORKLOAD = 10000;
+	public static Integer WORKLOAD = 100000000;
 	public static int DEFAULT_CLASSES=2;
+	public static final String FILTERRESULT="Classification result";
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
 	public static final String ENABLED="Enabled";
 	public static final String DISABLED="Disabled";
