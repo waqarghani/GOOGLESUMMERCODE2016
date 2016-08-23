@@ -123,6 +123,7 @@ public class Weka_Segmentation_ implements PlugIn {
 		String home = "C:\\Program Files\\ImageJ\\plugins\\activeSegmentation\\";
 		//String path = "C://Users//HP//Desktop//DataImages//aav_samples//json//";
 		try {
+			if(showSettingsDialog()){
 
 			IDataManager dataManager= new DataManagerImp();
 			dataManager.setPath(path);
@@ -130,19 +131,22 @@ public class Weka_Segmentation_ implements PlugIn {
 			if(dataManager.getOriginalImage()!=null){
 				trainingImage= dataManager.getOriginalImage();
 			}
-			else
+			else{
 			getImage();
+			dataManager.setOriginalImage(trainingImage);
+				}
 			IFilterManager filterManager=new FilterManager(dataManager, home);
 			IEvaluation evaluation= new EvaluationMetrics();
 			IFeatureManager featureManager = new FeatureManager(
 					trainingImage.getImageStack().getSize(),2,dataManager);
-			featureManager.addFeatures(new FeatureExtraction(filterManager,trainingImage.duplicate()));
+			featureManager.addFeatures(new FeatureExtraction(filterManager,dataManager.getOriginalImage()));
 
 			ILearningManager  learningManager= new ClassifierManager(dataManager);
 			GuiController guiController= new GuiController(filterManager, featureManager, learningManager,dataManager);
 			guiController.setMetadata(defaultValue[0], defaultValue[1], defaultValue[2]);
 			Gui gui= new Gui(guiController);
 			gui.showGridBagLayoutDemo();
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
