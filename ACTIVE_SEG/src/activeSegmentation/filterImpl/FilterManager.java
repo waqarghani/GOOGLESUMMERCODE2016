@@ -101,10 +101,7 @@ public class FilterManager implements IFilterManager {
 			}
 
 		}
-
 		ClassLoader classLoader= FilterManager.class.getClassLoader();
-		//IJ.log("IN FILTER");
-
 		for(String plugin: classes){		
 			Class<?>[] classesList=(classLoader.loadClass(plugin)).getInterfaces();
 			for(Class<?> cs:classesList){
@@ -121,7 +118,6 @@ public class FilterManager implements IFilterManager {
 
 
 	public void applyFilters(ImagePlus image){
-		//checkColorFeatures(image);
 		originalImage=image.duplicate();
 		System.out.println(originalImage.getImageStackSize());
 		for(int i=1; i<=originalImage.getImageStackSize(); i++){
@@ -129,19 +125,12 @@ public class FilterManager implements IFilterManager {
 			for(IFilter filter: filterMap.values()){
 				if(filter.isEnabled()){
 					ImageStack featureStack= filter.applyFilter(originalImage.getImageStack().getProcessor(i));
-					//new ImagePlus("temp", featureStack).show();
 					tempStack.add(featureStack);
-					//	new ImagePlus(" stack", featureStack).show();
 				}
 
 			}
-
-			//System.out.println("temp size"+tempStack.size());
-
 			featurStackMap.put(i, combineStacks(tempStack));
-
 		}
-
 
 	}
 
@@ -151,11 +140,8 @@ public class FilterManager implements IFilterManager {
 	{
 		ImageStack finalStack=new ImageStack(imageStackList.get(0).getWidth(),imageStackList.get(0).getHeight());
 		for(ImageStack stack: imageStackList){
-
 			for(int i=1; i<=stack.getSize(); i++){
-
 				finalStack.addSlice(stack.getSliceLabel(i), stack.getProcessor(i));
-
 			}
 		}
 
@@ -172,11 +158,8 @@ public class FilterManager implements IFilterManager {
 						featurStackMap.get(i).getProcessor(c));	
 			}
 		}
-
-		finalImage = new ImagePlus("Classification result", classified);
+		finalImage = new ImagePlus(Common.FILTERRESULT, classified);
 		finalImage.setDimensions(numChannels, originalImage.getImageStack().getSize(), originalImage.getNFrames());
-		System.out.println(originalImage.getNSlices());
-		System.out.println(originalImage.getNFrames());
 		if (originalImage.getImageStack().getSize()*originalImage.getNFrames() > 1)
 			finalImage.setOpenAsHyperStack(true);
 
@@ -222,14 +205,11 @@ public class FilterManager implements IFilterManager {
 
 
 
-	// Install plugins located in JAR files. 
 	private  List<String> installJarPlugins(String home) throws IOException {
-
 		List<String> classNames = new ArrayList<String>();
 		ZipInputStream zip = new ZipInputStream(new FileInputStream(home));
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
 			if (!entry.isDirectory() && entry.getName().endsWith(Common.DOTCLASS)) {
-				// This ZipEntry represents a class. Now, what class does it represent?
 				String className = entry.getName().replace('/', '.'); // including ".class"
 				classNames.add(className.substring(0, className.length() - Common.DOTCLASS.length()));
 			}
