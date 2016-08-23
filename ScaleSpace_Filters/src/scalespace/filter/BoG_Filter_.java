@@ -49,8 +49,7 @@ import dsp.Conv;
  * 				
  *   
  * 
- * @author Dimiter Prodanov
- * 		  IMEC
+ * @author Dimiter Prodanov IMEC  & Sumit Kumar Vohra
  *
  *
  * @contents
