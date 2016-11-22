@@ -203,10 +203,10 @@ public class FeatureExtraction implements IFeature {
 		// Set the index of the class attribute
 		testingData.setClassIndex(filterManager.getNumOfFeatures());
 
+		for( int y = 0; y < originalImage.getHeight(); y++ )				
+		{
 		for( int x = 0; x < originalImage.getWidth(); x++ ){
-			for( int y = 0; y < originalImage.getHeight(); y++ )				
-			{
-
+			
 				testingData.add( filterManager.createInstance(x, y, 0, sliceNum) );
 				
 			}		

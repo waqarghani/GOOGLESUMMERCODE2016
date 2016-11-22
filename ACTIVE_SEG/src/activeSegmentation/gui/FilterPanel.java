@@ -103,18 +103,7 @@ public class FilterPanel implements Runnable {
 		panel.setLayout(null);
 		panel.setFont(Common.FONT);
 
-		Set<String> filters= filterManager.getFilters();  
-		System.out.println(filters.size());
-		int filterSize=1;
-		for(String filter: filters){
-			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
-					filterManager.getFilterImage(filter), 
-					filterSize, filters.size(),filter, filterManager.isFilterEnabled(filter)));
-			filterSize++;
-
-		}
-
-
+        loadFilters();
 		pane.setSize(600, 300);
 		filterList.addMouseListener(mouseListener);
 		JScrollPane scrollPane = Util.addScrollPanel(filterList,null);
@@ -134,9 +123,25 @@ public class FilterPanel implements Runnable {
 		frame.setVisible(true);
 	}
 
+	
+	private void loadFilters(){
+		Set<String> filters= filterManager.getFilters();  
+		System.out.println(filters.size());
+		int filterSize=1;
+		for(String filter: filters){
+			if(filterManager.isFilterEnabled(filter)){
+			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
+					filterManager.getFilterImage(filter), 
+					filterSize, filters.size(),filter));
+			filterSize++;
+			}
+
+		}
+		
+	}
 
 	private JPanel createTab( Map<String , String> settingsMap, Image image, 
-			int size, int maxFilters,String filter, boolean enabled) {
+			int size, int maxFilters,String filter) {
 		JPanel p = new JPanel();
 		p.setLayout(null);
 		int  y=10;
@@ -168,10 +173,8 @@ public class FilterPanel implements Runnable {
 		textMap.put(filter, jtextList);
 		JButton button= new JButton();
 		ActionEvent event = new ActionEvent( button,1 , filter);
-		if(enabled)		
 			addButton( button,Common.ENABLED, null, 480,220 , 50, 20,p ,event, Color.GREEN);
-		else
-			addButton( button,Common.DISABLED, null, 480,220 , 50, 20,p ,event, Color.RED );
+		
 
 		return p;
 	}
@@ -186,18 +189,9 @@ public class FilterPanel implements Runnable {
 			if(event.getActionCommand()== filter){
 
 				filterManager.enableFilter(filter);
-				Color	color=((Component)event.getSource()).getBackground();
-				if(color == Color.RED){
-					((JButton)event.getSource()).setBackground(Color.GREEN);
-					((JButton)event.getSource()).setText(Common.ENABLED);
-				}
-				else{
-					((JButton)event.getSource()).setBackground(Color.RED);
-					((JButton)event.getSource()).setText(Common.DISABLED);
-				}
-
-				//pane.remove(pane.getSelectedIndex());
-				pane.setEnabledAt(pane.getSelectedIndex(), false);
+				System.out.println(filter);
+				pane.removeAll();
+				loadFilters();
 				updateFiterList();
 			}
 		}
@@ -284,10 +278,11 @@ public class FilterPanel implements Runnable {
 				int index = theList.getSelectedIndex();
 				if (index >= 0) {
 					String item =theList.getSelectedValue().toString();
-					String[] arr= item.split(" ");
-					int classId =filterList.getSelectedIndex();
 					String filter=(String)filterList.getSelectedValue();
-					pane.setEnabledAt(classId, true);
+					filterManager.enableFilter(filter);
+					pane.removeAll();
+					loadFilters();
+					updateFiterList();
 					
 				}
 			}
