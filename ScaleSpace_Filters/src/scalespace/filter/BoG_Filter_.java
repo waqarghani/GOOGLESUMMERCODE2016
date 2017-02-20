@@ -154,7 +154,7 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 	public ImageStack applyFilter(ImageProcessor ip){
 
 		imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
-		for (int sigma=sz; sigma<= max_sz; sigma +=2){		
+		for (int sigma=sz; sigma<= max_sz; sigma *=2){		
 			GScaleSpace sp=new GScaleSpace(sigma);
 			ImageProcessor fp=filter(ip.duplicate(), sp,sep, isiso);
 			imageStack.addSlice( FILTER_KEY+"_" + sigma, fp);		

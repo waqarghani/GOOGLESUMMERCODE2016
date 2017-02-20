@@ -151,7 +151,7 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	public ImageStack applyFilter(ImageProcessor ip){
 
 		imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
-		for (int sigma=sz; sigma<= max_sz; sigma +=2){		
+		for (int sigma=sz; sigma<= max_sz; sigma *=2){		
 			GScaleSpace sp=new GScaleSpace(sigma);
 			ImageProcessor fp=filter(ip.duplicate(), sp,sep, scnorm);
 			imageStack.addSlice( FILTER_KEY+"_" + sigma, fp);		
