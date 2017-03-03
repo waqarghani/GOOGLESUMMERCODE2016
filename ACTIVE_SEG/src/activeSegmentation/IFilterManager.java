@@ -44,24 +44,109 @@ import ij.ImageStack;
  */
 public interface IFilterManager {
 
+	/**
+	 * This method will load list of filter from particular
+	 * directory, It can load filters from jar file 
+	 * @param diretory of filter
+	 *
+	 */
 	public  void loadFilters(String home)throws InstantiationException, IllegalAccessException, 
 	IOException, ClassNotFoundException;
+	/**
+	 * This method will apply list of filters on particular 
+	 * image 
+	 * @param image on which filter is applied
+	 *
+	 */
 	public void applyFilters(ImagePlus image);
+	/**
+	 * This method will set of filters loaded by the plugin  
+	 * 
+	 * @return set of loaded or available filters
+	 *
+	 */
 	public Set<String> getFilters();
+	/**
+	 * This method will give the setting of the particular filters 
+	 * 
+	 * @param key of the filter
+	 *
+	 */
 	public Map<String,String> getFilterSetting(String key);
+	/**
+	 * This method will update the setting of the particular filters 
+	 * given by key
+	 * @param key of the filter
+	 *@param  updated setting map
+	 */
 	public boolean updateFilterSetting(String key, Map<String,String> settingsMap);
+	
 	public int getNumOfFeatures() ;
 	public String getLabel(int index);
 	public ImageStack getImageStack(int sliceNum);
+	/**
+	 * This method will create pixel level training  
+	 * instance. It might be changed in future to handle other feature type
+	 *@param xlocation of pixel
+	 *@param  ylocation of Pixel
+	 *@param class of pixel
+	 *@param slice of Image
+	 *@return Instance of pixel
+	 */
 	public Instance createInstance(int x, int y, int classIndex, int sliceNum);
+	/**
+	 * This method will return number of slices
+	 * @return return number of slices
+	 */
 	public int getOriginalImageSize();
+	/**
+	 * This method will return processed image by particular filter
+	 * @param  filter key
+	 * @return extracted Image
+	 */
 	public Image getFilterImage(String key);
+	/**
+	 * This method will change filter settings to default
+	 * @param  filter key
+	 * @return success flag
+	 */
 	public boolean setDefault(String key);
+	/**
+	 * This method is to check whether filter is enabled or not
+	 * @param  filter key
+	 * @return success flag
+	 */
 	public boolean isFilterEnabled(String key);
+	/**
+	 * This method is to enable the filter
+	 * @param  filter key
+	 */
 	public void enableFilter(String key);
+	
+	/**
+	 * 
+	 * @return  classified image
+	 */
 	public ImagePlus getFinalImage();
+	
+	/**
+	 * 
+	 * @param  set classified image
+	 */
 	public void setFinalImage(ImagePlus finalImage);
+	/**
+	 * 
+	 *   set filters Meta Data using MetaInfo
+	 */
 	public void setFiltersMetaData();
+	/**
+	 * 
+	 *   save filters Meta data using MetaInfo
+	 */
 	public void saveFiltersMetaData();
+	/**
+	 * 
+	 *   @return give original training Image
+	 */
 	public ImagePlus getOriginalImage();
 }
