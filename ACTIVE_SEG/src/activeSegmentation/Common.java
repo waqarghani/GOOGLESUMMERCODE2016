@@ -30,7 +30,7 @@ import java.awt.Font;
  */
 public class Common {
 
-   // to check the class
+   // to check the class 
 	public static final String CLASS="class";
 	 // to check the .jar extension
 	public static final String JAR=".jar";
