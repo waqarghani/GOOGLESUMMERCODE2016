@@ -12,7 +12,8 @@ import weka.core.Instances;
  *
  * @contents
  * Interface for Dataset required for Learning, 
- * It is generic interface for dataset
+ * It is generic interface for dataset , User can include weka, Meka dataset 
+ * using this interface 
  * 
  * 
  * @license This library is free software; you can redistribute it and/or

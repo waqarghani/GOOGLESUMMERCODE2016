@@ -16,7 +16,7 @@ import java.util.Vector;
  *
  * @contents
  * Interface for feature type like segmentation, classification or
- * objection Detection
+ * objection Detection. This is also in development stage
  * 
  * 
  * @license This library is free software; you can redistribute it and/or

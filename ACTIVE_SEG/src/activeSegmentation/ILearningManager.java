@@ -33,9 +33,27 @@ import java.util.List;
 
 public interface ILearningManager {
 
+	/**
+	 * This method will set the particular type of classifier for learing like 
+	 * Support Vector Machines, Deep Learning etc
+	 * given by key
+	 * @param classifier 
+	 */
 	public void setClassifier(Object classifier);
+	/**
+	 * This method will train the classifier 
+	 * 
+	 */
 	public void trainClassifier();
+	/**
+	 * This method will save the training metadata using MetaInfo
+	 * 
+	 */
 	public void saveLearningMetaData();
+	/**
+	 * This method will load the training metadata using MetaInfo
+	 * 
+	 */
 	public void loadLearningMetaData();
 	public  List<double[]> applyClassifier(List<IDataSet> testDataSet);
 	

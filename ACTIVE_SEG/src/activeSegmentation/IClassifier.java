@@ -13,7 +13,8 @@ import weka.core.Instance;
  *
  *
  * @contents
- * Interface for classifier, It will allow to use any type of classifier in our system
+ * Interface for classifier, It will allow to use any 
+ * type of classifier in our system
  * 
  * 
  * @license This library is free software; you can redistribute it and/or

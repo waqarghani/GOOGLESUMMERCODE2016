@@ -17,7 +17,7 @@ import ij.gui.Roi;
  *
  * @contents
  * Feature manager is responsible for loading , saving Features, It is also responsible 
- * for storing , updating ROIS
+ * for storing , Updating ROIS
  * 
  * 
  * @license This library is free software; you can redistribute it and/or

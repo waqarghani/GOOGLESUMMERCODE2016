@@ -24,7 +24,7 @@ import ij.ImageStack;
  *
  *
  * @contents
- * Interface for Filter manager, It is responsible of doing all the Saving , loading
+ * Interface for Filter manager, It is responsible of doing all the Saving, loading
  * the filter
  * 
  * 

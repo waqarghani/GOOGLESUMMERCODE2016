@@ -45,7 +45,7 @@ public interface IDataManager {
 	public boolean writeDataToARFF(Instances data, String filename);
 	
 	/**
-	 * This method is used to read the  training and text instance from directory
+	 * This method is used to read the training and text instance from directory
 	 * It will return the genric Idataset instance 
 	 * @param  filename
 	 * @return IDataset
