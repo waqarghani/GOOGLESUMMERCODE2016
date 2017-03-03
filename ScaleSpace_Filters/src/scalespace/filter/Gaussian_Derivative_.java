@@ -6,17 +6,13 @@ import ij.ImageStack;
 import ij.Prefs;
 import ij.gui.GenericDialog;
 import ij.gui.DialogListener;
-import ij.gui.Roi;
-import ij.plugin.filter.Convolver;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
-import ij.process.Blitter;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ijaux.scale.*;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.util.*;
 

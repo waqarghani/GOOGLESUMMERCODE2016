@@ -1,23 +1,18 @@
 package scalespace.filter;
 import ij.IJ;
-import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
 import ij.gui.GenericDialog;
 import ij.gui.DialogListener;
 import ij.measure.Calibration;
-import ij.plugin.filter.Convolver;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
-import ij.process.Blitter;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import ij.process.LUT;
 import ijaux.scale.*;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 
 import org.jfree.chart.ChartFactory;
@@ -36,7 +31,7 @@ import dsp.Conv;
  * 				
  *   
  * 
- * @author Dimiter Prodanov, IMEC , Sumit Kumar Vohra 
+ * @author Dimiter Prodanov, IMEC , Sumit Kumar Vohra , Kuleuven
  *
  *
  * @contents
@@ -73,7 +68,6 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 
 	private static int sz= Prefs.getInt(LEN, 2);
 	private  int max_sz= Prefs.getInt(MAX_LEN, 8);
-	//private static float sigma=(float) Prefs.getDouble(SIGMA, 2.0f);
 	private boolean isEnabled=true;
 
 	private float[][] kernel=null;
@@ -96,15 +90,15 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	/** The pretty name of the target detector. */
 	private final String FILTER_NAME = "Anisotropic Laplace of Gaussian";
 
+	/** It stores the settings of the Filter. */
 	private Map< String, String > settings= new HashMap<String, String>();
-
+	
+	/** It is the result stack*/
 	private ImageStack imageStack;
 
 	/**
-	 * 
-	 */
-	/* (non-Javadoc)
-	 * @see ij.plugin.filter.PlugInFilter#setup(java.lang.String, ij.ImagePlus)
+	 * This method is to setup the PlugInFilter using image stored in ImagePlus 
+	 * and arguments of filter
 	 */
 	@Override
 	public int setup(String arg, ImagePlus imp) {
@@ -117,8 +111,13 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 
 	final int Ox=0, Oy=1, Oz=2;
 
+	// It is used to check whether to calibiration or not
 	private boolean doCalib = false;
+	/*
+	 * This variable is to calibrate the Image Window
+	 */
 	private Calibration cal=null;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see ij.plugin.filter.PlugInFilter#run(ij.process.ImageProcessor)
@@ -139,7 +138,8 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	}
 
 	/**
-	 * Apply filter to input image (in place)
+	 * 
+	 * This method Apply filter to input image (in place)
 	 * @param inputImage input image
 	 * @param size kernel size (it must be odd)
 	 * @param nAngles number of angles
@@ -157,7 +157,15 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	}
 
 
-	public void filter(ImageProcessor ip,GScaleSpace sp, float sigma){
+	
+	/**
+	 * 
+	 * This method is helper function for both applyFilter and run method
+	 * @param ip input image
+	 * @param sp gaussian scale space
+	 * @param sigma filter sigma
+	 */
+	private void filter(ImageProcessor ip,GScaleSpace sp, float sigma){
 
 		ip.snapshot();
 

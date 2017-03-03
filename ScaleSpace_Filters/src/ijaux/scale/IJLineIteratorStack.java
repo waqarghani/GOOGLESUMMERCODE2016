@@ -1,9 +1,7 @@
 package ijaux.scale;
 
 import ij.ImageStack;
-import ij.process.ImageProcessor;
 
-import java.util.Iterator;
 
 public class IJLineIteratorStack<E> extends IJAbstractLineIterator<E> {
  

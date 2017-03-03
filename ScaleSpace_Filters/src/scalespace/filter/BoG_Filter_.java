@@ -1,20 +1,15 @@
 package scalespace.filter;
 import ij.IJ;
-import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
 import ij.gui.GenericDialog;
 import ij.gui.DialogListener;
-import ij.gui.Roi;
-import ij.measure.Calibration;
-import ij.plugin.filter.Convolver;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.Blitter;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import ij.process.LUT;
 import ijaux.scale.GScaleSpace;
 
 

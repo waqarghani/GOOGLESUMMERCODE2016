@@ -1,7 +1,6 @@
 package dsp;
 
 import ij.IJ;
-import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
@@ -10,16 +9,48 @@ import ijaux.scale.IJLineIteratorStack;
 
 import java.awt.Rectangle;
 
-/*
- *  version 1.1 27 Jun 2015
- */
 
+/**
+ * @version 	1.2 23 Aug 2016
+ *              1.1	14 Oct 2013
+ * 				- moved contratAdjust -> Conv
+ * 				- changed brightness adjustment factor to sigma^2		
+ * 				1.1 	18 Jul 2013
+ * 				- refactoring
+ * 				1.0		05 Feb 2013 
+ * 				Based on Mexican_Hat_Filter v 2.2
+ * 				- common functionality is refactored in a library class
+ * 				
+ *   
+ * 
+ * @author Dimiter Prodanov IMEC , Sumit Kumar Vohra
+ *
+ *
+ * @contents
+ * This is Convolution Library that do different type of convolution
+ * 
+ * 
+ * @license This library is free software; you can redistribute it and/or
+ *      modify it under the terms of the GNU Lesser General Public
+ *      License as published by the Free Software Foundation; either
+ *      version 2.1 of the License, or (at your option) any later version.
+ *
+ *      This library is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *       Lesser General Public License for more details.
+ *
+ *      You should have received a copy of the GNU Lesser General Public
+ *      License along with this library; if not, write to the Free Software
+ *      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 public class Conv {
 	
 	public static boolean debug=false;
 	
 	/**
+	 * It is used for semi-separable convolution
 	 * @param ip
 	 * @param kernx
 	 * @param kern_diff
@@ -51,12 +82,13 @@ public class Conv {
 		ip2.setSnapshotPixels(null);
 		convolveFloat1D(ip2, kern_diff, 1, kern_diff.length); // y direction
 		add(ip2, ipx, ip2.getRoi());
-		//new ImagePlus("roi", ip2).show();
 		ip.setPixels(ip2.getPixels());
 	}
 	
 	
 	/**
+	 * It is used for semi-separable convolution with 
+	 * iteration rather than synchronizion
 	 * @param ip
 	 * @param kernx
 	 * @param kern_diff
@@ -71,15 +103,6 @@ public class Conv {
 		ipx = (FloatProcessor)ip.duplicate();
 		ipx.setRoi(roi);
 		
-		/*synchronized(this) {		
-			ip2 = (FloatProcessor)ip.duplicate();
-			ip2.setRoi(roi);
-			ip2.setSnapshotPixels(ip.getSnapshotPixels());
-			ipx = (FloatProcessor)ip2.duplicate();
-			ipx.setRoi(roi);
-			ipx.setSnapshotPixels(ip.getSnapshotPixels());
-		}
- */
 		convolveFloat1D(ipx, kern_diff, Ox); // x direction
 		//ipx.setSnapshotPixels(null);
 		convolveFloat1D(ipx, kernx, Oy); // y direction
@@ -161,6 +184,7 @@ public class Conv {
 	
 	
 	/**
+	 * It is used to convolve 3D Stack
 	 * @param xstack
 	 * @param kernx
 	 * @param kern_diffx
@@ -376,125 +400,7 @@ public class Conv {
 	
 	public final static int Ox=0, Oy=1, Oz=2;
 	
-	/*public void putLine(ImageStack is, float[] line, int k, int dir) {
-		final int width=is.getWidth();
-		final int height=is.getHeight();
-		final int depth=is.getSize();
- 
-		switch (dir) {
-			case Ox: {
-				System.out.println("puting line in Ox");
-				final int lineno=height*depth;
-				int offset=k*width;
-	 
-				int z=offset/(width*height);
-				//System.out.println("max lines "+lineno);
-				//System.out.println("z :"+z);
-				if (z>=0 && z<lineno) {
-					Object[] aux=is.getImageArray();
-					try {
-						if (aux[z]!=null)
-							System.arraycopy(line, 0, aux[z], offset % height , width);
-					 
-						//System.out.println(":"+offset/z);
-					} catch (Exception e) {
-						System.out.println("offset"+(offset % height));
-						e.printStackTrace();
-					}
-				}
-				break;
-			}
-			case Oy: {
-				System.out.println("puting line in  Oy");
-				final int lineno=width*depth;
-				int offset=k*height;
-				k=k % width;
-				//float[] ret=new float[height];
-				int z=offset/(width*height);
-				//System.out.println("max lines "+lineno);
-				//System.out.println("z :"+z);				
-				if (z>=0 && z<lineno) {
-					Object[] aux=is.getImageArray();	
-					try {
-						float[] pixels= (float[])aux[z];
-						if (pixels!=null)
-							for (int y=0; y<height; y++) {
-								pixels[k+y*width]=line[y];	
-								//System.out.print( "("+ k +" " +y +"),");
-							}					
-					} catch (Exception e) {
-						//System.out.println("k "+ k );
-						e.printStackTrace();
-					}
-				}
-				break;
-			}
-			case Oz:{
-				System.out.println("puting line in Oz");
-				final int lineno=width*height;
-				//System.out.println("max lines "+lineno);
-				//float[] ret=new float[depth];
-				
-				if (k>=0 && k<lineno) {
-					Object[] aux=is.getImageArray();					 
-					for (int z=0; z<depth; z++) {
-						try {
-							float[] pixels= (float[])aux[z];
-							if (pixels!=null)
-								pixels[k]=line[z];
-							//System.out.print( "("+ k +" "+ z +"),");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				break;
-			}
-		}
-		
-	}
 	
-	public void putLine(ImageProcessor ip, float[] line, int k, int xdir) {
-		final int width=ip.getWidth();
-		final int height=ip.getHeight();
-		
-		switch (xdir) {
-			case Ox: {
-				System.out.println("puting line in Ox");
-				final int lineno=height;
-				int offset=k*width;
-				int z=offset/(width*height);
-				if (z>=0 && z<lineno) {
-					Object aux=ip.getPixels();
-					try {	 
-						System.arraycopy(line, 0, aux, offset , width);
-						//System.out.println(":"+(offset ));
-					} catch (Exception e) {
-						System.out.println("offset"+(offset));
-						e.printStackTrace();
-					}
-				}
-				break;
-			}
-			case Oy: {
-				System.out.println("puting line in Oy");
-				final int lineno=width;				
-				k=k % width;						
-				if (k>=0 && k<lineno) {				 
-					try {
-						for (int y=0; y<height; y++) {
-							ip.setf(k, y, line[y]);		 
-							//System.out.print( "("+ k +" " +y +"),");
-						}					
-					} catch (Exception e) {
-						//System.out.println("k "+ k );
-						e.printStackTrace();
-					}
-				}
-				break;
-			}
-		}
-	}*/
 	
 	/** Convolves the image <code>ip</code> with a kernel of width 
 	<code>kw</code> and height <code>kh</code>. */
@@ -623,66 +529,6 @@ public class Conv {
 	    return y;
 	}
 	
-	/** Convolves the image <code>ip</code> with a kernel of width 
-	<code>kw</code> and height <code>kh</code>. */
-	/**
-	 * @param ip
-	 * @param kernel
-	 * @param kw
-	 * @param kh
-	 * @param scaled
-	 */
-	/*public void convolveFloat1D(ImageStack is, float[] kernel, int kw, int kh) {
-		int width = is.getWidth();
-		int height = is.getHeight();
-		int depth=is.getSize();
-		Rectangle r = is.getRoi();
-		int x1 = r.x;
-		int y1 = r.y;
-		int x2 = x1 + r.width;
-		int y2 = y1 + r.height;
-		int uc = kw/2;    
-		int vc = kh/2;
-		float[][] pixels = (float[][])is.getImageArray();
-	 
-		//float[] pixels2 = (float[])is.getPixelsCopy();
-		float[][] pixels2= pixels.clone();
-
-		boolean vertical = kw==1;
-
-		double sum;
-		int offset, i;
-		boolean edgePixel;
-		int xedge = width-uc;
-		int yedge = height-vc;
-		for(int y=y1; y<y2; y++) {
-			for(int x=x1; x<x2; x++) {
-				sum = 0.0;
-				i = 0;
-				if (vertical) {
-					edgePixel = y<vc || y>=yedge;
-					offset = x+(y-vc)*width;
-					for(int v=-vc; v<=vc; v++) {
-						if (edgePixel)
-							sum += getPixel(x+uc, y+v, pixels2, width, height)*kernel[i++];
-						else
-							sum += pixels2[offset+uc]*kernel[i++];
-						offset += width;
-					}
-				} else {
-					edgePixel = x<uc || x>=xedge;
-					offset = x+(y-vc)*width;
-					for(int u = -uc; u<=uc; u++) {
-						if (edgePixel)
-							sum += getPixel(x+u, y+vc, pixels2, width, height)*kernel[i++];
-						else
-							sum += pixels2[offset+u]*kernel[i++];
-					}
-				}
-				pixels[x+y*width] = (float)(sum);
-			}
-		}
-	}*/
 	
 	 
 	private float getPixel(int x, int y, float[] pixels, int width, int height) {
