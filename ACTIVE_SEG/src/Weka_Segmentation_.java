@@ -61,66 +61,21 @@ public class Weka_Segmentation_ implements PlugIn {
 
 
 	}
+	
 	/**
-	 * Main method to test and debug the Active Weka
-	 * Segmentation GUI
-	 *  
-	 * @param args
+	 * This method will be an entry point into the Plugin. All the
+	 * dependency are inject through this class. This method is written according to 
+	 * ImageJ plugin loading requirements
+	 * @param parameter for imageJ
+	 *
 	 */
-	public static void main(String[] args) {
-		try {
-
-			String home = "C:\\Program Files\\ImageJ\\plugins\\activeSegmentation\\";
-			File f=new File(args[0]);
-
-			if (f.exists() && f.isDirectory() ) {
-				System.setProperty("plugins.dir", args[0]);
-				new ImageJ();
-				if(showSettingsDialog()){
-
-					IDataManager dataManager= new DataManagerImp();
-					dataManager.setPath(path);
-					dataManager.getMetaInfo();
-					Weka_Segmentation_ test_Gui_ = new Weka_Segmentation_();
-					if(dataManager.getOriginalImage()!=null){
-						test_Gui_.setTrainingImage(dataManager.getOriginalImage());
-					}
-					else{
-					test_Gui_.getImage();
-					dataManager.setOriginalImage(test_Gui_.getTrainingImage());
-					}
-					IFilterManager filterManager=new FilterManager(dataManager, home);
-
-					IEvaluation evaluation= new EvaluationMetrics();
-					IFeatureManager featureManager = new FeatureManager(
-							test_Gui_.getTrainingImage().getImageStackSize(),2,dataManager);
-					ILearningManager  learningManager= new ClassifierManager(dataManager);
-					featureManager.addFeatures(new FeatureExtraction(filterManager,dataManager.getOriginalImage()));
-
-					GuiController guiController= new GuiController(filterManager, featureManager,
-							learningManager,dataManager);
-					guiController.setMetadata(defaultValue[0], defaultValue[1], defaultValue[2]);
-					Gui gui= new Gui(guiController);
-					gui.showGridBagLayoutDemo();
-				}
-				//	filterMetadata.saveFilters();
-
-
-			} else {
-				throw new IllegalArgumentException();
-			}
-		}
-		catch (Exception ex) {
-			IJ.log("plugins.dir misspecified\n");
-			ex.printStackTrace();
-		}
-
-	}
-
 	@Override
 	public void run(String arg0) {
-		String home = "C:\\Program Files\\ImageJ\\plugins\\activeSegmentation\\";
-		try {
+		IJ.log(System.getProperty("plugins.dir"));
+		//System.out.println(System.getProperty("plugins.dir"));
+		String home = System.getProperty("plugins.dir")+"\\plugins\\activeSegmentation\\";
+		
+			try {
 			if(showSettingsDialog()){
 
 			IDataManager dataManager= new DataManagerImp();
@@ -134,7 +89,7 @@ public class Weka_Segmentation_ implements PlugIn {
 			dataManager.setOriginalImage(trainingImage);
 				}
 			IFilterManager filterManager=new FilterManager(dataManager, home);
-			IEvaluation evaluation= new EvaluationMetrics();
+			//IEvaluation evaluation= new EvaluationMetrics();
 			IFeatureManager featureManager = new FeatureManager(
 					trainingImage.getImageStack().getSize(),2,dataManager);
 			featureManager.addFeatures(new FeatureExtraction(filterManager,dataManager.getOriginalImage()));
@@ -160,7 +115,7 @@ public class Weka_Segmentation_ implements PlugIn {
 	 *
 	 * @return false when canceled
 	 */
-	public static boolean showSettingsDialog()
+	private static boolean showSettingsDialog()
 	{
 		List<String> settings= new ArrayList<String>();
 		settings.add("FILTER");
@@ -194,13 +149,12 @@ public class Weka_Segmentation_ implements PlugIn {
 	}
 
 	private static void loadSessionFile(){
-		//get selected pixel
+		//get loaded file
 		OpenDialog od = new OpenDialog("Choose Session file", OpenDialog.getLastDirectory(), "data.json");
 		if (od.getFileName()==null)
 			return ;
 
 		path=od.getDirectory();
-		//metaFileName= od.getFileName();
 
 	}
 	public ImagePlus getTrainingImage() {
