@@ -34,8 +34,6 @@ import activeSegmentation.learning.ClassifierManager;
 
 
 
-
-
 public class Weka_Segmentation_ implements PlugIn {
 
 	private ImagePlus trainingImage;
@@ -73,7 +71,7 @@ public class Weka_Segmentation_ implements PlugIn {
 	public void run(String arg0) {
 		IJ.log(System.getProperty("plugins.dir"));
 		//System.out.println(System.getProperty("plugins.dir"));
-		String home = System.getProperty("plugins.dir")+"\\plugins\\activeSegmentation\\";
+		String home = System.getProperty("plugins.dir");
 		
 			try {
 			if(showSettingsDialog()){
@@ -164,6 +162,11 @@ public class Weka_Segmentation_ implements PlugIn {
 	public void setTrainingImage(ImagePlus trainingImage) {
 		this.trainingImage = trainingImage;
 	}
-
+	
+	public static void main(String[] args) {
+	       // new ij.ImageJ();
+		   
+	        new Weka_Segmentation_().run("");
+	}
 
 }

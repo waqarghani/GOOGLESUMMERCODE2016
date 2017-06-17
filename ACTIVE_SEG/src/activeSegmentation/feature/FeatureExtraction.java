@@ -149,7 +149,6 @@ public class FeatureExtraction implements IFeature {
 
 	private ArrayList<String> addClasstoHeader(int numClasses,List<String> classLabels){
 		ArrayList<String> classes=null;
-
 			classes = new ArrayList<String>();
 			for(int i = 0; i < numClasses ; i ++)
 			{			
@@ -159,7 +158,6 @@ public class FeatureExtraction implements IFeature {
 						classes.add(classLabels.get(i));
 				}
 			}			
-		
 		return classes;
 
 	}

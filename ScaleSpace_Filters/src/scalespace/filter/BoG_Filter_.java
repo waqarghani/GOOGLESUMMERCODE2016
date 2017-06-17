@@ -22,7 +22,6 @@ import ijaux.scale.GScaleSpace;
 
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 
 import org.jfree.chart.ChartFactory;
@@ -31,6 +30,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import activeSegmentation.FeatureType;
 import activeSegmentation.IFilter;
 import dsp.Conv;
 
@@ -68,11 +68,13 @@ import dsp.Conv;
 
  
 public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilter {
-
+    @SuppressWarnings("unused")
 	private PlugInFilterRunner pfr=null;
 
 	final int flags=DOES_ALL+SUPPORTS_MASKING+KEEP_PREVIEW;
 	private String version="1.5";
+	@SuppressWarnings("unused")
+
 	private int nPasses=1;
 	private int pass;
 	
@@ -92,7 +94,8 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 
 	public boolean isFloat=false;
 	
-	private boolean hasRoi=false;
+	@SuppressWarnings("unused")
+    private boolean hasRoi=false;
 	
 	
 	/* NEW VARIABLES*/

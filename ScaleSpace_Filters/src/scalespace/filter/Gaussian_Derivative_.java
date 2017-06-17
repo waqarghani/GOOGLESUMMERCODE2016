@@ -22,6 +22,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import activeSegmentation.FeatureType;
 import activeSegmentation.IFilter;
 import dsp.Conv;
 
@@ -60,12 +61,18 @@ import dsp.Conv;
  */
 public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListener,IFilter {
 
-	private PlugInFilterRunner pfr=null;
+    @SuppressWarnings("unused")
+
+    private PlugInFilterRunner pfr=null;
 
 	final int flags=DOES_ALL+CONVERT_TO_FLOAT+SUPPORTS_MASKING+KEEP_PREVIEW;
 	private String version="2.0";
+	   @SuppressWarnings("unused")
+
 	private int nPasses=1;
-	private int pass=0;
+	    @SuppressWarnings("unused")
+
+	   private int pass=0;
 	public final static String SIGMA="LOG_sigma", LEN="G_len" ,MAX_LEN="G_MAX", 
 			ISSEP="G_SEP", GN="G_Xn", GM="G_Yn", SCNORM="G_SCNORM";
 

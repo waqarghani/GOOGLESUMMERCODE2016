@@ -36,6 +36,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import activeSegmentation.FeatureType;
 import activeSegmentation.IFilter;
 import dsp.Conv;
 
@@ -76,11 +77,14 @@ import dsp.Conv;
 
 
 public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter {
+    @SuppressWarnings("unused")
 
 	private PlugInFilterRunner pfr=null;
 
 	private final int flags=DOES_ALL+SUPPORTS_MASKING+KEEP_PREVIEW;
 	private String version="2.1";
+    @SuppressWarnings("unused")
+
 	private int nPasses=1;
 
 	public static boolean debug=IJ.debugMode;

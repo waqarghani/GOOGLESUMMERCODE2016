@@ -56,11 +56,14 @@ import dsp.Conv;
 
 
 public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilter {
+    @SuppressWarnings("unused")
 
 	private PlugInFilterRunner pfr=null;
 
 	final int flags=DOES_ALL+KEEP_PREVIEW+ NO_CHANGES;
 	private String version="2.0";
+    @SuppressWarnings("unused")
+
 	private int nPasses=1;
 	private int pass;
 
@@ -78,6 +81,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	public boolean fulloutput=false;
 
 	private boolean isFloat=false;
+    @SuppressWarnings("unused")
 
 	private boolean hasRoi=false;
 
@@ -152,7 +156,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 			GScaleSpace sp=new GScaleSpace(sigma);
 			filter(ip.duplicate(), sp,sigma);
 		}
-
+		
 		return imageStack;
 	}
 

@@ -28,7 +28,7 @@ public interface IFilter {
 	 * 
 	 * @return String
 	 */	
-	public ImageStack applyFilter(ImageProcessor imageProcessor);
+	public <T> T applyFilter(ImageProcessor imageProcessor);
 	/**
 	 * Returns a unique key of filter
 	 * 
