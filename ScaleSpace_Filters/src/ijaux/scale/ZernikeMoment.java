@@ -2,9 +2,6 @@ package ijaux.scale;
 
 import java.util.ArrayList;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 
 public class ZernikeMoment {
@@ -21,25 +18,22 @@ public class ZernikeMoment {
 	}
 	
 	public double calculateRadial(double r, int m, int n, Zps zps){
-		//Check if radial value for m and n already present.
-		if(zps.get(m, n)!=0){
-			return zps.get(m, n);
-		}
-		if(n==0&&m==0){
-			return 1;
-		}
-		else if(n<m || (n-m)%2!=0)
+		
+		if(n<m || n<0 || m<0)
 			return 0;
-		else{
-			if(m-1<0)
-				return ((2*r*calculateRadial(r,m+1,n-1,zps))-calculateRadial(r,m,n-2,zps));
-			else if(n==m){
-				return (r*calculateRadial(r,m-1,n-1,zps));
-			}else{
-				return (r*(calculateRadial(r,m-1,n-1,zps)+calculateRadial(r,m+1,n-1,zps))-calculateRadial(r,m,n-2,zps));
-			}
-				
-		}
+		
+		//Check if radial value for m and n already present.
+		if(zps.get(m, n)!=0)
+			return zps.get(m, n);
+		
+		if(n==0&&m==0)
+			return 1;
+		
+		if((n-m)%2==0)
+			return (r*(calculateRadial(r,Math.abs(m-1),n-1,zps)+calculateRadial(r,m+1,n-1,zps))-calculateRadial(r,m,n-2,zps));	
+		
+		else
+			return 0;
 	}
 	
 	public void calculateRadius(ImageProcessor ip){

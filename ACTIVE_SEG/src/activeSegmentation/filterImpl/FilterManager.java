@@ -102,9 +102,11 @@ public class FilterManager implements IFilterManager {
 			else if (plugin.endsWith(Common.DOTCLASS)){
 				classes.add(plugin);
 			}
+			break;
 		}
 		ClassLoader classLoader= FilterManager.class.getClassLoader();
 		for(String plugin: classes){
+			System.out.println(plugin);
 			Class<?>[] classesList=(classLoader.loadClass(plugin)).getInterfaces();
 			for(Class<?> cs:classesList){
 				if(cs.getSimpleName().equals(Common.IFILTER)){
