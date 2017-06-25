@@ -53,7 +53,7 @@ public class Test_Zernike_Radial_Poly {
 		int ind = 0;
 		radial_manual_values = new double[2500];
 		try {
-			BufferedReader br = new BufferedReader(new FileReader("/home/mg/zernike_radial_values"));
+			BufferedReader br = new BufferedReader(new FileReader("../other_res/Zr"));
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		    	if(!line.isEmpty()){
@@ -105,7 +105,7 @@ public class Test_Zernike_Radial_Poly {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		String path="/home/mg/Downloads/test_image.tif";
+		String path="../other_res/test_image.tif";
     	ImagePlus imp=IJ.openImage(path);
     	ImageConverter ic=new ImageConverter(imp);
     	ic.convertToGray8();
