@@ -41,8 +41,8 @@ public class Test_Zernike_Radial_Poly {
         		final int x = j-centerX;
         		final int y = i-centerY;
         		final double r = Math.sqrt((x * x) + (y * y)) / radius;
-        		zps[index]=new Zps(order,degree);
-        		radial_exp_values[index] = zm.calculateRadial(r, order, degree, zps[index]);
+        		//zps[index]=new Zps(order,degree);
+        		radial_exp_values[index] = zm.calculateRadial(r, order, degree, null);
         		index++;
         	}
         }
@@ -105,7 +105,7 @@ public class Test_Zernike_Radial_Poly {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		String path="../other_res/test_image.tif";
+		String path="../other_res/test_image3.tiff";
     	ImagePlus imp=IJ.openImage(path);
     	ImageConverter ic=new ImageConverter(imp);
     	ic.convertToGray8();
