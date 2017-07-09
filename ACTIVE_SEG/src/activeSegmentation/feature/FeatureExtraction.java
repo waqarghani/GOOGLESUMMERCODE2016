@@ -91,7 +91,7 @@ public class FeatureExtraction implements IFeature {
 			IJ.log("# of pixels selected as " + classLabels.get(classIndex) + ": " +nl);
 		}
 
-
+		System.out.println(trainingData+"GII");
 
 	}
 
@@ -126,7 +126,7 @@ public class FeatureExtraction implements IFeature {
 			{
 
 				if(poly.contains(new Point(x0, y0))){
-					trainingData.add( filterManager.createInstance(x, y, classIndex, sliceNum) );
+					trainingData.add( filterManager.createInstance(featureName, x, y, classIndex, sliceNum) );
 				}				
 				// increase number of instances for this class
 				numInstances ++;
@@ -205,7 +205,7 @@ public class FeatureExtraction implements IFeature {
 		{
 		for( int x = 0; x < originalImage.getWidth(); x++ ){
 			
-				testingData.add( filterManager.createInstance(x, y, 0, sliceNum) );
+				testingData.add( filterManager.createInstance(featureName, x, y, 0, sliceNum) );
 				
 			}		
 		}

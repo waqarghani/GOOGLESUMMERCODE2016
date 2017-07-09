@@ -29,7 +29,7 @@ public class Test_Zernike_Radial_Poly {
     // // Array of manually calculated radial polynomial values of given order and degree
     double [] radial_manual_values = null;
     
-	ZernikeMoment zm=new ZernikeMoment(8, 4);
+	ZernikeMoment zm=new ZernikeMoment(8);
 
 	
 	public void extract_radial_exp(ImagePlus imp){

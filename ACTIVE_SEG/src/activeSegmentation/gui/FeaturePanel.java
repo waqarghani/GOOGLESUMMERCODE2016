@@ -77,6 +77,8 @@ public class FeaturePanel extends StackWindow
 	private List<JCheckBox> jCheckBoxList= new ArrayList<JCheckBox>();
 	JPanel imagePanel;
 	JPanel controlsBox;
+	JPanel controlsBoxForClass;
+	JPanel optionBox;
 	private JFrame frame = new JFrame("CONFIGURE");
 	private ImagePlus classifiedImage;
 	Panel all;
@@ -108,6 +110,11 @@ public class FeaturePanel extends StackWindow
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 21, "TRAIN" );
 
+	/** This {@link ActionEvent} is fired when the 'pixel level' button is pressed. */
+	final ActionEvent PIXEL_LEVEL_BUTTON_PRESSED = new ActionEvent( this, 21, "PIXEL LEVEL EXTRACTION" );
+	/** This {@link ActionEvent} is fired when the 'class level' button is pressed. */
+	final ActionEvent CLASS_LEVEL_BUTTON_PRESSED = new ActionEvent( this, 21, "CLASS LEVEL EXTRACTION" );
+
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 23, "Save" );
@@ -126,7 +133,8 @@ public class FeaturePanel extends StackWindow
 	Dimension dimension=new Dimension(100, 25);
 	ImageOverlay resultOverlay;
 
-
+	String feature_extraction_type = "pixelLevel";
+	
 	public FeaturePanel(GuiController controller, ImagePlus image)
 	{
 		super(image, new CustomCanvas(image));	
@@ -202,13 +210,17 @@ public class FeaturePanel extends StackWindow
 			canvas.addKeyListener(keyListener);
 
 		}
-
+		
+		showOption();
 		createPanel();
+		createPanelforClassLevel();
 		updateGui();
 		Panel all = new Panel();
 		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
 		all.setLayout(box);
 		all.add(imagePanel);
+		all.add(optionBox);
+		all.add(controlsBoxForClass);
 		all.add(controlsBox);
 		add(all);  	      	      	   
 		this.pack();	 	    
@@ -263,6 +275,15 @@ public class FeaturePanel extends StackWindow
 
 	}
 
+	private void showOption(){
+		optionBox = new JPanel(new GridBagLayout());	
+
+		addButton( "Pixel Level",null ,optionBox,
+				PIXEL_LEVEL_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
+		addButton( "Class Level",null ,optionBox,
+				CLASS_LEVEL_BUTTON_PRESSED,dimension,Util.getGbc(1,0 , 1, false, false),null );
+	}
+
 	private void createPanel(){
 
 		addButton( "CONFIGURE",null ,configureJPanel,
@@ -288,7 +309,7 @@ public class FeaturePanel extends StackWindow
 		controlsBox.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
 		add(controlsBox, BorderLayout.EAST);
 		configureFrame();
-
+		controlsBox.setVisible(false);
 	}
 
 
@@ -325,7 +346,18 @@ public class FeaturePanel extends StackWindow
 	}
 
 
-	
+	private void createPanelforClassLevel(){
+		
+		controlsBoxForClass=new JPanel(new GridBagLayout());
+		final JPanel resetJPanel = new JPanel(new GridBagLayout());
+
+		addButton( "COMPUTE",null ,resetJPanel,
+				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
+		
+		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
+		add(controlsBoxForClass, BorderLayout.EAST);
+		controlsBoxForClass.setVisible(false);
+	}
 
 	private JButton addButton( final String label, final Icon icon,JComponent panel, 
 			final ActionEvent action, Dimension dimension,GridBagConstraints labelsConstraints,Color color ){
@@ -360,8 +392,18 @@ public class FeaturePanel extends StackWindow
 
 	public void doAction( final ActionEvent event )	{
 		int currentSlice= displayImage.getCurrentSlice();
+		if(event==PIXEL_LEVEL_BUTTON_PRESSED){
+			controlsBox.setVisible(true);
+			controlsBoxForClass.setVisible(false);
+			feature_extraction_type = "pixelLevel";
+		}
+		if(event==CLASS_LEVEL_BUTTON_PRESSED){
+			controlsBox.setVisible(false);
+			controlsBoxForClass.setVisible(true);
+			feature_extraction_type = "classlevel";
+		}
 		if(event==COMPUTE_BUTTON_PRESSED){
-			classifiedImage=controller.computeFeatures("pixelLevel");
+			classifiedImage=controller.computeFeatures(feature_extraction_type);
 			toggleOverlay();
 		}
 		if(event==SAVE_BUTTON_PRESSED){

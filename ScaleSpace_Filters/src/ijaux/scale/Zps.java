@@ -22,4 +22,7 @@ public class Zps {
 	public ArrayList<Double> getReal(){
 		return real;
 	}
+	public ArrayList<Double> getImaginary(){
+		return imag;
+	}
 }

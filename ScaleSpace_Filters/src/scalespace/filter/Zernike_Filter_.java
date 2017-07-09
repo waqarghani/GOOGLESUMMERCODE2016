@@ -25,12 +25,13 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ijaux.scale.GScaleSpace;
 import ijaux.scale.ZernikeMoment;
+import ijaux.scale.ZernikeMoment.Complex;
 import ijaux.scale.Zps;
 
 public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilter {
 
 	final int flags=DOES_ALL+KEEP_PREVIEW+ NO_CHANGES;
-	public final static String DEG="Degree", ORD="Order";
+	public final static String DEG="Degree";
 
 	/** A string key identifying this factory. */
 	private final  String FILTER_KEY = "ZMC";
@@ -49,7 +50,9 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	
 	/** The pretty name of the target detector. */
 	private final String FILTER_NAME = "Zernike Moments";
-
+	
+	ZernikeMoment zm = null;
+	
 	@Override
 	public void run(ImageProcessor ip) {
 		// TODO Auto-generated method stub
@@ -69,7 +72,6 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	public Map<String, String> getDefaultSettings() {
 		// TODO Auto-generated method stub
 		settings.put(DEG, Integer.toString(6));
-		settings.put(ORD, Integer.toString(2));
 		return this.settings;
 	}
 
@@ -80,7 +82,7 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	}
 
 	@Override
-	public double[] applyFilter(ImageProcessor ip) {
+	public Complex applyFilter(ImageProcessor ip) {
 		// TODO Auto-generated method stub
 		return filter(ip.duplicate());
 	}
@@ -90,13 +92,18 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	 * This method is helper function for both applyFilter and run method
 	 * @param ip input image
 	 */
-	private double[] filter(ImageProcessor ip){
+	private Complex filter(ImageProcessor ip){
 
 		ip.snapshot();
 		ip.getDefaultColorModel();
 		
-		ZernikeMoment zm=new ZernikeMoment(6, 4); //this can be move to starting func
-		return zm.extractZernikeMoment(ip);
+		if(zm==null){
+			zm=new ZernikeMoment(Integer.parseInt(settings.get(DEG))); //this can be move to starting func
+			return zm.extractZernikeMoment(ip);
+		}else{
+			return zm.extractZernikeMoment(ip);
+		}
+		
 	            		
 	}
 

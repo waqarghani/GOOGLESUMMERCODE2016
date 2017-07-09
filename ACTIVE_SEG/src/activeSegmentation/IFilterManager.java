@@ -93,7 +93,8 @@ public interface IFilterManager {
 	 *@param slice of Image
 	 *@return Instance of pixel
 	 */
-	public Instance createInstance(int x, int y, int classIndex, int sliceNum);
+	public Instance createInstance(String featureName, int x, int y, int classIndex, int sliceNum);
+
 	/**
 	 * This method will return number of slices
 	 * @return return number of slices

@@ -1,6 +1,7 @@
 package activeSegmentation.filterImpl;
 
 import ij.ImageStack;
+import ijaux.scale.ZernikeMoment.Complex;
 import weka.core.DenseInstance;
 
 /**
@@ -78,12 +79,28 @@ public class FilterUtil {
 		return new DenseInstance(1.0, values);
 	}
 
+	public DenseInstance createInstance(Complex rv, int classValue){
+		int size=0;
+		for(int i=0;i<rv.getReal().length;i++){
+			size++;
+			if(rv.getImaginary()[i]!=0.0)
+				size++;
+		}
+		
+		double[] final_result = new double[size];
+		
+		int t=0;
+		for(int i=0;i<rv.getReal().length;i++){
+			final_result[t++] = rv.getReal()[i];
+			System.out.println(i+"rrr"+rv.getImaginary()[i]);
+			if(rv.getImaginary()[i]!=0){
+				final_result[t++] = rv.getImaginary()[i];
+			}
+			
+		}
+		final_result[t++]=(double) classValue;
+		return new DenseInstance(1.0,final_result);
+		
+	}
 	
-	
-	
-	
-	
-	
-	
-
 }

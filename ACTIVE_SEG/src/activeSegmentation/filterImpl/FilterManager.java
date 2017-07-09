@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 
 import activeSegmentation.Common;
 import activeSegmentation.FeatureType;
+import activeSegmentation.filterImpl.ApplyZernikeFilter;
 import activeSegmentation.IDataManager;
 import activeSegmentation.IFilter;
 import activeSegmentation.IFilterManager;
@@ -25,6 +26,7 @@ import weka.core.Instance;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ijaux.scale.ZernikeMoment.Complex;
 
 /**
  * 				
@@ -120,29 +122,48 @@ public class FilterManager implements IFilterManager {
 
 	}
 
+	
 
 	public void applyFilters(ImagePlus image){
 		originalImage=image.duplicate();
 		System.out.println(originalImage.getImageStackSize());
-		for(int i=1; i<=originalImage.getImageStackSize(); i++){
-			FeatureType featureType = new FeatureType();
-			for(IFilter filter: filterMap.values()){
-				if(filter.isEnabled()){
-					if(filter.getName().equals("Zernike Moments"))
-						featureType.add((double[])filter.applyFilter(originalImage.getImageStack().getProcessor(i)));
-					else
-						featureType.add((ImageStack)filter.applyFilter(originalImage.getImageStack().getProcessor(i)));
-					//tempStack.add(featureType);
+		for(IFilter filter: filterMap.values()){
+			if(filter.isEnabled()){
+				if(filter.getName().equals("Zernike Moments")){
+					ArrayList<Complex> arr=ApplyZernikeFilter.ComputeValues(originalImage, filter);
+					for(int i=1;i<=originalImage.getImageStackSize();i++){
+						FeatureType featureType;
+						if(!featurStackMap.containsKey(i))
+							featureType = new FeatureType();
+						else 
+							featureType = featurStackMap.get(i);
+						
+						featureType.add(arr.get(i-1));
+						featurStackMap.put(i, featureType);
+					}
 				}
-
+				else{
+					HashMap<Integer, ImageStack> arr=ApplyFilter.ComputeFeatures(originalImage, filter);
+					System.out.println(arr.size());
+					for(int i=1;i<=originalImage.getImageStackSize();i++){
+						FeatureType featureType;
+						if(!featurStackMap.containsKey(i)){
+								featureType = new FeatureType();
+								featureType.combineStacks(arr.get(i));
+						}	
+						else{
+							featureType = featurStackMap.get(i);
+							featureType.combineStacks(arr.get(i));
+						}
+						featurStackMap.put(i, featureType);
+						System.out.println(featurStackMap.get(i).getfinalStack()+"sssss");
+					}
+				}
+					
 			}
-			
-			if(!featureType.gettempStack().isEmpty())
-				featureType.combineStacks(featureType.gettempStack());
-			
-			featurStackMap.put(i, featureType);
-		}
 
+		}
+	
 	}
 
 
@@ -151,6 +172,7 @@ public class FilterManager implements IFilterManager {
 		int numChannels=featurStackMap.get(1).getfinalStack().getSize();
 		for (int i = 1; i <= originalImage.getStackSize(); i++){
 			for (int c = 1; c <= numChannels; c++){
+				System.out.println(i+"ss"+c+"aa"+featurStackMap.get(i).getfinalStack());
 				classified.addSlice(featurStackMap.get(i).getfinalStack().getSliceLabel(c), 
 						featurStackMap.get(i).getfinalStack().getProcessor(c));	
 			}
@@ -220,12 +242,14 @@ public class FilterManager implements IFilterManager {
 		return featurStackMap.get(sliceNum).getfinalStack();
 	}
 
-	public Instance createInstance(int x, int y, int classIndex, int sliceNum) {
+	public Instance createInstance(String featureName, int x, int y, int classIndex, int sliceNum) {
 
+		if(featureName.equals("classlevel"))
+			return filterUtil.createInstance(featurStackMap.get(sliceNum).getzernikeMoments(), classIndex);
+		
 		return filterUtil.createInstance(x, y, classIndex,
 				featurStackMap.get(sliceNum).getfinalStack(), colorFeatures, oldColorFormat);
 	}
-
 
 	@Override
 	public int getOriginalImageSize() {

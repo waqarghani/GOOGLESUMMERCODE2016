@@ -7,32 +7,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+import activeSegmentation.IFilter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import ijaux.scale.ZernikeMoment;
+import ijaux.scale.ZernikeMoment.Complex;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
 
-public class ExtractZernikeMoment extends RecursiveTask<double[]>{
+public class ApplyZernikeFilter extends RecursiveTask<Complex>{
 	ImageProcessor imp;
 	private ZernikeMoment zm;
-
+	private IFilter filter;
 	
-	public ExtractZernikeMoment(ImageProcessor imp, ZernikeMoment zm){
+	public ApplyZernikeFilter(IFilter filter, ImageProcessor imp){
 		this.imp=imp;
-		this.zm = zm;
+		this.filter=filter;
 	}
 	
 	@Override
-	protected double[] compute() {
+	protected Complex compute() {
 		// TODO Auto-generated method stub
 		//zm.count++;
 		//zm.ss++;
-		synchronized (zm) {
+		/*synchronized (filter) {
             // ensure that zm's initialization is complete
-            while (zm.rv==null) {
+            while (filter==null) {
                 // not yet initialized
                 try {
 					zm.wait();
@@ -41,21 +43,16 @@ public class ExtractZernikeMoment extends RecursiveTask<double[]>{
 					e.printStackTrace();
 				}
             }
-        }
-		return zm.extractZernikeMoment(imp);
-		
+        }*/
+//		return zm.extractZernikeMoment(imp);
+		return filter.applyFilter(imp);
 	}
 	
-	public static void main(String[] args) {
+	public static ArrayList<Complex> ComputeValues(ImagePlus originalImage, IFilter filter) {
 		// TODO Auto-generated method stub
 		Instances Data;
-
-		String path="/home/mg/Downloads/tifs/image.tif";
-    	ImagePlus imp=IJ.openImage(path);
-    	int degree=8;
-    	int order=4;
-    	ZernikeMoment zmtemp =new ZernikeMoment(8,4);
-    	ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+    	ArrayList<Complex> arr= new ArrayList<Complex>();
+/*    	ArrayList<Attribute> attributes = new ArrayList<Attribute>();
     	for(int k=0;k<degree;k++){
 			for(int l=0;l<order;l++){	
 				if((k-l)%2==0){
@@ -65,33 +62,35 @@ public class ExtractZernikeMoment extends RecursiveTask<double[]>{
     	}	
 		Data=new Instances("Zernike Moment", attributes, 30);
 		
-    	synchronized(zmtemp) {
+*/    	
+    	synchronized(filter) {
     		// synchronize the initialization of zmtemp, because other threads will
             // check it
-    		double[] rv = zmtemp.extractZernikeMoment(imp.getImageStack().getProcessor(1));
-    		DenseInstance insta=new DenseInstance(1.0,rv);
-            Data.add(insta);  
+    		Complex rv = filter.applyFilter(originalImage.getImageStack().getProcessor(1));
+    		arr.add(rv);
+//    		DenseInstance insta=new DenseInstance(1.0,rv);
+//          Data.add(insta);  
     		// wake up any threads waiting on the initialization
-    		zmtemp.notifyAll();
+    		filter.notifyAll();
     	}
 		long as=System.currentTimeMillis();
 		
-		List<ExtractZernikeMoment> tasks = new ArrayList<>();
-		for(int i=2; i<imp.getStackSize(); i++){
-			ExtractZernikeMoment ezm =new ExtractZernikeMoment(imp.getImageStack().getProcessor(i), zmtemp);
+		List<ApplyZernikeFilter> tasks = new ArrayList<>();
+		for(int i=2; i<originalImage.getStackSize(); i++){
+			ApplyZernikeFilter ezm =new ApplyZernikeFilter(filter, originalImage.getImageStack().getProcessor(i));
             tasks.add(ezm);
 			ezm.fork();
 		}
 		
 		if (tasks.size() > 0) {
-			for (ExtractZernikeMoment task : tasks) {
-                double[] rv=task.join();
-                System.out.println(rv.length);
-                DenseInstance insta=new DenseInstance(1.0,rv);
-                Data.add(insta);    
+			for (ApplyZernikeFilter task : tasks) {
+                Complex rv=task.join();
+        		arr.add(rv);
+ //               DenseInstance insta=new DenseInstance(1.0,rv);
+  //              Data.add(insta);    
             }
 		}
-		System.out.println(Data);
+/*		System.out.println(Data);
 		BufferedWriter writer;
 		try {
 			writer = new BufferedWriter(new FileWriter("/home/mg/zernike.arff"));
@@ -102,10 +101,9 @@ public class ExtractZernikeMoment extends RecursiveTask<double[]>{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
+*/		 
 		long aa=System.currentTimeMillis();
 		System.out.println(aa-as);
-		
-
+		return arr;
 	}
 }

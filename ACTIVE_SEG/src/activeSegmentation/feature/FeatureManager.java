@@ -350,7 +350,9 @@ public class FeatureManager implements IFeatureManager {
 
 	@Override
 	public IDataSet extractFeatures(String featureType){
-
+		
+		if(featureType.equals("classlevel"))
+			numOfClasses = 30;
 		featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),
 				numOfClasses, examples);
 		IDataSet dataset=featureMap.get(featureType).getDataSet();

@@ -9,20 +9,17 @@ import ij.process.ImageProcessor;
 
 public class ZernikeMoment {
 	int degree;
-	int order;
 	int centerX;
 	int centerY;
 	double radius;
 	public RadialValue[] rv=null;
 	
-	public ZernikeMoment(int degree, int order){
+	public ZernikeMoment(int degree){
 		this.degree=degree;
-		this.order=order;
 	}
 	
-	public ZernikeMoment(int degree, int order, RadialValue[] rv){
+	public ZernikeMoment(int degree, RadialValue[] rv){
 		this.degree = degree;
-		this.order = order;
 		this.rv = rv;
 	}
 	
@@ -52,7 +49,7 @@ public class ZernikeMoment {
         radius = Math.sqrt(2 * max * max);
 	}
 
-	public double[] extractZernikeMoment(ImageProcessor ip){
+	public Complex extractZernikeMoment(ImageProcessor ip){
 		System.out.println("Start Zernike moment extraction process");
 		calculateRadius(ip);
 		
@@ -73,13 +70,13 @@ public class ZernikeMoment {
         		zps[index]=new Zps();
         		
         		if(rv[index]==null)
-        			rv[index] = new RadialValue(order,degree);
+        			rv[index] = new RadialValue(degree,degree);
         		
         		real=new ArrayList<Double>();
         		imag=new ArrayList<Double>();
         		
-        		for(int k=0;k<degree;k++){
-        			for(int l=0;l<order;l++){
+        		for(int k=0;k<=degree;k++){
+        			for(int l=0;l<=k;l++){
         				
         				if((k-l)%2==0){
         					//Calculate radial_value
@@ -101,18 +98,22 @@ public class ZernikeMoment {
        }
         
         double[] real_result=new double[real.size()];
+        double[] imag_result=new double[real.size()];
         for(int i=0;i<zps.length;i++){
         	ArrayList<Double> temp=zps[i].getReal();
         	for(int j=0;j<temp.size();j++){
         		real_result[j]+=(temp.get(j)) / Math.PI;
         	}
-        	
+        	temp=zps[i].getImaginary();
+        	for(int j=0;j<temp.size();j++){
+        		imag_result[j]+=(temp.get(j)) / Math.PI;
+        	}
         }
         for(int i=0;i<real_result.length;i++){
-        	System.out.println(real_result[i]);
+        	System.out.println(real_result[i]+"sss"+ imag_result[i]);
         }
         
-		return real_result;
+		return new Complex(real_result, imag_result);
 	}
 	public static void main(String[] args){
 		String path="/home/mg/Downloads/tifs/image.tif";
@@ -121,10 +122,53 @@ public class ZernikeMoment {
     	ic.convertToGray8();
     	
     	ImageProcessor ip=imp.getProcessor();
-    	ZernikeMoment zm=new ZernikeMoment(8,4);
+    	ZernikeMoment zm=new ZernikeMoment(8);
     	long aa=System.currentTimeMillis();
     	zm.extractZernikeMoment(ip);
     	long bb=System.currentTimeMillis();
     	System.out.println(bb-aa);
 	}
+	public static class Complex {
+        /** real part. */
+        private double[] m_real;
+
+        /** imaginary part. */
+        private double[] m_imaginary;
+
+        /**
+         * constructor for number with imaginary part = 0.
+         * 
+         * @param real the real part
+         */
+        public Complex(final double[] real) {
+            m_real = real;
+            m_imaginary = null;
+        }
+
+        /**
+         * constructor.
+         * 
+         * @param real the real part
+         * @param imaginary the imaginary part
+         */
+        public Complex(final double[] real, final double[] imaginary) {
+            m_real = real;
+            m_imaginary = imaginary;
+        }
+
+        /**
+         * @return the real part of the complex number.
+         */
+        public double[] getReal() {
+            return m_real;
+        }
+
+        /**
+         * @return the imaginary part of the complex number.
+         */
+        public double[] getImaginary() {
+            return m_imaginary;
+        }
+
+     }
 }
