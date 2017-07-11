@@ -66,7 +66,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 
 	private int nPasses=1;
 	private int pass;
-
+	private int position_id;
 	public final static String SIGMA="LOG_sigma",MAX_LEN="G_MAX",FULL_OUTPUT="Full_out",LEN="G_len";
 
 	private static int sz= Prefs.getInt(LEN, 2);
@@ -504,5 +504,11 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	@Override
 	public void setImageStack(ImageStack imageStack) {
 		this.imageStack = imageStack;
+	}
+
+	@Override
+	public void updatePosition(int position_id) {
+		// TODO Auto-generated method stub
+		this.position_id = position_id;
 	}
 }

@@ -86,7 +86,7 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
     @SuppressWarnings("unused")
 
 	private int nPasses=1;
-
+    private int position_id;
 	public static boolean debug=IJ.debugMode;
 	public final static String SIGMA="LOG_sigma", LEN="G_len",MAX_LEN="G_MAX", ISSEP="G_SEP", SCNORM="G_SCNORM";
 
@@ -433,6 +433,14 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	@Override
 	public void setImageStack(ImageStack imageStack) {
 		this.imageStack = imageStack;
+	}
+
+
+
+	@Override
+	public void updatePosition(int position_id) {
+		// TODO Auto-generated method stub
+		this.position_id = position_id;
 	}
 
 

@@ -1,37 +1,30 @@
 
 
 
-import ij.IJ;
-import ij.ImageJ;
-import ij.ImagePlus;
-import ij.WindowManager;
-import ij.io.OpenDialog;
-import ij.plugin.PlugIn;
-
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 import activeSegmentation.IDataManager;
-import activeSegmentation.IEvaluation;
 import activeSegmentation.IFeatureManager;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.ILearningManager;
-import activeSegmentation.evaluation.EvaluationMetrics;
 import activeSegmentation.feature.FeatureExtraction;
-import activeSegmentation.feature.Zernike_Feature_Extraction;
 import activeSegmentation.feature.FeatureManager;
+import activeSegmentation.feature.Zernike_Feature_Extraction;
 import activeSegmentation.filterImpl.FilterManager;
 import activeSegmentation.gui.GenericDialogPlus;
 import activeSegmentation.gui.Gui;
 import activeSegmentation.gui.GuiController;
 import activeSegmentation.io.DataManagerImp;
 import activeSegmentation.learning.ClassifierManager;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.WindowManager;
+import ij.io.OpenDialog;
+import ij.plugin.PlugIn;
 
 
 
@@ -71,7 +64,6 @@ public class Weka_Segmentation_ implements PlugIn {
 	@Override
 	public void run(String arg0) {
 		IJ.log(System.getProperty("plugins.dir"));
-		//System.out.println(System.getProperty("plugins.dir"));
 		String home = System.getProperty("plugins.dir");
 		
 			try {

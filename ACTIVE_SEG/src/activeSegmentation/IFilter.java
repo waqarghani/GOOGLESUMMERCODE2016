@@ -22,6 +22,8 @@ public interface IFilter {
 	 * @return boolean
 	 */
 	public boolean updateSettings(Map< String, String > settingsMap);
+
+	public void updatePosition(int position_id);
 	
 	/**
 	 * Returns apply filter

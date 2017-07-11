@@ -47,7 +47,7 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	private boolean isEnabled=true;
 
 	private int nPasses=1;
-	
+	private int position_id;
 	/** The pretty name of the target detector. */
 	private final String FILTER_NAME = "Zernike Moments";
 	
@@ -217,6 +217,12 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	public int showDialog(ImagePlus arg0, String arg1, PlugInFilterRunner arg2) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void updatePosition(int position_id) {
+		// TODO Auto-generated method stub
+		this.position_id = position_id;
 	}
 
 }

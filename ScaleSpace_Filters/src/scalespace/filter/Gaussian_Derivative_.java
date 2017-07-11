@@ -76,6 +76,7 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 	public final static String SIGMA="LOG_sigma", LEN="G_len" ,MAX_LEN="G_MAX", 
 			ISSEP="G_SEP", GN="G_Xn", GM="G_Yn", SCNORM="G_SCNORM";
 
+	private int position_id;
 	private static int sz = Prefs.getInt(LEN, 2);
 	private  int max_sz= Prefs.getInt(MAX_LEN, 8);
 	private float[][] kernel=null;
@@ -454,6 +455,12 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 	@Override
 	public void setImageStack(ImageStack imageStack) {
 		this.imageStack = imageStack;
+	}
+
+	@Override
+	public void updatePosition(int position_id) {
+		// TODO Auto-generated method stub
+		this.position_id = position_id;
 	}
 
 
