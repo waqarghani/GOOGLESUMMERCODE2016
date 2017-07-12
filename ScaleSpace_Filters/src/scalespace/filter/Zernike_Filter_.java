@@ -17,6 +17,7 @@ import activeSegmentation.IFilter;
 import dsp.Conv;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.Prefs;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
@@ -32,7 +33,7 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 
 	final int flags=DOES_ALL+KEEP_PREVIEW+ NO_CHANGES;
 	public final static String DEG="Degree";
-
+	private static int degree= Prefs.getInt(DEG, 4);
 	/** A string key identifying this factory. */
 	private final  String FILTER_KEY = "ZMC";
 	
@@ -78,7 +79,8 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	@Override
 	public boolean updateSettings(Map<String, String> settingsMap) {
 		// TODO Auto-generated method stub
-		return false;
+		degree = Integer.parseInt(settingsMap.get(DEG));
+		return true;
 	}
 
 	@Override
