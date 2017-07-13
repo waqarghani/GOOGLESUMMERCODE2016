@@ -10,25 +10,28 @@ import java.util.concurrent.RecursiveTask;
 import activeSegmentation.IFilter;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.process.ImageProcessor;
+import ijaux.scale.Pair;
 import ijaux.scale.ZernikeMoment;
 import ijaux.scale.ZernikeMoment.Complex;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
 
-public class ApplyZernikeFilter extends RecursiveTask<Complex>{
+public class ApplyZernikeFilter extends RecursiveTask<Pair<Integer,Complex>>{
 	ImageProcessor imp;
 	private ZernikeMoment zm;
 	private IFilter filter;
-	
-	public ApplyZernikeFilter(IFilter filter, ImageProcessor imp){
+	private int index;
+	public ApplyZernikeFilter(IFilter filter, ImageProcessor imp, int index){
 		this.imp=imp;
 		this.filter=filter;
+		this.index=index;
 	}
 	
 	@Override
-	protected Complex compute() {
+	protected Pair<Integer,Complex> compute() {
 		// TODO Auto-generated method stub
 		//zm.count++;
 		//zm.ss++;
@@ -45,13 +48,14 @@ public class ApplyZernikeFilter extends RecursiveTask<Complex>{
             }
         }*/
 //		return zm.extractZernikeMoment(imp);
+		filter.updatePosition(index);
 		return filter.applyFilter(imp);
 	}
 	
-	public static ArrayList<Complex> ComputeValues(ImagePlus originalImage, IFilter filter) {
+	public static ArrayList<Pair<Integer,Complex>> ComputeValues(ImagePlus originalImage, IFilter filter) {
 		// TODO Auto-generated method stub
 		Instances Data;
-    	ArrayList<Complex> arr= new ArrayList<Complex>();
+    	ArrayList<Pair<Integer,Complex>> arr= new ArrayList<Pair<Integer,Complex>>();
 /*    	ArrayList<Attribute> attributes = new ArrayList<Attribute>();
     	for(int k=0;k<degree;k++){
 			for(int l=0;l<order;l++){	
@@ -66,7 +70,8 @@ public class ApplyZernikeFilter extends RecursiveTask<Complex>{
     	synchronized(filter) {
     		// synchronize the initialization of zmtemp, because other threads will
             // check it
-    		Complex rv = filter.applyFilter(originalImage.getImageStack().getProcessor(1));
+    		filter.updatePosition(1);
+    		Pair<Integer,Complex> rv = filter.applyFilter(originalImage.getImageStack().getProcessor(1));
     		arr.add(rv);
 //    		DenseInstance insta=new DenseInstance(1.0,rv);
 //          Data.add(insta);  
@@ -77,14 +82,14 @@ public class ApplyZernikeFilter extends RecursiveTask<Complex>{
 		
 		List<ApplyZernikeFilter> tasks = new ArrayList<>();
 		for(int i=2; i<originalImage.getStackSize(); i++){
-			ApplyZernikeFilter ezm =new ApplyZernikeFilter(filter, originalImage.getImageStack().getProcessor(i));
+			ApplyZernikeFilter ezm =new ApplyZernikeFilter(filter, originalImage.getImageStack().getProcessor(i),i);
             tasks.add(ezm);
 			ezm.fork();
 		}
 		
 		if (tasks.size() > 0) {
 			for (ApplyZernikeFilter task : tasks) {
-                Complex rv=task.join();
+				Pair<Integer,Complex> rv=task.join();
         		arr.add(rv);
  //               DenseInstance insta=new DenseInstance(1.0,rv);
   //              Data.add(insta);    

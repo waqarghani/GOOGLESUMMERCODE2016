@@ -26,6 +26,7 @@ import weka.core.Instance;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ijaux.scale.Pair;
 import ijaux.scale.ZernikeMoment.Complex;
 
 /**
@@ -130,34 +131,35 @@ public class FilterManager implements IFilterManager {
 		for(IFilter filter: filterMap.values()){
 			if(filter.isEnabled()){
 				if(filter.getName().equals("Zernike Moments")){
-					ArrayList<Complex> arr=ApplyZernikeFilter.ComputeValues(originalImage, filter);
-					for(int i=1;i<=originalImage.getImageStackSize();i++){
+					ArrayList<Pair<Integer,Complex>> arr=ApplyZernikeFilter.ComputeValues(originalImage, filter);
+					for(Pair<Integer, Complex> pr:arr){
 						FeatureType featureType;
-						if(!featurStackMap.containsKey(i))
+						if(!featurStackMap.containsKey(pr.first))
 							featureType = new FeatureType();
-						else 
-							featureType = featurStackMap.get(i);
-						
-						featureType.add(arr.get(i-1));
-						featurStackMap.put(i, featureType);
+						else
+							featureType = featurStackMap.get(pr.first);
+						featureType.add(pr.second);
+						featurStackMap.put(pr.first, featureType);
+						//System.out.println(featurStackMap.get(pr.first).getfinalStack()+"sssss");
 					}
 				}
 				else{
-					HashMap<Integer, ImageStack> arr=ApplyFilter.ComputeFeatures(originalImage, filter);
+					ArrayList<Pair<Integer, ImageStack>> arr=(ArrayList<Pair<Integer, ImageStack>>) ApplyFilter.ComputeFeatures(originalImage, filter);
 					System.out.println(arr.size());
-					for(int i=1;i<=originalImage.getImageStackSize();i++){
+					for(Pair<Integer,ImageStack> pr:arr){
 						FeatureType featureType;
-						if(!featurStackMap.containsKey(i)){
-								featureType = new FeatureType();
-								featureType.combineStacks(arr.get(i));
-						}	
-						else{
-							featureType = featurStackMap.get(i);
-							featureType.combineStacks(arr.get(i));
+						if(!featurStackMap.containsKey(pr.first)){
+							featureType = new FeatureType();
+							featureType.combineStacks(pr.second);
 						}
-						featurStackMap.put(i, featureType);
-						System.out.println(featurStackMap.get(i).getfinalStack()+"sssss");
+						else{
+							featureType = featurStackMap.get(pr.first);
+							featureType.combineStacks(pr.second);
+						}
+						featurStackMap.put(pr.first, featureType);
+						//System.out.println(featurStackMap.get(pr.first).getfinalStack()+"sssss");
 					}
+				
 				}
 					
 			}
@@ -172,7 +174,6 @@ public class FilterManager implements IFilterManager {
 		int numChannels=featurStackMap.get(1).getfinalStack().getSize();
 		for (int i = 1; i <= originalImage.getStackSize(); i++){
 			for (int c = 1; c <= numChannels; c++){
-				System.out.println(i+"ss"+c+"aa"+featurStackMap.get(i).getfinalStack());
 				classified.addSlice(featurStackMap.get(i).getfinalStack().getSliceLabel(c), 
 						featurStackMap.get(i).getfinalStack().getProcessor(c));	
 			}
@@ -204,8 +205,6 @@ public class FilterManager implements IFilterManager {
 
 		return filterMap.get(key).updateSettings(settingsMap);
 	}
-
-
 	
 	public int getNumOfFeatures() {
 
