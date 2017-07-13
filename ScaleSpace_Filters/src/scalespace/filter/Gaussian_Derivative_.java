@@ -76,7 +76,6 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 	public final static String SIGMA="LOG_sigma", LEN="G_len" ,MAX_LEN="G_MAX", 
 			ISSEP="G_SEP", GN="G_Xn", GM="G_Yn", SCNORM="G_SCNORM";
 
-	private int position_id;
 	private static int sz = Prefs.getInt(LEN, 2);
 	private  int max_sz= Prefs.getInt(MAX_LEN, 8);
 	private float[][] kernel=null;
@@ -92,6 +91,7 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 	private boolean isRGB=false;
 	private static int wnd=3;
 	private boolean isEnabled=true;
+	private int position_id=-1;
 
 
 	/* NEW VARIABLES*/
@@ -129,6 +129,10 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 
 	}
 
+	public void initialseimageStack(ImageStack img){
+		this.imageStack = img;
+	}
+	
 	@Override
 	public int setup(String arg, ImagePlus imp) {
 		isFloat= (imp.getType()==ImagePlus.GRAY32);
@@ -170,16 +174,16 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 	 * @param nAngles number of angles
 	 * @return false if error
 	 */
-	public ImageStack applyFilter(ImageProcessor ip){
-
-		imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
+	public Pair<Integer,ImageStack> applyFilter(ImageProcessor ip){
+		int index = position_id;
+		ImageStack imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
 		for (int sigma=sz; sigma<= max_sz; sigma *=2){		
 			GScaleSpace sp=new GScaleSpace(sigma);
 			ImageProcessor fp=filter(ip.duplicate(), sp,sep, scnorm,nn,mm);
 			imageStack.addSlice( FILTER_KEY+"_" + sigma, fp);		
 		}
-
-		return imageStack;
+		initialseimageStack(imageStack);
+		return new Pair<Integer,ImageStack>(index, imageStack);
 	}
 
 
@@ -458,9 +462,9 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 	}
 
 	@Override
-	public void updatePosition(int position_id) {
+	public void updatePosition(int position) {
 		// TODO Auto-generated method stub
-		this.position_id = position_id;
+		this.position_id = position;
 	}
 
 

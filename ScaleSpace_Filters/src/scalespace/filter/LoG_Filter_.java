@@ -10,6 +10,7 @@ import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ijaux.scale.GScaleSpace;
+import ijaux.scale.Pair;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -86,7 +87,7 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
     @SuppressWarnings("unused")
 
 	private int nPasses=1;
-    private int position_id;
+
 	public static boolean debug=IJ.debugMode;
 	public final static String SIGMA="LOG_sigma", LEN="G_len",MAX_LEN="G_MAX", ISSEP="G_SEP", SCNORM="G_SCNORM";
 
@@ -117,6 +118,7 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	private Map< String, String > settings= new HashMap<String, String>();
 
 	private ImageStack imageStack;
+	private int position_id;
 
 
 	/**
@@ -133,7 +135,10 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 		return  flags;
 	}
 
-
+	public void initialseimageStack(ImageStack img){
+		this.imageStack = img;
+	}
+	
 
 	@Override
 	public void run(ImageProcessor ip) {
@@ -152,16 +157,16 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 	 * @param nAngles number of angles
 	 * @return false if error
 	 */
-	public ImageStack applyFilter(ImageProcessor ip){
-
-		imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
+	public Pair<Integer,ImageStack> applyFilter(ImageProcessor ip){
+		int index = position_id;
+		ImageStack imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
 		for (int sigma=sz; sigma<= max_sz; sigma *=2){		
 			GScaleSpace sp=new GScaleSpace(sigma);
 			ImageProcessor fp=filter(ip.duplicate(), sp,sep, scnorm);
 			imageStack.addSlice( FILTER_KEY+"_" + sigma, fp);		
 		}
-
-		return imageStack;
+		initialseimageStack(imageStack);
+		return new Pair<Integer,ImageStack>(index, imageStack);
 	}
 
 
@@ -438,9 +443,9 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 
 
 	@Override
-	public void updatePosition(int position_id) {
+	public void updatePosition(int position) {
 		// TODO Auto-generated method stub
-		this.position_id = position_id;
+		this.position_id = position;
 	}
 
 

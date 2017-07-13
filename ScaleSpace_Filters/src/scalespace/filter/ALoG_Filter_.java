@@ -15,6 +15,8 @@ import ijaux.scale.*;
 import java.awt.*;
 import java.util.*;
 
+import javax.print.attribute.standard.PrinterLocation;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -67,6 +69,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	private int nPasses=1;
 	private int pass;
 	private int position_id;
+
 	public final static String SIGMA="LOG_sigma",MAX_LEN="G_MAX",FULL_OUTPUT="Full_out",LEN="G_len";
 
 	private static int sz= Prefs.getInt(LEN, 2);
@@ -122,6 +125,10 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	 */
 	private Calibration cal=null;
 	
+	public void initialseimageStack(ImageStack img){
+		this.imageStack = img;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see ij.plugin.filter.PlugInFilter#run(ij.process.ImageProcessor)
@@ -134,7 +141,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 
 		imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
 
-		filter(ip,sp,sz);
+		imageStack = filter(ip,sp,sz,imageStack);
 
 
 		image=new ImagePlus("ALoG result hw="+((sz-1)/2),imageStack);
@@ -149,16 +156,18 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	 * @param nAngles number of angles
 	 * @return false if error
 	 */
-	public ImageStack applyFilter(ImageProcessor ip){
-
-		imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
+	@Override
+	public Pair<Integer,ImageStack> applyFilter(ImageProcessor ip){
+		int index = position_id;
+		ImageStack imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
 		for (int sigma=sz; sigma<= max_sz; sigma *=2){		
 			GScaleSpace sp=new GScaleSpace(sigma);
-			filter(ip.duplicate(), sp,sigma);
+			imageStack = filter(ip.duplicate(), sp,sigma,imageStack);
 		}
-		
-		return imageStack;
+		initialseimageStack(imageStack);
+		return new Pair<Integer,ImageStack>(index, imageStack);
 	}
+	
 
 
 	
@@ -169,7 +178,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	 * @param sp gaussian scale space
 	 * @param sigma filter sigma
 	 */
-	private void filter(ImageProcessor ip,GScaleSpace sp, float sigma){
+	private ImageStack filter(ImageProcessor ip,GScaleSpace sp, float sigma, ImageStack imageStack){
 
 		ip.snapshot();
 
@@ -177,7 +186,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 			ip=ip.toFloat(0, null);
 
 		pass++;
-
+		System.out.println(settings.get(LEN)+"MG");
 		//GScaleSpace sp=new GScaleSpace(sigma);
 		float[] kernx= sp.gauss1D();
 		System.out.println("kernx :"+kernx.length);
@@ -282,9 +291,7 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 		lap_o.resetMinAndMax();
 		imageStack.addSlice(FILTER_KEY+"Lap O"+sigma, lap_o);
 		System.out.println("ALOG_FILTER");
-
-
-
+		return imageStack;
 	}
 
 
@@ -507,8 +514,9 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 	}
 
 	@Override
-	public void updatePosition(int position_id) {
+	public void updatePosition(int position) {
 		// TODO Auto-generated method stub
-		this.position_id = position_id;
+		this.position_id=position;
 	}
+
 }

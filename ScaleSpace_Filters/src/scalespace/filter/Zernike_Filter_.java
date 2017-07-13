@@ -25,6 +25,7 @@ import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ijaux.scale.GScaleSpace;
+import ijaux.scale.Pair;
 import ijaux.scale.ZernikeMoment;
 import ijaux.scale.ZernikeMoment.Complex;
 import ijaux.scale.Zps;
@@ -34,6 +35,8 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	final int flags=DOES_ALL+KEEP_PREVIEW+ NO_CHANGES;
 	public final static String DEG="Degree";
 	private static int degree= Prefs.getInt(DEG, 4);
+	private int position_id=-1;
+
 	/** A string key identifying this factory. */
 	private final  String FILTER_KEY = "ZMC";
 	
@@ -48,7 +51,7 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	private boolean isEnabled=true;
 
 	private int nPasses=1;
-	private int position_id;
+	
 	/** The pretty name of the target detector. */
 	private final String FILTER_NAME = "Zernike Moments";
 	
@@ -72,7 +75,7 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	@Override
 	public Map<String, String> getDefaultSettings() {
 		// TODO Auto-generated method stub
-		settings.put(DEG, Integer.toString(6));
+		settings.put(DEG, Integer.toString(4));
 		return this.settings;
 	}
 
@@ -83,8 +86,9 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 		return true;
 	}
 
+	
 	@Override
-	public Complex applyFilter(ImageProcessor ip) {
+	public Pair<Integer,Complex> applyFilter(ImageProcessor ip) {
 		// TODO Auto-generated method stub
 		return filter(ip.duplicate());
 	}
@@ -94,19 +98,15 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	 * This method is helper function for both applyFilter and run method
 	 * @param ip input image
 	 */
-	private Complex filter(ImageProcessor ip){
-
+	private Pair<Integer,Complex> filter(ImageProcessor ip){
+		int index = position_id;
 		ip.snapshot();
 		ip.getDefaultColorModel();
-		
 		if(zm==null){
-			zm=new ZernikeMoment(Integer.parseInt(settings.get(DEG))); //this can be move to starting func
-			return zm.extractZernikeMoment(ip);
-		}else{
-			return zm.extractZernikeMoment(ip);
+			zm=new ZernikeMoment(degree); 
 		}
-		
-	            		
+		return new Pair<Integer,Complex>(index, zm.extractZernikeMoment(ip));
+		        		
 	}
 
 	@Override
@@ -222,9 +222,9 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 	}
 
 	@Override
-	public void updatePosition(int position_id) {
+	public void updatePosition(int position) {
 		// TODO Auto-generated method stub
-		this.position_id = position_id;
+		this.position_id = position;
 	}
 
 }

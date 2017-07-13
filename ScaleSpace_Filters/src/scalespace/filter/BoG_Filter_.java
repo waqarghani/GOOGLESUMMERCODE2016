@@ -11,15 +11,7 @@ import ij.process.Blitter;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ijaux.scale.GScaleSpace;
-
-
-
-
-
-
-
-
-
+import ijaux.scale.Pair;
 
 import java.awt.*;
 import java.util.*;
@@ -77,13 +69,14 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 
 	private int nPasses=1;
 	private int pass;
-	private int position_id;
+	
 	public final static String SIGMA="LOG_sigma", LEN="G_len",MAX_LEN="G_MAX", ISO="G_iso", ISSEP="G_SEP";
 
 	private static int sz= Prefs.getInt(LEN, 2);
 	private  int max_sz= Prefs.getInt(MAX_LEN, 8);
 	//private static float sigma=(float) Prefs.getDouble(SIGMA, 2.0f);
 	private float[][] kernel=null;
+	private int position_id=-1;
 
 	private ImagePlus image=null;
 	public static boolean debug=IJ.debugMode;
@@ -110,6 +103,9 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 
 	private ImageStack imageStack;
 	
+	public void initialseimageStack(ImageStack img){
+		this.imageStack = img;
+	}
 	/**
 	 * 
 	 */
@@ -149,21 +145,19 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 	 * @param nAngles number of angles
 	 * @return false if error
 	 */
-	public ImageStack applyFilter(ImageProcessor ip){
-
-		imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
+	public Pair<Integer,ImageStack> applyFilter(ImageProcessor ip){
+		int index = position_id;
+		ImageStack imageStack=new ImageStack(ip.getWidth(),ip.getHeight());
 		for (int sigma=sz; sigma<= max_sz; sigma *=2){		
 			GScaleSpace sp=new GScaleSpace(sigma);
 			ImageProcessor fp=filter(ip.duplicate(), sp,sep, isiso);
 			imageStack.addSlice( FILTER_KEY+"_" + sigma, fp);		
 		}
-
-		return imageStack;
+		initialseimageStack(imageStack);
+		return new Pair<Integer,ImageStack>(index, imageStack);	
 	}
 
 
-	
-	
 	public FloatProcessor filter(ImageProcessor ip,GScaleSpace sp, final boolean seperable,final boolean isotropic){
 		
 		ip.snapshot();
@@ -487,9 +481,9 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 	}
 
 	@Override
-	public void updatePosition(int position_id) {
+	public void updatePosition(int position) {
 		// TODO Auto-generated method stub
-		this.position_id = position_id;
+		this.position_id=position;
 	}
 
 
