@@ -219,9 +219,11 @@ public class FeaturePanel extends StackWindow
 		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
 		all.setLayout(box);
 		all.add(imagePanel);
-		all.add(optionBox);
-		all.add(controlsBoxForClass);
-		all.add(controlsBox);
+		JPanel subpanel=new JPanel(new GridBagLayout());
+		subpanel.add(optionBox,Util.getGbc(0, 0, 0, false, true));
+		subpanel.add(controlsBoxForClass,Util.getGbc(0, 20, 0, false, true));
+		subpanel.add(controlsBox,Util.getGbc(0, 20, 0, false, true));
+		all.add(subpanel);
 		add(all);  	      	      	   
 		this.pack();	 	    
 		this.setVisible(true); 
