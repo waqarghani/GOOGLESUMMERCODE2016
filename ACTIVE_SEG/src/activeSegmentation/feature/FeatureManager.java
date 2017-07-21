@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
@@ -52,6 +53,7 @@ public class FeatureManager implements IFeatureManager {
 	/** array of lists of Rois for each slice (vector index) 
 	 * and each class (arraylist index) of the training image */
 	private List<Vector<ArrayList<Roi>>> examples;
+	private HashMap<Integer, Integer> imageType;
 	private IDataManager dataManager;
 	private MetaInfo metaInfo;
 	private Map<String,IFeature> featureMap= new HashMap<String, IFeature>();
@@ -69,6 +71,7 @@ public class FeatureManager implements IFeatureManager {
 	{
 		this.stackSize=stackSize;
 		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
+		this.imageType = new HashMap<Integer, Integer>();
 		this.dataManager= dataManager;	
 		// update list of examples
 		for(int i=0; i < stackSize; i++)
@@ -91,6 +94,12 @@ public class FeatureManager implements IFeatureManager {
 		examples.get(n-1).get(classNum).add(roi);
 		roiman.addRoi(roi);
 
+	}
+	
+	public void addImageType(int dataImageTypeId, int nSlice) 
+	{
+		System.out.println("ADD Images in dataset of training or testing");
+		imageType.put(nSlice, dataImageTypeId);
 	}
 
 	@Override
@@ -389,5 +398,19 @@ public class FeatureManager implements IFeatureManager {
 	}
 
 
+	@Override
+	public ArrayList<Integer> getDataImageTypeId(int DataImageTypeId) {
+		// TODO Auto-generated method stub
+		
+		if(imageType.size()==0)
+			return null;
+		ArrayList<Integer> sliceNum = new ArrayList<Integer>();
+		
+		for(Entry<Integer, Integer> map:imageType.entrySet()){
+			if(map.getValue()==DataImageTypeId)
+				sliceNum.add(map.getKey());
+		}
+		return sliceNum;
+	}
 
 }

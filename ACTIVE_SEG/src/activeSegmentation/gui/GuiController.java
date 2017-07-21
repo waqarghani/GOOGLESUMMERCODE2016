@@ -128,12 +128,20 @@ public class GuiController {
 		return featureManager.getSize(i, currentSlice);
 	}
 
+	public ArrayList<Integer> getDataImageTypeId(int DataImageTypeId ){
+		return featureManager.getDataImageTypeId(DataImageTypeId);
+	}
+	
 	public void addExamples(int id, Roi r, int currentSlice) {
 		// TODO Auto-generated method stub
 		featureManager.addExample(id, r, currentSlice);	
 	}
 
-
+	public void addImageType(int id, int SliceNo) {
+		// TODO Auto-generated method stub
+		featureManager.addImageType(id, SliceNo);	
+	}
+	
 	public ImagePlus computeFeatures(String featureType) {
 		ImagePlus classifiedImage= null;
 		featureManager.extractFeatures(featureType);

@@ -1,5 +1,6 @@
 package activeSegmentation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -58,7 +59,12 @@ public interface IFeatureManager {
 	 * @param index
 	 */
 	public void deleteExample(int classNum, int nSlice, int index);
-	
+	/**
+	 * This method is adding marked images in Training or Testing set
+	 * @param classNum
+	 * @param nSlice
+	 */
+	public void addImageType(int dataImageTypeId, int nSlice); 
 	/**
 	 * This method return list of ROi for 
 	 * particular class and Image Slice
@@ -85,6 +91,8 @@ public interface IFeatureManager {
 	public String getClassLabel(int index);
 	
 	public int getSize(int i, int currentSlice);
+	
+	public ArrayList<Integer> getDataImageTypeId(int DataImageTypeId);
 	/**
 	 * This method will set class name 
 	 * @param classNum

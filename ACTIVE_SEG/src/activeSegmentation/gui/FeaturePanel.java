@@ -74,6 +74,7 @@ public class FeaturePanel extends StackWindow
 	final JPanel labelsJPanel=new JPanel(new GridBagLayout());
 	final JPanel resetJPanel = new JPanel(new GridBagLayout());
 	final JPanel configureJPanel = new JPanel(new GridBagLayout());
+	final JPanel ClasslabelsJPanel=new JPanel(new GridBagLayout());
 	private List<JCheckBox> jCheckBoxList= new ArrayList<JCheckBox>();
 	JPanel imagePanel;
 	JPanel controlsBox;
@@ -93,10 +94,12 @@ public class FeaturePanel extends StackWindow
 	GuiController controller;
 	private List<JList> exampleList;
 	private List<JList> allexampleList;
+	private List<JList> imageTypeList;
 	private List<Color> colors ;
 	/** flag to display the overlay image */
 	private boolean showColorOverlay=false;
 	int originalJ=0;
+	int originalJ1=0;
 	JPanel classJPanel;
 	int originajFrameJ=0, originalFrameK=0;
 	LUT overlayLUT;
@@ -143,6 +146,7 @@ public class FeaturePanel extends StackWindow
 		this.setTitle("Active Segmentation");
 		this.exampleList = new ArrayList<JList>();
 		this.allexampleList = new ArrayList<JList>();
+		this.imageTypeList = new ArrayList<JList>();
 		this.controller= controller;	
 		colors=Util.setDefaultColors();
 		roiOverlayList = new ArrayList<RoiListOverlay>();
@@ -273,7 +277,8 @@ public class FeaturePanel extends StackWindow
 	private void updateGui(){
 		drawExamples();
 		updateExampleLists();
-		updateallExampleLists();	
+		updateallExampleLists();
+		updateImageTypeLists();
 
 	}
 
@@ -347,14 +352,52 @@ public class FeaturePanel extends StackWindow
 
 	}
 
+	private void addsidepanelforClass(int i){
+		JList current=Util.model();
+		current.setForeground(colors.get(i));
+		imageTypeList.add(current);
+		RoiListOverlay roiOverlay = new RoiListOverlay();
+		roiOverlay.setComposite( transparency050 );
+		((OverlayedImageCanvas)ic).addOverlay(roiOverlay);
+		roiOverlayList.add(roiOverlay);
+
+		JPanel buttonsPanel = new JPanel(new GridBagLayout());
+		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddImageType");
+		
+		String DataType="";
+		if(i==0)
+			DataType = "Training";
+		if(i==1)
+			DataType = "Testing";
+		addButton(DataType,null ,ClasslabelsJPanel,
+				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
+		ClasslabelsJPanel.add(buttonsPanel,Util.getGbc(1,originalJ1 , 1, false, false) );
+		originalJ1++;
+		imageTypeList.get(i).addMouseListener(mouseListener);
+		ClasslabelsJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
+				Util.getGbc(0,originalJ1, 1, false, false));
+		originalJ1++;		
+	}
 
 	private void createPanelforClassLevel(){
 		
 		controlsBoxForClass=new JPanel(new GridBagLayout());
 		final JPanel resetJPanel = new JPanel(new GridBagLayout());
 
+
+		ClasslabelsJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
+
+		for(int i = 0; i < 2; i++){
+			addsidepanelforClass(i);
+		}
+
+		
+		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
+				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
+		
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
+		
 		
 		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
 		add(controlsBoxForClass, BorderLayout.EAST);
@@ -404,6 +447,15 @@ public class FeaturePanel extends StackWindow
 			controlsBoxForClass.setVisible(true);
 			feature_extraction_type = "classlevel";
 		}
+		
+		if(event.getActionCommand()== "AddImageType"){	
+			//Event ID 0 specify that image is of Training dataset type.
+			//Event ID 1 specify that image is of Testing dataset type.	
+			displayImage.killRoi();
+			controller.addImageType(event.getID(), currentSlice);			
+			updateGui();
+		}
+
 		if(event==COMPUTE_BUTTON_PRESSED){
 			classifiedImage=controller.computeFeatures(feature_extraction_type);
 			toggleOverlay();
@@ -440,6 +492,7 @@ public class FeaturePanel extends StackWindow
 
 
 		if(event.getActionCommand()== "AddButton"){	
+			
 			final Roi r = displayImage.getRoi();
 			if (null == r)
 				return;
@@ -507,11 +560,32 @@ public class FeaturePanel extends StackWindow
 		}
 
 	}
+	
+	/**
+	 * Update the imagetype lists in the GUI
+	 */
+	private void updateImageTypeLists()	{
+		for(int i = 0; i < 2; i++){
+			imageTypeList.get(i).removeAll();
+			Vector listModel = new Vector();
+			ArrayList<Integer> SliceNums = controller.getDataImageTypeId(i);
+			if(SliceNums!=null){
+				for(int j=0; j<SliceNums.size(); j++){	
+					listModel.addElement("image"+ " "+ SliceNums.get(j));
+				}
+				imageTypeList.get(i).setListData(listModel);
+				imageTypeList.get(i).setForeground(colors.get(i));
+			}
+	}
+
+	}
+	
 	private  MouseListener mouseListener = new MouseAdapter() {
 		public void mouseClicked(MouseEvent mouseEvent) {
 			JList theList = ( JList) mouseEvent.getSource();
 			if (mouseEvent.getClickCount() == 1) {
 				int index = theList.getSelectedIndex();
+				
 				if (index >= 0) {
 					String item =theList.getSelectedValue().toString();
 					String[] arr= item.split(" ");
