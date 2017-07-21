@@ -63,6 +63,10 @@ public class GuiController {
 		featureManager.deleteExample(classId, currentSlice, index);
 	}
 	
+	public void deleteImageType(int sliceNum){
+		featureManager.deleteImageType(sliceNum);
+	}
+	
 	public int getClassId(String classNum){
 		
 		return featureManager.getclassKey(classNum);
@@ -142,6 +146,9 @@ public class GuiController {
 		featureManager.addImageType(id, SliceNo);	
 	}
 	
+	public String getImageStatus(int SliceNo){
+		return featureManager.getImageStatus(SliceNo);
+	}
 	public ImagePlus computeFeatures(String featureType) {
 		ImagePlus classifiedImage= null;
 		featureManager.extractFeatures(featureType);

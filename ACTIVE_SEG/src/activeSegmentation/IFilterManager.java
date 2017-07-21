@@ -2,6 +2,7 @@ package activeSegmentation;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -94,7 +95,12 @@ public interface IFilterManager {
 	 *@return Instance of pixel
 	 */
 	public Instance createInstance(String featureName, int x, int y, int classIndex, int sliceNum);
-
+	/**
+	 * This method will create class level training  
+	 *@param slice of Image
+	 *@return Instance of pixel
+	 */
+	public Instance createInstance(String featureName, int sliceNum);
 	/**
 	 * This method will return number of slices
 	 * @return return number of slices

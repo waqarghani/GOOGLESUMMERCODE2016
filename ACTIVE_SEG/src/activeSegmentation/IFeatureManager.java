@@ -60,6 +60,11 @@ public interface IFeatureManager {
 	 */
 	public void deleteExample(int classNum, int nSlice, int index);
 	/**
+	 * This method is to delete the particular slice from from particular dataset.
+	 * @param SliceNum
+	 */
+	public void deleteImageType(int sliceNum);
+	/**
 	 * This method is adding marked images in Training or Testing set
 	 * @param classNum
 	 * @param nSlice
@@ -73,6 +78,11 @@ public interface IFeatureManager {
 	 * @return List<Roi>
 	 */
 	public List<Roi> getExamples(int classNum, int n);
+	/**
+	 * Return set name whether slice is in training or testing set  
+	 * @param nSlice
+	 */
+	public String getImageStatus(int nSlice);
 	/**
 	 * This method return key used for particular class
 	 * @param classNum

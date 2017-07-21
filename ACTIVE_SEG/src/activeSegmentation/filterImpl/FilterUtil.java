@@ -87,7 +87,7 @@ public class FilterUtil {
 				size++;
 		}
 		
-		double[] final_result = new double[size];
+		double[] final_result = new double[size+1];
 		
 		int t=0;
 		for(int i=0;i<rv.getReal().length;i++){

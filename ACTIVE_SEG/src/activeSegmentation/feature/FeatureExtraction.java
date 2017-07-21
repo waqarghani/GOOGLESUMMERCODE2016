@@ -5,8 +5,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -236,6 +235,11 @@ public class FeatureExtraction implements IFeature {
 		// TODO Auto-generated method stub
 		this.trainingData= trainingData.getDataset();
 
+	}
+	@Override
+	public void createTrainingInstance(HashMap<Integer, Integer> imageType) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

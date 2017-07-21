@@ -1,6 +1,7 @@
 package activeSegmentation.feature;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -31,49 +32,51 @@ public class Zernike_Feature_Extraction implements IFeature {
 	}
 
 	@Override
+	public void createTrainingInstance(HashMap<Integer, Integer> imageType) {
+		
+	}
+	
+	@Override
 	public void createTrainingInstance(List<String> classLabels, int classes, List<Vector<ArrayList<Roi>>> examples) {
-		// TODO Auto-generated method stub
-		ArrayList<Attribute> attributes = createFeatureHeader();
-		attributes.add(new Attribute(Common.CLASS, addClasstoHeader(classes)));
-		
-		// create initial set of instances
-		trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
-		
-		// Set the index of the class attribute
-		trainingData.setClassIndex(classes);
-		
-		for(int sliceNum = 1; sliceNum <= classes; sliceNum++)
-		{
-			trainingData.add(filterManager.createInstance(featureName, 0, 0, sliceNum, sliceNum));
-		}
-
+	
+			ArrayList<Attribute> attributes = createFeatureHeader();
+			attributes.add(new Attribute(Common.CLASS, classLabels));
+						
+			//create initial set of instances
+			trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
+						
+			//Set the index of the class attribute
+			trainingData.setClassIndex(classes);
+						
+			for(String imageIndex : classLabels)
+			{
+				trainingData.add(filterManager.createInstance(featureName, Integer.parseInt(imageIndex.replace("image", ""))));
+			}
+			System.out.println(trainingData+"aaaaaaaaaa");
 	}
 
 	private  ArrayList<Attribute> createFeatureHeader(){
 		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
-		double[] tempzernikevalues = filterManager.createInstance(featureName, 0, 0, 0, 1).toDoubleArray();
+		double[] tempzernikevalues = filterManager.createInstance(featureName, 1).toDoubleArray();
 		int degree = tempzernikevalues.length;
-		for(int k=0;k<=degree;k++){
+		int count = 0;
+		int k=0;
+		while(count<degree){
 			for(int l=0;l<=k;l++){	
 				if((k-l)%2==0){
 				     attributes.add(new Attribute("Z"+k+","+l));
-				     if(l!=0)
+				     count++;
+				     if(l!=0){
 				    	 attributes.add(new Attribute("Z"+k+",-"+l));
+				    	 count++;
+				     }	 
 				}
 			}
-    	}	
+			k++;
+		}
 		return attributes;
 	}
 	
-	private ArrayList<String> addClasstoHeader(int numClasses){
-		ArrayList<String> classes=null;
-			classes = new ArrayList<String>();
-			for(int i = 1; i <= numClasses ; i ++)
-			{			
-				classes.add("class"+i);
-			}			
-		return classes;
-	}
 	
 	@Override
 	public IDataSet getDataSet() {
@@ -93,5 +96,7 @@ public class Zernike_Feature_Extraction implements IFeature {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 }

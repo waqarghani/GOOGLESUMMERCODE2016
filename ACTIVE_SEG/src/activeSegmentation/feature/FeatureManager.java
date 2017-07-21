@@ -127,6 +127,16 @@ public class FeatureManager implements IFeatureManager {
 		return examples.get(n-1).get(classNum);
 	}
 
+	@Override
+	public String getImageStatus(int nSlice){
+		if(imageType.containsKey(nSlice))
+		{
+			if(imageType.get(nSlice)==0)
+				return "Training";
+			return "Testing";
+		}
+		return null;
+	}
 
 
 	@Override
@@ -155,6 +165,16 @@ public class FeatureManager implements IFeatureManager {
 	public void deleteExample(int classNum, int nSlice, int index)
 	{
 		getExamples(classNum, nSlice).remove(index);
+	}
+	
+	/**
+	 * Remove an slice from dataset. 
+	 * 
+	 * @param sliceNum the number of the examples' class
+	 */
+	public void deleteImageType(int sliceNum)
+	{
+		imageType.remove(sliceNum);
 	}
 
 	/**
@@ -357,13 +377,30 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 
+	public ArrayList<String> ClassLabelsForClassLevel(){
+		
+		ArrayList<String> labels = new ArrayList<String>();
+		for(Entry<Integer, Integer> map:imageType.entrySet()){
+			if(map.getValue()==0)
+				labels.add("image"+map.getKey());
+		}
+		numOfClasses = labels.size();
+		return labels;
+	}
+	
 	@Override
 	public IDataSet extractFeatures(String featureType){
 		
 		if(featureType.equals("classlevel"))
-			numOfClasses = 30;
-		featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),
+		{
+			featureMap.get(featureType).createTrainingInstance(ClassLabelsForClassLevel(),
 				numOfClasses, examples);
+			
+		}
+		else {
+			featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),
+					numOfClasses, examples);
+		}
 		IDataSet dataset=featureMap.get(featureType).getDataSet();
 		dataManager.setData(dataset);
 		System.out.println("NUMBER OF INSTANCE"+dataset.toString());

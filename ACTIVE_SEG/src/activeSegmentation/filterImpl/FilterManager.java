@@ -242,12 +242,12 @@ public class FilterManager implements IFilterManager {
 	}
 
 	public Instance createInstance(String featureName, int x, int y, int classIndex, int sliceNum) {
-
-		if(featureName.equals("classlevel"))
-			return filterUtil.createInstance(featurStackMap.get(sliceNum).getzernikeMoments(), classIndex);
-		
 		return filterUtil.createInstance(x, y, classIndex,
 				featurStackMap.get(sliceNum).getfinalStack(), colorFeatures, oldColorFormat);
+	}
+	
+	public Instance createInstance(String featureName, int sliceNum){
+		return filterUtil.createInstance(featurStackMap.get(sliceNum).getzernikeMoments(), sliceNum);
 	}
 
 	@Override

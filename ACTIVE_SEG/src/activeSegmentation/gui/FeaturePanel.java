@@ -12,23 +12,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Panel;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -80,6 +75,7 @@ public class FeaturePanel extends StackWindow
 	JPanel controlsBox;
 	JPanel controlsBoxForClass;
 	JPanel optionBox;
+	JTextArea sliceStatus;
 	private JFrame frame = new JFrame("CONFIGURE");
 	private ImagePlus classifiedImage;
 	Panel all;
@@ -159,6 +155,7 @@ public class FeaturePanel extends StackWindow
 		imagePanel.add(zSelector,Util.getGbc(0, 0, 0, false, false));
 		imagePanel.add(sliceSelector,Util.getGbc(0, 1, 1, false, true));
 
+		
 		if(null != sliceSelector){
 			sliceSelector.setEnabled(true);
 			// set slice selector to the correct number
@@ -171,6 +168,7 @@ public class FeaturePanel extends StackWindow
 					if(e.getSource() == sliceSelector)
 					{
 						displayImage.killRoi();
+						updateImageStatus();
 						updateGui();
 						if(showColorOverlay)
 						{
@@ -373,7 +371,7 @@ public class FeaturePanel extends StackWindow
 				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
 		ClasslabelsJPanel.add(buttonsPanel,Util.getGbc(1,originalJ1 , 1, false, false) );
 		originalJ1++;
-		imageTypeList.get(i).addMouseListener(mouseListener);
+		imageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
 		ClasslabelsJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
 				Util.getGbc(0,originalJ1, 1, false, false));
 		originalJ1++;		
@@ -382,6 +380,13 @@ public class FeaturePanel extends StackWindow
 	private void createPanelforClassLevel(){
 		
 		controlsBoxForClass=new JPanel(new GridBagLayout());
+		int currentSlice= displayImage.getCurrentSlice();
+
+		sliceStatus= new JTextArea();
+		sliceStatus.setText("Image "+currentSlice+" : Null");
+		sliceStatus.setSize(dimension);
+		controlsBoxForClass.add(sliceStatus, Util.getGbc(0, 0, 1, false, true));
+
 		final JPanel resetJPanel = new JPanel(new GridBagLayout());
 
 
@@ -404,6 +409,10 @@ public class FeaturePanel extends StackWindow
 		controlsBoxForClass.setVisible(false);
 	}
 
+	private void updateImageStatus(){
+		int currentSlice= displayImage.getCurrentSlice();
+		sliceStatus.setText("Image "+currentSlice+" : "+controller.getImageStatus(currentSlice));
+	}
 	private JButton addButton( final String label, final Icon icon,JComponent panel, 
 			final ActionEvent action, Dimension dimension,GridBagConstraints labelsConstraints,Color color ){
 		final JButton button = new JButton();
@@ -533,7 +542,6 @@ public class FeaturePanel extends StackWindow
 	 */
 	protected void drawExamples(){
 		final int currentSlice = displayImage.getCurrentSlice();
-
 		for(int i = 0; i < controller.getRois(currentSlice).size(); i++){
 			roiOverlayList.get(i).setColor(colors.get(i));
 			roiOverlayList.get(i).setRoi(controller.getRois(currentSlice).get(i));
@@ -567,7 +575,7 @@ public class FeaturePanel extends StackWindow
 	private void updateImageTypeLists()	{
 		for(int i = 0; i < 2; i++){
 			imageTypeList.get(i).removeAll();
-			Vector listModel = new Vector();
+			Vector<String> listModel = new Vector<String>();
 			ArrayList<Integer> SliceNums = controller.getDataImageTypeId(i);
 			if(SliceNums!=null){
 				for(int j=0; j<SliceNums.size(); j++){	
@@ -576,7 +584,7 @@ public class FeaturePanel extends StackWindow
 				imageTypeList.get(i).setListData(listModel);
 				imageTypeList.get(i).setForeground(colors.get(i));
 			}
-	}
+		}
 
 	}
 	
@@ -614,6 +622,21 @@ public class FeaturePanel extends StackWindow
 		}
 	};
 
+	private  MouseListener mouseListenerClassLevel = new MouseAdapter() {
+		public void mouseClicked(MouseEvent mouseEvent) {
+			JList theList = ( JList) mouseEvent.getSource();
+			if (mouseEvent.getClickCount() == 2) {
+				int index = theList.getSelectedIndex();
+				if (index >= 0) {
+					String item =theList.getSelectedValue().toString();
+					System.out.println("ITEM : "+ item);
+					String[] arr= item.split(" ");
+					controller.deleteImageType(Integer.parseInt(arr[1].trim()));
+					updateGui();
+				}
+			}
+		}
+	};
 	
 	/**
 	 * Select a list and deselect the others
