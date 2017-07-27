@@ -110,8 +110,6 @@ public class ClassifierManager implements ILearningManager {
 			pool.invoke(applyTask);
 			results.add(classificationResult);			
 		}
-		
-		
 		return results;
 	}
 

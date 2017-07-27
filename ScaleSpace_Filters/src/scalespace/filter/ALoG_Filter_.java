@@ -519,4 +519,10 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 		this.position_id=position;
 	}
 
+	@Override
+	public int getDegree() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

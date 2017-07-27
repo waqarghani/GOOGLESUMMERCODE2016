@@ -82,7 +82,7 @@ public interface IFilterManager {
 	 */
 	public boolean updateFilterSetting(String key, Map<String,String> settingsMap);
 	
-	public int getNumOfFeatures() ;
+	public int getNumOfFeatures(String featureName) ;
 	public String getLabel(int index);
 	public ImageStack getImageStack(int sliceNum);
 	/**

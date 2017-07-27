@@ -51,7 +51,6 @@ public class FilterUtil {
 	{
 		
 		final int size=stack.getSize();
-
 		final double[] values = new double[ size + 1 ];
 		int n = 0;
 
@@ -66,16 +65,14 @@ public class FilterUtil {
 			{
 				int c  = (int) stack.getVoxel( x, y, z );
 				int r = (c&0xff0000)>>16;
-			int g = (c&0xff00)>>8;
-		int b = c&0xff;
-		values[ z ] = (r + g + b) / 3.0;
+				int g = (c&0xff00)>>8;
+				int b = c&0xff;
+				values[ z ] = (r + g + b) / 3.0;
 			}
 		}
 
-
 		// Assign class
 		values[values.length-1] = (double) classValue;
-
 		return new DenseInstance(1.0, values);
 	}
 
@@ -92,13 +89,15 @@ public class FilterUtil {
 		int t=0;
 		for(int i=0;i<rv.getReal().length;i++){
 			final_result[t++] = rv.getReal()[i];
-			System.out.println(i+"rrr"+rv.getImaginary()[i]);
 			if(rv.getImaginary()[i]!=0){
 				final_result[t++] = rv.getImaginary()[i];
 			}
 			
 		}
-		final_result[t++]=(double) classValue;
+		final_result[t]=(double) classValue;
+		for(int i=0;i<final_result.length;i++){
+			System.out.print(final_result[i]);
+		}
 		return new DenseInstance(1.0,final_result);
 		
 	}

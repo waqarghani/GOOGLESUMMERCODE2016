@@ -71,11 +71,11 @@ public class FeatureExtraction implements IFeature {
 	{
 		ArrayList<Attribute> attributes = createFeatureHeader();
 		attributes.add(new Attribute(Common.CLASS, addClasstoHeader(classes, classLabels)));
-
+		
 		// create initial set of instances
 		trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
 		// Set the index of the class attribute
-		trainingData.setClassIndex(filterManager.getNumOfFeatures());
+		trainingData.setClassIndex(filterManager.getNumOfFeatures(featureName));
 		for(int classIndex = 0; classIndex < classes; classIndex++)
 		{
 			int nl = 0;
@@ -137,7 +137,7 @@ public class FeatureExtraction implements IFeature {
 
 	private  ArrayList<Attribute> createFeatureHeader(){
 		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
-		for (int i=1; i<=filterManager.getNumOfFeatures(); i++)
+		for (int i=1; i<=filterManager.getNumOfFeatures(featureName); i++)
 		{
 			String attString = filterManager.getLabel(i);
 			attributes.add(new Attribute(attString));
@@ -147,8 +147,7 @@ public class FeatureExtraction implements IFeature {
 	}
 
 	private ArrayList<String> addClasstoHeader(int numClasses,List<String> classLabels){
-		ArrayList<String> classes=null;
-			classes = new ArrayList<String>();
+		ArrayList<String> classes = new ArrayList<String>();
 			for(int i = 0; i < numClasses ; i ++)
 			{			
 				for(int n=0; n<filterManager.getOriginalImageSize(); n++)
@@ -198,7 +197,7 @@ public class FeatureExtraction implements IFeature {
 		// create initial set of instances
 		testingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
 		// Set the index of the class attribute
-		testingData.setClassIndex(filterManager.getNumOfFeatures());
+		testingData.setClassIndex(filterManager.getNumOfFeatures(featureName));
 
 		for( int y = 0; y < originalImage.getHeight(); y++ )				
 		{
@@ -210,7 +209,6 @@ public class FeatureExtraction implements IFeature {
 		}
 		// increase number of instances for this class
 
-		System.out.println("SIZe"+testingData.size());
 		System.out.println(testingData.get(1).toString());
 		return testingData;		
 	}

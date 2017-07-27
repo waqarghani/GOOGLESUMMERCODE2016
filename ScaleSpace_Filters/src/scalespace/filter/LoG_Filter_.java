@@ -448,5 +448,11 @@ public class LoG_Filter_ implements ExtendedPlugInFilter, DialogListener,IFilter
 		this.position_id = position;
 	}
 
+	@Override
+	public int getDegree() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 }

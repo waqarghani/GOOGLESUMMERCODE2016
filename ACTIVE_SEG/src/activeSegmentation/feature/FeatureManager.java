@@ -382,7 +382,7 @@ public class FeatureManager implements IFeatureManager {
 		ArrayList<String> labels = new ArrayList<String>();
 		for(Entry<Integer, Integer> map:imageType.entrySet()){
 			if(map.getValue()==0)
-				labels.add("image"+map.getKey());
+				labels.add("class"+map.getKey());
 		}
 		numOfClasses = labels.size();
 		return labels;

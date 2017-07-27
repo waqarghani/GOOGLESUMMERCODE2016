@@ -34,7 +34,7 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 
 	final int flags=DOES_ALL+KEEP_PREVIEW+ NO_CHANGES;
 	public final static String DEG="Degree";
-	private static int degree= Prefs.getInt(DEG, 4);
+	private int degree= Prefs.getInt(DEG, 4);
 	private int position_id=-1;
 
 	/** A string key identifying this factory. */
@@ -109,6 +109,10 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 		        		
 	}
 
+	public int getDegree(){
+		return degree;
+	}
+	
 	@Override
 	public String getKey() {
 		// TODO Auto-generated method stub
@@ -172,6 +176,7 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 
 		return (x*x-2)* Math.exp(-Math.pow(x, 2)/2) / (2  *Math.sqrt(3.14));
 	}
+	
 	
 	@Override
 	public boolean isEnabled() {

@@ -206,9 +206,11 @@ public class FilterManager implements IFilterManager {
 		return filterMap.get(key).updateSettings(settingsMap);
 	}
 	
-	public int getNumOfFeatures() {
-
-		return featurStackMap.get(featurStackMap.size()).getfinalStack().getSize();
+	public int getNumOfFeatures(String featureName) {
+		if(featureName.equals("classlevel"))
+			return filterMap.get("ZMC").getDegree();
+		else
+			return featurStackMap.get(featurStackMap.size()).getfinalStack().getSize();
 	}
 
 	/**

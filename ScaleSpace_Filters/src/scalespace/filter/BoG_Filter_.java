@@ -485,6 +485,11 @@ public class BoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilte
 		// TODO Auto-generated method stub
 		this.position_id=position;
 	}
+	@Override
+	public int getDegree() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 
 }

@@ -9,7 +9,6 @@ import weka.core.Instances;
 
 public class ApplyTask extends RecursiveAction{
 
-
 	/**
 	 * 
 	 */
@@ -71,6 +70,5 @@ public class ApplyTask extends RecursiveAction{
 			}
 		}
 	}
-
 
 }

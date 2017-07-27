@@ -467,5 +467,11 @@ public class Gaussian_Derivative_ implements ExtendedPlugInFilter, DialogListene
 		this.position_id = position;
 	}
 
+	@Override
+	public int getDegree() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 }

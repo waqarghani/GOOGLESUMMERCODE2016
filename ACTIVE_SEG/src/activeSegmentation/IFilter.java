@@ -94,7 +94,7 @@ public interface IFilter {
 
 	public void setImageStack(ImageStack imageStack);
 	
-	
+	public int getDegree();
 	
 
 }

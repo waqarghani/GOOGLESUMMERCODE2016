@@ -21,6 +21,7 @@ public class Zernike_Feature_Extraction implements IFeature {
 
 	private Instances trainingData;
 	private String featureName="classlevel";
+	int classindex = 0;
 	public Zernike_Feature_Extraction(IFilterManager filterManager, ImagePlus originalImage){
 		this.filterManager= filterManager;
 	}
@@ -46,29 +47,28 @@ public class Zernike_Feature_Extraction implements IFeature {
 			trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
 						
 			//Set the index of the class attribute
-			trainingData.setClassIndex(classes);
+			trainingData.setClassIndex(classindex);
 						
 			for(String imageIndex : classLabels)
 			{
-				trainingData.add(filterManager.createInstance(featureName, Integer.parseInt(imageIndex.replace("image", ""))));
+				trainingData.add(filterManager.createInstance(featureName, Integer.parseInt(imageIndex.replace("class", ""))));
 			}
+			System.out.println(classindex+"CISCO");
 			System.out.println(trainingData+"aaaaaaaaaa");
 	}
 
 	private  ArrayList<Attribute> createFeatureHeader(){
 		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
-		double[] tempzernikevalues = filterManager.createInstance(featureName, 1).toDoubleArray();
-		int degree = tempzernikevalues.length;
-		int count = 0;
+		int degree = filterManager.getNumOfFeatures(featureName);
 		int k=0;
-		while(count<degree){
+		while(k<=degree){
 			for(int l=0;l<=k;l++){	
 				if((k-l)%2==0){
 				     attributes.add(new Attribute("Z"+k+","+l));
-				     count++;
+				     ++classindex;
 				     if(l!=0){
 				    	 attributes.add(new Attribute("Z"+k+",-"+l));
-				    	 count++;
+				     ++classindex;
 				     }	 
 				}
 			}
