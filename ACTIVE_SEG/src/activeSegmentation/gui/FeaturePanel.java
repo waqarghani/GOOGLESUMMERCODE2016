@@ -317,6 +317,66 @@ public class FeaturePanel extends StackWindow
 		controlsBox.setVisible(false);
 	}
 
+	
+	
+	private void addsidepanelforClass(int i){
+		JList current=Util.model();
+		current.setForeground(colors.get(i));
+		imageTypeList.add(current);
+		RoiListOverlay roiOverlay = new RoiListOverlay();
+		roiOverlay.setComposite( transparency050 );
+		((OverlayedImageCanvas)ic).addOverlay(roiOverlay);
+		roiOverlayList.add(roiOverlay);
+
+		JPanel buttonsPanel = new JPanel(new GridBagLayout());
+		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddImageType");
+		
+		addButton(controller.getclassLabel(i+1),null ,ClasslabelsJPanel,
+				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
+		ClasslabelsJPanel.add(buttonsPanel,Util.getGbc(1,originalJ1 , 1, false, false) );
+		originalJ1++;
+		imageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
+		ClasslabelsJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
+				Util.getGbc(0,originalJ1, 1, false, false));
+		originalJ1++;		
+	}
+
+	private void createPanelforClassLevel(){
+		addButton( "CONFIGURE",null ,configureJPanel,
+				CONFIGURE_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
+		
+		controlsBoxForClass=new JPanel(new GridBagLayout());
+		
+		/*int currentSlice= displayImage.getCurrentSlice();
+
+		sliceStatus= new JTextArea();
+		sliceStatus.setText("Image "+currentSlice+" : Null");
+		sliceStatus.setSize(dimension);
+		controlsBoxForClass.add(sliceStatus, Util.getGbc(0, 0, 1, false, true));*/
+
+		final JPanel resetJPanel = new JPanel(new GridBagLayout());
+
+
+		ClasslabelsJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
+
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			addsidepanelforClass(i);
+		}
+
+		
+		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
+				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
+		
+		addButton( "COMPUTE",null ,resetJPanel,
+				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
+		
+		controlsBoxForClass.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
+
+		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
+		add(controlsBoxForClass, BorderLayout.EAST);
+		controlsBoxForClass.setVisible(false);
+	}
+	
 
 	private void configureFrame(){
 
@@ -350,64 +410,7 @@ public class FeaturePanel extends StackWindow
 
 	}
 
-	private void addsidepanelforClass(int i){
-		JList current=Util.model();
-		current.setForeground(colors.get(i));
-		imageTypeList.add(current);
-		RoiListOverlay roiOverlay = new RoiListOverlay();
-		roiOverlay.setComposite( transparency050 );
-		((OverlayedImageCanvas)ic).addOverlay(roiOverlay);
-		roiOverlayList.add(roiOverlay);
-
-		JPanel buttonsPanel = new JPanel(new GridBagLayout());
-		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddImageType");
-		
-		String DataType="";
-		if(i==0)
-			DataType = "Training";
-		if(i==1)
-			DataType = "Testing";
-		addButton(DataType,null ,ClasslabelsJPanel,
-				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
-		ClasslabelsJPanel.add(buttonsPanel,Util.getGbc(1,originalJ1 , 1, false, false) );
-		originalJ1++;
-		imageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
-		ClasslabelsJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
-				Util.getGbc(0,originalJ1, 1, false, false));
-		originalJ1++;		
-	}
-
-	private void createPanelforClassLevel(){
-		
-		controlsBoxForClass=new JPanel(new GridBagLayout());
-		int currentSlice= displayImage.getCurrentSlice();
-
-		sliceStatus= new JTextArea();
-		sliceStatus.setText("Image "+currentSlice+" : Null");
-		sliceStatus.setSize(dimension);
-		controlsBoxForClass.add(sliceStatus, Util.getGbc(0, 0, 1, false, true));
-
-		final JPanel resetJPanel = new JPanel(new GridBagLayout());
-
-
-		ClasslabelsJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
-
-		for(int i = 0; i < 2; i++){
-			addsidepanelforClass(i);
-		}
-
-		
-		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
-				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
-		
-		addButton( "COMPUTE",null ,resetJPanel,
-				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
-		
-		
-		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
-		add(controlsBoxForClass, BorderLayout.EAST);
-		controlsBoxForClass.setVisible(false);
-	}
+	
 
 	private void updateImageStatus(){
 		int currentSlice= displayImage.getCurrentSlice();
@@ -458,8 +461,6 @@ public class FeaturePanel extends StackWindow
 		}
 		
 		if(event.getActionCommand()== "AddImageType"){	
-			//Event ID 0 specify that image is of Training dataset type.
-			//Event ID 1 specify that image is of Testing dataset type.	
 			displayImage.killRoi();
 			controller.addImageType(event.getID(), currentSlice);			
 			updateGui();
@@ -533,6 +534,7 @@ public class FeaturePanel extends StackWindow
 		controller.addClass();
 		addclasses(controller.getNumberofClasses()-1, originajFrameJ, originalFrameK);
 		addSidePanel(controller.getNumberofClasses()-1);
+		addsidepanelforClass(controller.getNumberofClasses()-1);
 		validateFrame();
 	}
 
@@ -573,13 +575,13 @@ public class FeaturePanel extends StackWindow
 	 * Update the imagetype lists in the GUI
 	 */
 	private void updateImageTypeLists()	{
-		for(int i = 0; i < 2; i++){
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			imageTypeList.get(i).removeAll();
 			Vector<String> listModel = new Vector<String>();
 			ArrayList<Integer> SliceNums = controller.getDataImageTypeId(i);
 			if(SliceNums!=null){
 				for(int j=0; j<SliceNums.size(); j++){	
-					listModel.addElement("image"+ " "+ SliceNums.get(j));
+					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
 				}
 				imageTypeList.get(i).setListData(listModel);
 				imageTypeList.get(i).setForeground(colors.get(i));
@@ -631,7 +633,9 @@ public class FeaturePanel extends StackWindow
 					String item =theList.getSelectedValue().toString();
 					System.out.println("ITEM : "+ item);
 					String[] arr= item.split(" ");
-					controller.deleteImageType(Integer.parseInt(arr[1].trim()));
+					int classId= controller.getClassId(arr[0].trim())-1;
+					System.out.println(classId+"sssssssss");
+					controller.deleteImageType(classId,Integer.parseInt(arr[1].trim()));
 					updateGui();
 				}
 			}

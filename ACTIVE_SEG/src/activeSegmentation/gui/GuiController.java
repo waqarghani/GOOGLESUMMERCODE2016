@@ -63,8 +63,8 @@ public class GuiController {
 		featureManager.deleteExample(classId, currentSlice, index);
 	}
 	
-	public void deleteImageType(int sliceNum){
-		featureManager.deleteImageType(sliceNum);
+	public void deleteImageType(int classId, int sliceNum){
+		featureManager.deleteImageType(classId, sliceNum);
 	}
 	
 	public int getClassId(String classNum){
@@ -132,8 +132,8 @@ public class GuiController {
 		return featureManager.getSize(i, currentSlice);
 	}
 
-	public ArrayList<Integer> getDataImageTypeId(int DataImageTypeId ){
-		return featureManager.getDataImageTypeId(DataImageTypeId);
+	public ArrayList<Integer> getDataImageTypeId(int ClassNum ){
+		return featureManager.getDataImageTypeId(ClassNum);
 	}
 	
 	public void addExamples(int id, Roi r, int currentSlice) {

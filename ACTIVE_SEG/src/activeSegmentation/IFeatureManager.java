@@ -63,7 +63,7 @@ public interface IFeatureManager {
 	 * This method is to delete the particular slice from from particular dataset.
 	 * @param SliceNum
 	 */
-	public void deleteImageType(int sliceNum);
+	public void deleteImageType(int classNum, int sliceNum);
 	/**
 	 * This method is adding marked images in Training or Testing set
 	 * @param classNum

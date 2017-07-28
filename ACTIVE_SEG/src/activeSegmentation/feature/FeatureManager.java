@@ -53,7 +53,7 @@ public class FeatureManager implements IFeatureManager {
 	/** array of lists of Rois for each slice (vector index) 
 	 * and each class (arraylist index) of the training image */
 	private List<Vector<ArrayList<Roi>>> examples;
-	private HashMap<Integer, Integer> imageType;
+	private List<ArrayList<Integer>> imageType;
 	private IDataManager dataManager;
 	private MetaInfo metaInfo;
 	private Map<String,IFeature> featureMap= new HashMap<String, IFeature>();
@@ -71,12 +71,13 @@ public class FeatureManager implements IFeatureManager {
 	{
 		this.stackSize=stackSize;
 		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
-		this.imageType = new HashMap<Integer, Integer>();
+		this.imageType = new ArrayList<ArrayList<Integer>>();
 		this.dataManager= dataManager;	
 		// update list of examples
 		for(int i=0; i < stackSize; i++)
 		{
 			examples.add(new Vector<ArrayList<Roi>>());			
+			imageType.add(new ArrayList<Integer>());
 		}
 
 		for(int i=1; i<=numOfClasses;i++ ){
@@ -96,10 +97,13 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 	
-	public void addImageType(int dataImageTypeId, int nSlice) 
+	public void addImageType(int classNum, int nSlice) 
 	{
-		System.out.println("ADD Images in dataset of training or testing");
-		imageType.put(nSlice, dataImageTypeId);
+		for(int i=0;i<imageType.size();i++){
+			if(imageType.get(i).contains(nSlice))
+				imageType.get(i).remove(imageType.get(i).indexOf(nSlice));
+		}
+		imageType.get(classNum).add(nSlice);
 	}
 
 	@Override
@@ -129,12 +133,12 @@ public class FeatureManager implements IFeatureManager {
 
 	@Override
 	public String getImageStatus(int nSlice){
-		if(imageType.containsKey(nSlice))
+		/*if(imageType.containsKey(nSlice))
 		{
 			if(imageType.get(nSlice)==0)
 				return "Training";
 			return "Testing";
-		}
+		}*/
 		return null;
 	}
 
@@ -172,9 +176,9 @@ public class FeatureManager implements IFeatureManager {
 	 * 
 	 * @param sliceNum the number of the examples' class
 	 */
-	public void deleteImageType(int sliceNum)
+	public void deleteImageType(int classId, int sliceNum)
 	{
-		imageType.remove(sliceNum);
+		imageType.get(classId).remove(imageType.get(classId).indexOf(sliceNum));
 	}
 
 	/**
@@ -378,14 +382,15 @@ public class FeatureManager implements IFeatureManager {
 	}
 
 	public ArrayList<String> ClassLabelsForClassLevel(){
-		
+		/*
 		ArrayList<String> labels = new ArrayList<String>();
 		for(Entry<Integer, Integer> map:imageType.entrySet()){
 			if(map.getValue()==0)
 				labels.add("class"+map.getKey());
 		}
-		numOfClasses = labels.size();
-		return labels;
+		numOfClasses = labels.size();*/
+		//return labels;
+		return null;
 	}
 	
 	@Override
@@ -436,18 +441,13 @@ public class FeatureManager implements IFeatureManager {
 
 
 	@Override
-	public ArrayList<Integer> getDataImageTypeId(int DataImageTypeId) {
+	public ArrayList<Integer> getDataImageTypeId(int ClassNum) {
 		// TODO Auto-generated method stub
 		
 		if(imageType.size()==0)
 			return null;
-		ArrayList<Integer> sliceNum = new ArrayList<Integer>();
 		
-		for(Entry<Integer, Integer> map:imageType.entrySet()){
-			if(map.getValue()==DataImageTypeId)
-				sliceNum.add(map.getKey());
-		}
-		return sliceNum;
+		return imageType.get(ClassNum);
 	}
 
 }
