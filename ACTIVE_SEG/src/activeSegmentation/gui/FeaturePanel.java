@@ -168,7 +168,7 @@ public class FeaturePanel extends StackWindow
 					if(e.getSource() == sliceSelector)
 					{
 						displayImage.killRoi();
-						updateImageStatus();
+					//	updateImageStatus();
 						updateGui();
 						if(showColorOverlay)
 						{
@@ -411,11 +411,6 @@ public class FeaturePanel extends StackWindow
 	}
 
 	
-
-	private void updateImageStatus(){
-		int currentSlice= displayImage.getCurrentSlice();
-		sliceStatus.setText("Image "+currentSlice+" : "+controller.getImageStatus(currentSlice));
-	}
 	private JButton addButton( final String label, final Icon icon,JComponent panel, 
 			final ActionEvent action, Dimension dimension,GridBagConstraints labelsConstraints,Color color ){
 		final JButton button = new JButton();

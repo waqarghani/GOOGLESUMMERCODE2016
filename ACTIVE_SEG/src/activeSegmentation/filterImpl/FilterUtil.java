@@ -83,9 +83,8 @@ public class FilterUtil {
 			if(rv.getImaginary()[i]!=0.0)
 				size++;
 		}
-		
 		double[] final_result = new double[size+1];
-		
+
 		int t=0;
 		for(int i=0;i<rv.getReal().length;i++){
 			final_result[t++] = rv.getReal()[i];
@@ -94,10 +93,8 @@ public class FilterUtil {
 			}
 			
 		}
-		final_result[t]=(double) classValue;
-		for(int i=0;i<final_result.length;i++){
-			System.out.print(final_result[i]);
-		}
+		// Assign class
+		final_result[final_result.length-1] = (double) classValue;
 		return new DenseInstance(1.0,final_result);
 		
 	}

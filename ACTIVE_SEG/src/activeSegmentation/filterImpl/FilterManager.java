@@ -248,8 +248,8 @@ public class FilterManager implements IFilterManager {
 				featurStackMap.get(sliceNum).getfinalStack(), colorFeatures, oldColorFormat);
 	}
 	
-	public Instance createInstance(String featureName, int sliceNum){
-		return filterUtil.createInstance(featurStackMap.get(sliceNum).getzernikeMoments(), sliceNum);
+	public Instance createInstance(String featureName, int classIndex, int sliceNum){
+		return filterUtil.createInstance(featurStackMap.get(sliceNum).getzernikeMoments(), classIndex);
 	}
 
 	@Override

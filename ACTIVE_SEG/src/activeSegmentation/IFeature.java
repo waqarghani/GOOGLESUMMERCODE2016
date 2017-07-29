@@ -38,8 +38,7 @@ public interface IFeature {
 	
 	public String getFeatureName();
 	public void createTrainingInstance(List<String> classLabels,
-			int classes, List<Vector<ArrayList<Roi>>> examples);
-	public void createTrainingInstance(HashMap<Integer,Integer> imageType);
+			int classes, List<?> features);
 	public IDataSet getDataSet();
 	public void setDataset(IDataSet trainingData);
 	public List<IDataSet> createAllInstance(List<String> classLabels, int classes);

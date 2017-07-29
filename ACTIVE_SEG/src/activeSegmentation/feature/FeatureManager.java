@@ -381,25 +381,14 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 
-	public ArrayList<String> ClassLabelsForClassLevel(){
-		/*
-		ArrayList<String> labels = new ArrayList<String>();
-		for(Entry<Integer, Integer> map:imageType.entrySet()){
-			if(map.getValue()==0)
-				labels.add("class"+map.getKey());
-		}
-		numOfClasses = labels.size();*/
-		//return labels;
-		return null;
-	}
-	
 	@Override
 	public IDataSet extractFeatures(String featureType){
 		
 		if(featureType.equals("classlevel"))
 		{
-			featureMap.get(featureType).createTrainingInstance(ClassLabelsForClassLevel(),
-				numOfClasses, examples);
+			numOfClasses = imageType.size();
+			featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),
+				numOfClasses, imageType);
 			
 		}
 		else {
@@ -408,7 +397,7 @@ public class FeatureManager implements IFeatureManager {
 		}
 		IDataSet dataset=featureMap.get(featureType).getDataSet();
 		dataManager.setData(dataset);
-		System.out.println("NUMBER OF INSTANCE"+dataset.toString());
+		System.out.println("NUMBER OF INSTANCE "+dataset.toString());
 		return dataset;
 
 	}

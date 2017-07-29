@@ -152,6 +152,9 @@ public class GuiController {
 	public ImagePlus computeFeatures(String featureType) {
 		ImagePlus classifiedImage= null;
 		featureManager.extractFeatures(featureType);
+		if(featureType.contains("classlevel")){
+			
+		}
 		learningManager.trainClassifier();
 		List<double[]> classificationResult=learningManager.applyClassifier(featureManager.extractAll(featureType));
 		ImageStack classStack = new ImageStack(originalImage.getWidth(), originalImage.getHeight());

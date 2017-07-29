@@ -66,12 +66,11 @@ public class FeatureExtraction implements IFeature {
 	 * @return set of instances (feature vectors in Weka format)
 	 */
 	@Override
-	public void createTrainingInstance(List<String> classLabels,
-			int classes, List<Vector<ArrayList<Roi>>> examples)
-	{
+	public void createTrainingInstance(List<String> classLabels, int classes, List<?> features) {
+		// TODO Auto-generated method stub
+		List<Vector<ArrayList<Roi>>> examples = (List<Vector<ArrayList<Roi>>>)features;
 		ArrayList<Attribute> attributes = createFeatureHeader();
 		attributes.add(new Attribute(Common.CLASS, addClasstoHeader(classes, classLabels)));
-		
 		// create initial set of instances
 		trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
 		// Set the index of the class attribute
@@ -90,9 +89,9 @@ public class FeatureExtraction implements IFeature {
 			IJ.log("# of pixels selected as " + classLabels.get(classIndex) + ": " +nl);
 		}
 
-		System.out.println(trainingData+"GII");
-
+		System.out.println(trainingData);
 	}
+
 
 
 	/**
@@ -234,11 +233,7 @@ public class FeatureExtraction implements IFeature {
 		this.trainingData= trainingData.getDataset();
 
 	}
-	@Override
-	public void createTrainingInstance(HashMap<Integer, Integer> imageType) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
+	
 
 }

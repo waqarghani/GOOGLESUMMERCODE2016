@@ -27,34 +27,33 @@ public class Zernike_Feature_Extraction implements IFeature {
 	}
 	
 	@Override
+	public void createTrainingInstance(List<String> classLabels, int classes, List<?> features) {
+		// TODO Auto-generated method stub
+
+		List<ArrayList<Integer>> imageType = (List<ArrayList<Integer>>) features;
+		
+		ArrayList<Attribute> attributes = createFeatureHeader();
+		attributes.add(new Attribute(Common.CLASS, classLabels));
+				
+		//create initial set of instances
+		trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
+					
+		//Set the index of the class attribute
+		trainingData.setClassIndex(classindex);
+					
+		for(int classIndex = 0; classIndex < classes; classIndex++)
+		{
+			for(int i=0; i<imageType.get(classIndex).size();i++){
+				trainingData.add(filterManager.createInstance(featureName, classIndex, imageType.get(classIndex).get(i)));
+			}	
+		}
+		System.out.println(trainingData);
+	}
+	
+	@Override
 	public String getFeatureName() {
 		// TODO Auto-generated method stub
 		return featureName;
-	}
-
-	@Override
-	public void createTrainingInstance(HashMap<Integer, Integer> imageType) {
-		
-	}
-	
-	@Override
-	public void createTrainingInstance(List<String> classLabels, int classes, List<Vector<ArrayList<Roi>>> examples) {
-	
-			ArrayList<Attribute> attributes = createFeatureHeader();
-			attributes.add(new Attribute(Common.CLASS, classLabels));
-						
-			//create initial set of instances
-			trainingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
-						
-			//Set the index of the class attribute
-			trainingData.setClassIndex(classindex);
-						
-			for(String imageIndex : classLabels)
-			{
-				trainingData.add(filterManager.createInstance(featureName, Integer.parseInt(imageIndex.replace("class", ""))));
-			}
-			System.out.println(classindex+"CISCO");
-			System.out.println(trainingData+"aaaaaaaaaa");
 	}
 
 	private  ArrayList<Attribute> createFeatureHeader(){
@@ -96,7 +95,5 @@ public class Zernike_Feature_Extraction implements IFeature {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 
 }
