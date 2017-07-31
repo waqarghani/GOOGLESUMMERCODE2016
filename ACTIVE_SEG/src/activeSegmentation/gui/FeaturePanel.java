@@ -35,6 +35,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -70,6 +71,8 @@ public class FeaturePanel extends StackWindow
 	final JPanel resetJPanel = new JPanel(new GridBagLayout());
 	final JPanel configureJPanel = new JPanel(new GridBagLayout());
 	final JPanel ClasslabelsJPanel=new JPanel(new GridBagLayout());
+	final JPanel ClasslabelstestingJPanel=new JPanel(new GridBagLayout());
+
 	private List<JCheckBox> jCheckBoxList= new ArrayList<JCheckBox>();
 	JPanel imagePanel;
 	JPanel controlsBox;
@@ -91,6 +94,7 @@ public class FeaturePanel extends StackWindow
 	private List<JList> exampleList;
 	private List<JList> allexampleList;
 	private List<JList> imageTypeList;
+	private List<JList> imagetestingTypeList;
 	private List<Color> colors ;
 	/** flag to display the overlay image */
 	private boolean showColorOverlay=false;
@@ -143,6 +147,7 @@ public class FeaturePanel extends StackWindow
 		this.exampleList = new ArrayList<JList>();
 		this.allexampleList = new ArrayList<JList>();
 		this.imageTypeList = new ArrayList<JList>();
+		this.imagetestingTypeList = new ArrayList<JList>();
 		this.controller= controller;	
 		colors=Util.setDefaultColors();
 		roiOverlayList = new ArrayList<RoiListOverlay>();
@@ -301,7 +306,7 @@ public class FeaturePanel extends StackWindow
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			addSidePanel(i);
 		}
-
+		
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
 		addButton( "TOGGLE",null ,resetJPanel,
@@ -341,6 +346,21 @@ public class FeaturePanel extends StackWindow
 		originalJ1++;		
 	}
 
+	private void addsideTestPanelforClass(){
+		JList current=Util.model();
+		current.setForeground(colors.get(0));
+		imagetestingTypeList.add(current);
+		JPanel buttonsPanel = new JPanel(new GridBagLayout());
+		ActionEvent addbuttonAction= new ActionEvent(this, 0,"AddImageType");
+		addButton("Add Test Image",null ,ClasslabelstestingJPanel,
+				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,0 , 1, false, false),null );
+		ClasslabelstestingJPanel.add(buttonsPanel,Util.getGbc(1,0 , 1, false, false) );
+		imagetestingTypeList.get(0).addMouseListener(mouseListenerClassLevel);
+		ClasslabelstestingJPanel.add( Util.addScrollPanel(imagetestingTypeList.get(0),null), 
+				Util.getGbc(0,1, 1, false, false));
+		
+	}
+	
 	private void createPanelforClassLevel(){
 		addButton( "CONFIGURE",null ,configureJPanel,
 				CONFIGURE_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
@@ -362,14 +382,45 @@ public class FeaturePanel extends StackWindow
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			addsidepanelforClass(i);
 		}
-
-		
-		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
-				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
 		
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
 		
+		
+		
+		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
+				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
+		addsideTestPanelforClass();
+		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelstestingJPanel, 
+				ClasslabelstestingJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
+		
+		String[] types = {"Training", "Testing"};
+		JPanel dataJPanel = new JPanel();
+		JComboBox datatype = new JComboBox(types);
+	    datatype.setVisible(true);
+	    
+		datatype.setSelectedIndex(0);
+
+		datatype.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				JComboBox combo = (JComboBox)e.getSource();
+				if(combo.getSelectedItem().equals("Training")){
+					ClasslabelstestingJPanel.setVisible(false);
+					ClasslabelsJPanel.setVisible(true);
+				
+				}else{
+					System.out.println("MGGG");
+					ClasslabelsJPanel.setVisible(false);
+					ClasslabelstestingJPanel.setVisible(true);
+					
+				}
+			}});
+		
+		dataJPanel.add(datatype);
+		configureJPanel.add(dataJPanel);
 		controlsBoxForClass.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
 
 		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
