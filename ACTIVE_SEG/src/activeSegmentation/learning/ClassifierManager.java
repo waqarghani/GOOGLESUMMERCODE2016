@@ -108,6 +108,12 @@ public class ClassifierManager implements ILearningManager {
 			ApplyTask applyTask= new ApplyTask(dataSet, 0, dataSet.getNumInstances(), 
 					classificationResult, currentClassifier);
 			pool.invoke(applyTask);
+			
+				for(int j=0;j<classificationResult.length;j++){
+					System.out.println(classificationResult[j]+"ssss");
+				}
+				
+			
 			results.add(classificationResult);			
 		}
 		return results;

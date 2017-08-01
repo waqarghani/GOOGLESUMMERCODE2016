@@ -136,6 +136,9 @@ public class GuiController {
 		return featureManager.getDataImageTypeId(ClassNum);
 	}
 	
+	public ArrayList<Integer> getDataImageTestTypeId(){
+		return featureManager.getDataImageTestTypeId();
+	}
 	public void addExamples(int id, Roi r, int currentSlice) {
 		// TODO Auto-generated method stub
 		featureManager.addExample(id, r, currentSlice);	
@@ -144,6 +147,10 @@ public class GuiController {
 	public void addImageType(int id, int SliceNo) {
 		// TODO Auto-generated method stub
 		featureManager.addImageType(id, SliceNo);	
+	}
+	
+	public void addTestImageType(int SliceNo){
+		featureManager.addTestImageType(SliceNo);
 	}
 	
 	public String getImageStatus(int SliceNo){
@@ -157,6 +164,7 @@ public class GuiController {
 		}
 		learningManager.trainClassifier();
 		List<double[]> classificationResult=learningManager.applyClassifier(featureManager.extractAll(featureType));
+		
 		ImageStack classStack = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
 		int i=1;
 		for (double[] result: classificationResult)

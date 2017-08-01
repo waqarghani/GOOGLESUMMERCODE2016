@@ -282,7 +282,7 @@ public class FeaturePanel extends StackWindow
 		updateExampleLists();
 		updateallExampleLists();
 		updateImageTypeLists();
-
+		updateImageTestTypeLists();
 	}
 
 	private void showOption(){
@@ -351,7 +351,7 @@ public class FeaturePanel extends StackWindow
 		current.setForeground(colors.get(0));
 		imagetestingTypeList.add(current);
 		JPanel buttonsPanel = new JPanel(new GridBagLayout());
-		ActionEvent addbuttonAction= new ActionEvent(this, 0,"AddImageType");
+		ActionEvent addbuttonAction= new ActionEvent(this, 0,"AddTestImageType");
 		addButton("Add Test Image",null ,ClasslabelstestingJPanel,
 				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,0 , 1, false, false),null );
 		ClasslabelstestingJPanel.add(buttonsPanel,Util.getGbc(1,0 , 1, false, false) );
@@ -383,20 +383,19 @@ public class FeaturePanel extends StackWindow
 			addsidepanelforClass(i);
 		}
 		
-		addButton( "COMPUTE",null ,resetJPanel,
-				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
-		
 		
 		
 		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
 				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
+		
 		addsideTestPanelforClass();
 		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelstestingJPanel, 
-				ClasslabelstestingJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
+			ClasslabelstestingJPanel.getPreferredSize()), Util.getGbc(0, 2, 1, false, true));
+	
 		
 		String[] types = {"Training", "Testing"};
 		JPanel dataJPanel = new JPanel();
-		JComboBox datatype = new JComboBox(types);
+		/*JComboBox datatype = new JComboBox(types);
 	    datatype.setVisible(true);
 	    
 		datatype.setSelectedIndex(0);
@@ -408,22 +407,24 @@ public class FeaturePanel extends StackWindow
 				// TODO Auto-generated method stub
 				JComboBox combo = (JComboBox)e.getSource();
 				if(combo.getSelectedItem().equals("Training")){
-					ClasslabelstestingJPanel.setVisible(false);
-					ClasslabelsJPanel.setVisible(true);
-				
+				//	ClasslabelstestingJPanel.setVisible(false);	
+					//ClasslabelsJPanel.setVisible(true);			
 				}else{
-					System.out.println("MGGG");
-					ClasslabelsJPanel.setVisible(false);
-					ClasslabelstestingJPanel.setVisible(true);
-					
+					//ClasslabelsJPanel.setVisible(false);
+					//ClasslabelstestingJPanel.setVisible(true);
 				}
+				
 			}});
+		*/
+		addButton( "COMPUTE",null ,resetJPanel,
+				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
 		
-		dataJPanel.add(datatype);
-		configureJPanel.add(dataJPanel);
-		controlsBoxForClass.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
+		
+		//dataJPanel.add(datatype);
+		//configureJPanel.add(dataJPanel);
+		//controlsBoxForClass.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
 
-		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
+		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 0, 1, false, true));
 		add(controlsBoxForClass, BorderLayout.EAST);
 		controlsBoxForClass.setVisible(false);
 	}
@@ -512,9 +513,15 @@ public class FeaturePanel extends StackWindow
 			updateGui();
 		}
 
+		if(event.getActionCommand()=="AddTestImageType"){
+			displayImage.killRoi();
+			controller.addTestImageType(currentSlice);
+			updateGui();
+		}
+		
 		if(event==COMPUTE_BUTTON_PRESSED){
 			classifiedImage=controller.computeFeatures(feature_extraction_type);
-			toggleOverlay();
+			//toggleOverlay();
 		}
 		if(event==SAVE_BUTTON_PRESSED){
 			controller.saveMetadata();
@@ -617,6 +624,7 @@ public class FeaturePanel extends StackWindow
 
 	}
 	
+	
 	/**
 	 * Update the imagetype lists in the GUI
 	 */
@@ -636,6 +644,21 @@ public class FeaturePanel extends StackWindow
 
 	}
 	
+	/**
+	 * Update the imagetestingTypeList lists in the GUI
+	 */
+	private void updateImageTestTypeLists(){
+		imagetestingTypeList.get(0).removeAll();
+		Vector<String> listModel = new Vector<String>();
+		ArrayList<Integer> SliceNums = controller.getDataImageTestTypeId();
+		if(SliceNums!=null){
+			for(int j=0; j<SliceNums.size(); j++){	
+				listModel.addElement("imageNo "+ SliceNums.get(j));
+			}
+			imagetestingTypeList.get(0).setListData(listModel);
+			imageTypeList.get(0).setForeground(colors.get(0));
+		}
+	}
 	private  MouseListener mouseListener = new MouseAdapter() {
 		public void mouseClicked(MouseEvent mouseEvent) {
 			JList theList = ( JList) mouseEvent.getSource();

@@ -69,7 +69,12 @@ public interface IFeatureManager {
 	 * @param classNum
 	 * @param nSlice
 	 */
-	public void addImageType(int dataImageTypeId, int nSlice); 
+	public void addImageType(int dataImageTypeId, int nSlice);
+	/**
+	 * This method is adding marked images in Training or Testing set
+	 * @param nSlice
+	 */
+	public void addTestImageType(int nSlice);
 	/**
 	 * This method return list of ROi for 
 	 * particular class and Image Slice
@@ -103,6 +108,8 @@ public interface IFeatureManager {
 	public int getSize(int i, int currentSlice);
 	
 	public ArrayList<Integer> getDataImageTypeId(int DataImageTypeId);
+	
+	public ArrayList<Integer> getDataImageTestTypeId();
 	/**
 	 * This method will set class name 
 	 * @param classNum

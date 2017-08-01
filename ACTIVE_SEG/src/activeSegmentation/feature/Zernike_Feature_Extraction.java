@@ -40,14 +40,14 @@ public class Zernike_Feature_Extraction implements IFeature {
 					
 		//Set the index of the class attribute
 		trainingData.setClassIndex(classindex);
-					
+		System.out.println(imageType.get(0).size()+"ssssssssssssss");
 		for(int classIndex = 0; classIndex < classes; classIndex++)
 		{
 			for(int i=0; i<imageType.get(classIndex).size();i++){
 				trainingData.add(filterManager.createInstance(featureName, classIndex, imageType.get(classIndex).get(i)));
 			}	
 		}
-		System.out.println(trainingData);
+		
 	}
 	
 	@Override
@@ -95,5 +95,26 @@ public class Zernike_Feature_Extraction implements IFeature {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<IDataSet> createTestInstance(List<String> classLabels, int classes, ArrayList<Integer> testimageindex) {
+		// TODO Auto-generated method stub
+		classindex=0;
+		List<IDataSet> dataSets= new ArrayList<IDataSet>();
+		for(int i=0; i<testimageindex.size();i++){
+			Instances testingData;
+			ArrayList<Attribute> attributes = createFeatureHeader();
+			attributes.add(new Attribute(Common.CLASS,classLabels));
+			testingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
+			// Set the index of the class attribute
+			testingData.setClassIndex(classindex);
+			testingData.add(filterManager.createInstance(featureName, 0, testimageindex.get(i)));
+			dataSets.add(new WekaDataSet(testingData));
+		}
+		
+		return dataSets;        
+	}
+
+	
 
 }

@@ -233,6 +233,12 @@ public class FeatureExtraction implements IFeature {
 		this.trainingData= trainingData.getDataset();
 
 	}
+	@Override
+	public List<IDataSet> createTestInstance(List<String> classLabels, int classes, ArrayList<Integer> testimageindex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	
 	
 

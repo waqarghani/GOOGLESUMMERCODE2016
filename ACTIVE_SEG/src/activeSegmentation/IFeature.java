@@ -42,5 +42,6 @@ public interface IFeature {
 	public IDataSet getDataSet();
 	public void setDataset(IDataSet trainingData);
 	public List<IDataSet> createAllInstance(List<String> classLabels, int classes);
-	
+	public List<IDataSet> createTestInstance(List<String> classLabels, int classes,ArrayList<Integer> testimageindex);
+
 }

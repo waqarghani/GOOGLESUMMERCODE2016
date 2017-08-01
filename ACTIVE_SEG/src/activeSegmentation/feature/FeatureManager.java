@@ -54,6 +54,7 @@ public class FeatureManager implements IFeatureManager {
 	 * and each class (arraylist index) of the training image */
 	private List<Vector<ArrayList<Roi>>> examples;
 	private List<ArrayList<Integer>> imageType;
+	private ArrayList<Integer> imageTestType;
 	private IDataManager dataManager;
 	private MetaInfo metaInfo;
 	private Map<String,IFeature> featureMap= new HashMap<String, IFeature>();
@@ -72,6 +73,7 @@ public class FeatureManager implements IFeatureManager {
 		this.stackSize=stackSize;
 		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
 		this.imageType = new ArrayList<ArrayList<Integer>>();
+		this.imageTestType = new ArrayList<Integer>();
 		this.dataManager= dataManager;	
 		// update list of examples
 		for(int i=0; i < stackSize; i++)
@@ -99,6 +101,8 @@ public class FeatureManager implements IFeatureManager {
 	
 	public void addImageType(int classNum, int nSlice) 
 	{
+		if(imageTestType.contains(nSlice))
+			imageTestType.remove(imageTestType.indexOf(nSlice));
 		for(int i=0;i<imageType.size();i++){
 			if(imageType.get(i).contains(nSlice))
 				imageType.get(i).remove(imageType.get(i).indexOf(nSlice));
@@ -106,6 +110,13 @@ public class FeatureManager implements IFeatureManager {
 		imageType.get(classNum).add(nSlice);
 	}
 
+	public void addTestImageType(int nSlice){
+		for(int i=0;i<imageType.size();i++){
+			if(imageType.get(i).contains(nSlice))
+				imageType.get(i).remove(imageType.get(i).indexOf(nSlice));
+		}
+		imageTestType.add(nSlice);
+	}
 	@Override
 	public void addExampleList(int classNum, List<Roi> roiList, int n) {
 		// TODO Auto-generated method stub
@@ -178,7 +189,10 @@ public class FeatureManager implements IFeatureManager {
 	 */
 	public void deleteImageType(int classId, int sliceNum)
 	{
-		imageType.get(classId).remove(imageType.get(classId).indexOf(sliceNum));
+		if(classId!=-1 &&imageType.get(classId).indexOf(sliceNum)!=-1)
+			imageType.get(classId).remove(imageType.get(classId).indexOf(sliceNum));
+		else
+			imageTestType.remove(imageTestType.indexOf(sliceNum));
 	}
 
 	/**
@@ -404,11 +418,12 @@ public class FeatureManager implements IFeatureManager {
 
 	@Override
 	public List<IDataSet> extractAll(String featureType){
-		List<IDataSet> dataset= featureMap.get(featureType).
-				createAllInstance(new ArrayList<String>(classLabels.values()),
-						numOfClasses);
+		List<IDataSet> dataset = null;
+		if(featureType.equals("pixelLevel"))
+			dataset= featureMap.get(featureType).createAllInstance(new ArrayList<String>(classLabels.values()),numOfClasses);
+		else
+			dataset = featureMap.get(featureType).createTestInstance(new ArrayList<String>(classLabels.values()),numOfClasses, imageTestType);
 		return dataset;
-
 	}
 
 	@Override
@@ -439,4 +454,12 @@ public class FeatureManager implements IFeatureManager {
 		return imageType.get(ClassNum);
 	}
 
+
+	@Override
+	public ArrayList<Integer> getDataImageTestTypeId() {
+		// TODO Auto-generated method stub
+		return imageTestType;
+	}
+
+	
 }
