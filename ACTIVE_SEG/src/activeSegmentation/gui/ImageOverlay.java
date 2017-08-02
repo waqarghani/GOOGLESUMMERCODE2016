@@ -54,7 +54,6 @@ public class ImageOverlay implements Overlay{
 			return;
 						
 		Graphics2D g2d = (Graphics2D)g;						
-				
 		final AffineTransform originalTransform = g2d.getTransform();
 		final AffineTransform at = new AffineTransform();
 		at.scale( magnification, magnification );

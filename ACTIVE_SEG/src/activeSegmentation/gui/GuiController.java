@@ -8,6 +8,7 @@ import ij.io.SaveDialog;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,12 +157,8 @@ public class GuiController {
 	public String getImageStatus(int SliceNo){
 		return featureManager.getImageStatus(SliceNo);
 	}
-	public ImagePlus computeFeatures(String featureType) {
-		ImagePlus classifiedImage= null;
-		featureManager.extractFeatures(featureType);
-		if(featureType.contains("classlevel")){
-			
-		}
+	
+	public ImagePlus pixellevelTraining(ImagePlus classifiedImage, String featureType){
 		learningManager.trainClassifier();
 		List<double[]> classificationResult=learningManager.applyClassifier(featureManager.extractAll(featureType));
 		
@@ -171,7 +168,6 @@ public class GuiController {
 		{
 			ImageProcessor classifiedSliceProcessor = new FloatProcessor(originalImage.getWidth(),
 					originalImage.getHeight(), result);				
-			
 			classStack.addSlice(originalImage.getStack().getSliceLabel(i), classifiedSliceProcessor);
 			i++;
 		}
@@ -179,7 +175,40 @@ public class GuiController {
 		classifiedImage.setCalibration(originalImage.getCalibration());
 		classifiedImage.show();
 		return classifiedImage;
-
+	}
+	
+	public ImagePlus classlevelTraining(ImagePlus classifiedImage, String featureType){
+		learningManager.trainClassifier();
+		List<double[]> classificationResult=learningManager.applyClassifier(featureManager.extractAll(featureType));
+		ImageStack classStack = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
+		ImagePlus tempImage = originalImage.duplicate();
+		
+		for (int i=1;i<=tempImage.getStackSize(); i++)
+		{
+			if(featureManager.getDataImageTestTypeId().contains(i)){
+				tempImage.getStack().getProcessor(i).setColor(Color.RED);
+				tempImage.getStack().getProcessor(i).fill();
+				tempImage.updateAndDraw();
+			}	
+			classStack.addSlice(tempImage.getStack().getSliceLabel(i), tempImage.getStack().getProcessor(i));
+		}
+		classifiedImage= new ImagePlus("Classified Image", classStack);
+		classifiedImage.setCalibration(originalImage.getCalibration());
+		classifiedImage.show();
+		return classifiedImage;
+	}
+	
+	public ImagePlus computeFeatures(String featureType) {
+		ImagePlus classifiedImage= null;
+		featureManager.extractFeatures(featureType);
+		
+		if(featureType.contains("classlevel"))
+			return classlevelTraining(classifiedImage, featureType);
+		
+		else if(featureType.contains("pixelLevel"))
+			return pixellevelTraining(classifiedImage, featureType);
+		
+		return null;
 	}
 
 	public void setClassifier(Object classifier){
@@ -208,6 +237,4 @@ public class GuiController {
 	public void setFilterManager(IFilterManager filterManager) {
 		this.filterManager = filterManager;
 	}
-
-
 }

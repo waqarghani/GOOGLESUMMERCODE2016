@@ -99,10 +99,11 @@ public class Zernike_Feature_Extraction implements IFeature {
 	@Override
 	public List<IDataSet> createTestInstance(List<String> classLabels, int classes, ArrayList<Integer> testimageindex) {
 		// TODO Auto-generated method stub
-		classindex=0;
+		
 		List<IDataSet> dataSets= new ArrayList<IDataSet>();
 		for(int i=0; i<testimageindex.size();i++){
 			Instances testingData;
+			classindex=0;
 			ArrayList<Attribute> attributes = createFeatureHeader();
 			attributes.add(new Attribute(Common.CLASS,classLabels));
 			testingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );

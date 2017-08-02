@@ -1,7 +1,27 @@
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.List;
 
 import activeSegmentation.Common;
+import activeSegmentation.gui.ImageOverlay;
+import activeSegmentation.gui.OverlayedImageCanvas;
+import activeSegmentation.gui.RoiListOverlay;
+import activeSegmentation.gui.Util;
 import activeSegmentation.learning.LVQ;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.gui.ImageCanvas;
+import ij.gui.NewImage;
+import ij.gui.Overlay;
+import ij.gui.Roi;
+import ij.process.FloatProcessor;
+import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
+import ij.process.LUT;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -29,112 +49,93 @@ public class example {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		ArrayList<Attribute> attributes = createFeatureHeader();
+		ImagePlus t= IJ.openImage("/home/mg/Downloads/tifs/image.tif");
+		ImagePlus classifiedImage= null;
+
+		ImageStack classStack = new ImageStack(t.getWidth(), t.getHeight());
+		ImagePlus tempImage = t.duplicate();
 		
-		ArrayList<String> label = new ArrayList<String>();
-		label.add("class1");
-		label.add("class2");
-		label.add("class3");
-		attributes.add(new Attribute(Common.CLASS, label));
-		Instances trainingData = new Instances(Common.INSTANCE_NAME, attributes, 1 );
-		//trainingData.setClassIndex(15);
-		trainingData.add(clac1());
-		trainingData.add(clac2());
-		trainingData.add(clac1());
+		for (int i=1;i<=tempImage.getStackSize(); i++)
+		{
+			if(i==3||i==23){
+				tempImage.getStack().getProcessor(i).setColor(Color.RED);
+				tempImage.getStack().getProcessor(i).fill();
+				tempImage.updateAndDraw();
+			}	
+			classStack.addSlice(tempImage.getStack().getSliceLabel(i), tempImage.getStack().getProcessor(i));
+		}
+		classifiedImage= new ImagePlus("Classified Image", classStack);
+		classifiedImage.setCalibration(t.getCalibration());
+		classifiedImage.show();
+/*		//drawOutline(t);
 		
-		LVQ l=new LVQ();
-		//System.out.println(trainingData);
-		l.buildClusterer(trainingData);
-		//
-		System.out.println(l.clusterInstance(clac1()));
+		//ImageConverter ii = new ImageConverter(t);
+		//ii.convertoriginalImageToRGB();
+		//t.setColor(Color.blue);
+		t.show();
+		LUT overlayLUT;
+		byte[] red = new byte[ 256 ];
+		byte[] green = new byte[ 256 ];
+		byte[] blue = new byte[ 256 ];
+		 List<Color>colors=Util.setDefaultColors();
+
+		for(Color color: colors){
+			red[14] = (byte) color.getRed();
+			green[14] = (byte) color.getGreen();
+			blue[14] = (byte) color.getBlue();
+			red[13] = (byte) color.getRed();
+			green[13] = (byte) color.getGreen();
+			blue[13] = (byte) color.getBlue();
+		}
+		overlayLUT = new LUT(red, green, blue);
+		ImageProcessor ip2 = t.getProcessor();
+		ip2.convertToRGB();
+		ip2.setColor(Color.RED);;	
+		ip2.fill();
+		t.updateAndDraw();	
+			//t.show();
+		ImageStack c = new ImageStack(t.getWidth(), t.getHeight());
+		
+		System.out.println(Util.setDefaultColors().get(1));
+		for(int i=1;i<=t.getStackSize();i++){
+		   //System.out.println(t.getStack().getSliceLabel(i));
+			if(i==14)	
+			{t.getStack().getProcessor(i).setColorModel(overlayLUT);
+				t.getStack().getProcessor(i).fill();
+				t.updateAndDraw();
+			}
+			c.addSlice((t.getStack().getProcessor(i)));
+		}
+		System.out.println(c.size());
+		ImagePlus ci= new ImagePlus("Classified Image", c);
+		ci.show();
+			*/
+	}	
+	
+	static void drawOutline(ImagePlus imp) {
+		ImageCanvas ic = imp.getCanvas();
+		Overlay overlay = imp.getOverlay();
+		
+		if (overlay==null)
+			overlay = new Overlay();
+		Roi roi = null;
+		final Composite transparency050 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f );
+		imp.show();
+		roi = new Roi(0, 0, imp.getWidth(), imp.getHeight());
+		ArrayList<Roi> aa= new ArrayList<Roi>();
+		aa.add(roi);
+		//	roi.setStrokeColor(Color.red);
+			RoiListOverlay roiOverlay = new RoiListOverlay();
+			roiOverlay.setComposite( transparency050 );
+			roiOverlay.setRoi(aa);
+			roiOverlay.setColor(Color.red);
+		//	overlay.add(roi);
+			
+			imp.updateAndDraw();
+			
+		//imp.setOverlay(roi, strokeColor, strokeWidth, fillColor);
+		
 	}
 	
-	public static DenseInstance clac1(){
-		double[] arr=new double[16];
-
-		arr[0]=15336178.274083;
-		arr[1]=5453928.416547;
-		arr[2]=5501378.704379;
-		arr[3]=-5041502.610245;
-		arr[4]=-47346.645001;
-		arr[5]=3890940.541617;
-		arr[6]=-4152380.174964;
-		arr[7]=-4157357.336523;
-		arr[8]=-1412307.427417;
-		arr[9]=1357285.088363;
-		arr[10]=-1306894.082555;
-		arr[11]=39602.468131;
-		arr[12]=-3988073.88832;
-		arr[13]=-1052640.22706;
-		arr[14]=-26084.611457;
-		arr[15]=(double)0;
-		return new DenseInstance(1.0,arr);
-	}
-	
-	public static DenseInstance clac2(){
-		double[] arr=new double[16];
-
-		arr[0]=13429884.027705;
-		arr[1]=4722636.043672;
-		arr[2]=4773664.662441;
-		arr[3]=-4546146.598138;
-		arr[4]=-64253.916547;
-		arr[5]=3361818.536303;
-		arr[6]=-3633031.005658;
-		arr[7]=-3643419.67225;
-		arr[8]=-1252078.605175;
-		arr[9]=1140934.350451;
-		arr[10]=-968617.5636;
-		arr[11]=50430.485514;
-		arr[12]=-3466354.648281;
-		arr[13]=-910600.031379;
-		arr[14]=-77227.251272;
-		arr[15]=(double)2;
-		return new DenseInstance(1.0,arr);
-	}
-	
-	public static DenseInstance clac3(){
-		double[] arr=new double[16];
-
-		arr[0]=13429884.027705;
-		arr[1]=4722636.043672;
-		arr[2]=4773664.662441;
-		arr[3]=-4546146.598138;
-		arr[4]=-64253.916547;
-		arr[5]=3361818.536303;
-		arr[6]=-3633031.005658;
-		arr[7]=-3643419.67225;
-		arr[8]=-1252078.605175;
-		arr[9]=1140934.350451;
-		arr[10]=-968617.5636;
-		arr[11]=50430.485514;
-		arr[12]=-3466354.648281;
-		arr[13]=-910600.031379;
-		arr[14]=-77227.251272;
-		arr[15]=(double)0;
-		return new DenseInstance(1.0,arr);
-	}
-	
-	public static DenseInstance clac4(){
-		double[] arr=new double[16];
-
-		arr[0]=15336178.274083;
-		arr[1]=5453928.416547;
-		arr[2]=5501378.704379;
-		arr[3]=-5041502.610245;
-		arr[4]=-47346.645001;
-		arr[5]=3890940.541617;
-		arr[6]=-4152380.174964;
-		arr[7]=-4157357.336523;
-		arr[8]=-1412307.427417;
-		arr[9]=1357285.088363;
-		arr[10]=-1306894.082555;
-		arr[11]=39602.468131;
-		arr[12]=-3988073.88832;
-		arr[13]=-1052640.22706;
-		arr[14]=-26084.611457;
-		//arr[15]=(double)1;
-		return new DenseInstance(1.0,arr);
-	}
 	
 }

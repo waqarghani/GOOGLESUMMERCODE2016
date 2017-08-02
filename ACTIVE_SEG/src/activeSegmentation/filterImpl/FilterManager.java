@@ -249,7 +249,7 @@ public class FilterManager implements IFilterManager {
 	}
 	
 	public Instance createInstance(String featureName, int classIndex, int sliceNum){
-		System.out.println(featurStackMap.get(sliceNum).getzernikeMoments()+"MGMGMG");
+		System.out.println(filterUtil);
 		return filterUtil.createInstance(featurStackMap.get(sliceNum).getzernikeMoments(), classIndex);
 	}
 

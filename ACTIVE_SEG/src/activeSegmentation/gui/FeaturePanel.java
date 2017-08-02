@@ -521,7 +521,7 @@ public class FeaturePanel extends StackWindow
 		
 		if(event==COMPUTE_BUTTON_PRESSED){
 			classifiedImage=controller.computeFeatures(feature_extraction_type);
-			//toggleOverlay();
+			toggleOverlay();
 		}
 		if(event==SAVE_BUTTON_PRESSED){
 			controller.saveMetadata();
