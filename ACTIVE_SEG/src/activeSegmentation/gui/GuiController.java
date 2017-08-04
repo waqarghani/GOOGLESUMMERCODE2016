@@ -182,11 +182,11 @@ public class GuiController {
 		List<double[]> classificationResult=learningManager.applyClassifier(featureManager.extractAll(featureType));
 		ImageStack classStack = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
 		ImagePlus tempImage = originalImage.duplicate();
-		
+		int id=0;
 		for (int i=1;i<=tempImage.getStackSize(); i++)
 		{
 			if(featureManager.getDataImageTestTypeId().contains(i)){
-				tempImage.getStack().getProcessor(i).setColor(Color.RED);
+				tempImage.getStack().getProcessor(i).setColor(Util.setDefaultColors().get(id++));
 				tempImage.getStack().getProcessor(i).fill();
 				tempImage.updateAndDraw();
 			}	

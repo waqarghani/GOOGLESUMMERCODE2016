@@ -66,7 +66,6 @@ public class ClassifierManager implements ILearningManager {
 			learningMap.put(Common.ARFF, Common.ARFFFILENAME);
 			dataManager.writeDataToARFF(dataset.getDataset(), Common.ARFFFILENAME);		
 		}
-		
 		//learningMap.put(Common.CLASSIFIER, Common.CLASSIFIERNAME);  
 		learningMap.put(Common.LEARNINGTYPE, selectedType);
 		metaInfo.setLearning(learningMap);
@@ -82,19 +81,13 @@ public class ClassifierManager implements ILearningManager {
 			dataset= dataManager.readDataFromARFF(metaInfo.getLearning().get(Common.ARFF));
 			selectedType=metaInfo.getLearning().get(Common.LEARNINGTYPE);
 		}
-
 	}
-
-
-
 
 	@Override
 	public void setClassifier(Object classifier) {
-
 		if (classifier instanceof AbstractClassifier) {
 			currentClassifier = new WekaClassifier((AbstractClassifier)classifier);		 		
 		}
-
 	}
 
     @Override
@@ -110,16 +103,12 @@ public class ClassifierManager implements ILearningManager {
 					pool.invoke(applyTask);
 			
 				for(int j=0;j<classificationResult.length;j++){
-					System.out.println(classificationResult[j]+"ssss");
+				//	System.out.println(classificationResult[j]+"ssss");
 				}
 				
 			results.add(classificationResult);			
 		}
 		return results;
 	}
-
-
-
-
 
 }

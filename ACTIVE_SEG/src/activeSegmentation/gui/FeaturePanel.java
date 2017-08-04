@@ -70,9 +70,11 @@ public class FeaturePanel extends StackWindow
 	final JPanel labelsJPanel=new JPanel(new GridBagLayout());
 	final JPanel resetJPanel = new JPanel(new GridBagLayout());
 	final JPanel configureJPanel = new JPanel(new GridBagLayout());
-	final JPanel ClasslabelsJPanel=new JPanel(new GridBagLayout());
+	final JPanel ClasslabelstrainingJPanel=new JPanel(new GridBagLayout());
 	final JPanel ClasslabelstestingJPanel=new JPanel(new GridBagLayout());
+	final JPanel ClasslabelsJPanel=new JPanel(new GridBagLayout());
 
+	
 	private List<JCheckBox> jCheckBoxList= new ArrayList<JCheckBox>();
 	JPanel imagePanel;
 	JPanel controlsBox;
@@ -221,7 +223,7 @@ public class FeaturePanel extends StackWindow
 		showOption();
 		createPanel();
 		createPanelforClassLevel();
-		updateGui();
+		//updateGui();
 		Panel all = new Panel();
 		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
 		all.setLayout(box);
@@ -336,12 +338,12 @@ public class FeaturePanel extends StackWindow
 		JPanel buttonsPanel = new JPanel(new GridBagLayout());
 		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddImageType");
 		
-		addButton(controller.getclassLabel(i+1),null ,ClasslabelsJPanel,
+		addButton(controller.getclassLabel(i+1),null ,ClasslabelstrainingJPanel,
 				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
-		ClasslabelsJPanel.add(buttonsPanel,Util.getGbc(1,originalJ1 , 1, false, false) );
+		ClasslabelstrainingJPanel.add(buttonsPanel,Util.getGbc(1,originalJ1 , 1, false, false) );
 		originalJ1++;
 		imageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
-		ClasslabelsJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
+		ClasslabelstrainingJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
 				Util.getGbc(0,originalJ1, 1, false, false));
 		originalJ1++;		
 	}
@@ -362,44 +364,33 @@ public class FeaturePanel extends StackWindow
 	}
 	
 	private void createPanelforClassLevel(){
-		addButton( "CONFIGURE",null ,configureJPanel,
-				CONFIGURE_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
 		
 		controlsBoxForClass=new JPanel(new GridBagLayout());
 		
-		/*int currentSlice= displayImage.getCurrentSlice();
+		addButton( "CONFIGURE",null ,configureJPanel,
+				CONFIGURE_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
+		controlsBoxForClass.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
 
-		sliceStatus= new JTextArea();
-		sliceStatus.setText("Image "+currentSlice+" : Null");
-		sliceStatus.setSize(dimension);
-		controlsBoxForClass.add(sliceStatus, Util.getGbc(0, 0, 1, false, true));*/
-
+		String[] types = {"Training", "Testing"};
+		JPanel dataJPanel = new JPanel();
+		JComboBox datatype = new JComboBox(types);
+		datatype.setVisible(true);
+		datatype.setSelectedIndex(0);
+		dataJPanel.add(datatype);
+		controlsBoxForClass.add(dataJPanel, Util.getGbc(0, 2, 0, false, true));		
+		
 		final JPanel resetJPanel = new JPanel(new GridBagLayout());
-
-
-		ClasslabelsJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
-
+		ClasslabelstrainingJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			addsidepanelforClass(i);
 		}
 		
 		
-		
-		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
-				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
+		ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstrainingJPanel, 
+				ClasslabelstrainingJPanel.getPreferredSize()), Util.getGbc(0, 1, 0, false, true));
 		
 		addsideTestPanelforClass();
-		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelstestingJPanel, 
-			ClasslabelstestingJPanel.getPreferredSize()), Util.getGbc(0, 2, 1, false, true));
-	
 		
-		String[] types = {"Training", "Testing"};
-		JPanel dataJPanel = new JPanel();
-		/*JComboBox datatype = new JComboBox(types);
-	    datatype.setVisible(true);
-	    
-		datatype.setSelectedIndex(0);
-
 		datatype.addActionListener(new ActionListener(){
 
 			@Override
@@ -407,26 +398,50 @@ public class FeaturePanel extends StackWindow
 				// TODO Auto-generated method stub
 				JComboBox combo = (JComboBox)e.getSource();
 				if(combo.getSelectedItem().equals("Training")){
-				//	ClasslabelstestingJPanel.setVisible(false);	
-					//ClasslabelsJPanel.setVisible(true);			
+					ClasslabelsJPanel.removeAll();
+					ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstrainingJPanel, 
+							ClasslabelstrainingJPanel.getPreferredSize()), Util.getGbc(0, 1, 0, false, true));
+					ClasslabelstestingJPanel.setVisible(true);
+				
 				}else{
-					//ClasslabelsJPanel.setVisible(false);
-					//ClasslabelstestingJPanel.setVisible(true);
+					ClasslabelsJPanel.removeAll();
+					ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstestingJPanel, 
+							ClasslabelstestingJPanel.getPreferredSize()), Util.getGbc(0, 0, 1, false, true));
+					ClasslabelstestingJPanel.setVisible(true);
+
 				}
 				
 			}});
-		*/
+		
+		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
+				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 3, 0, false, true));
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
+		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 4, 0, false, true));
+		add(controlsBoxForClass, BorderLayout.EAST);
+		controlsBoxForClass.setVisible(false);
+		/*
+		int currentSlice= displayImage.getCurrentSlice();
+
+		sliceStatus= new JTextArea();
+		sliceStatus.setText("Image "+currentSlice+" : Null");
+		sliceStatus.setSize(dimension);
+		controlsBoxForClass.add(sliceStatus, Util.getGbc(0, 0, 1, false, true));
+
+		
+		
+		
+		
+			    
+
+		
+		
 		
 		
 		//dataJPanel.add(datatype);
-		//configureJPanel.add(dataJPanel);
-		//controlsBoxForClass.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
-
-		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 0, 1, false, true));
-		add(controlsBoxForClass, BorderLayout.EAST);
-		controlsBoxForClass.setVisible(false);
+		//configureJPanel.add(dataJPanel);*/
+		
+		
 	}
 	
 
