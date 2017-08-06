@@ -151,31 +151,10 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 
 	@Override
 	public Image getImage() {
-		// TODO Auto-generated method stub
-		final XYSeries series = new XYSeries("Data");
-		for(double i=-10;i<=10;i=i+0.5){
-			Double y=log(i);
-			series.add(i, y);
-		}
-		final XYSeriesCollection data = new XYSeriesCollection(series);
-		final JFreeChart chart = ChartFactory.createXYLineChart(
-				"",
-				"", 
-				"", 
-				data,
-				PlotOrientation.VERTICAL,
-				false,
-				false,
-				false
-				);
-
-		return chart.createBufferedImage(200, 200);
+		return null;
 	}
 
-	private Double log(double x){
-
-		return (x*x-2)* Math.exp(-Math.pow(x, 2)/2) / (2  *Math.sqrt(3.14));
-	}
+	
 	
 	
 	@Override

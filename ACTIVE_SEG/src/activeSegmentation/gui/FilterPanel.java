@@ -130,10 +130,10 @@ public class FilterPanel implements Runnable {
 		int filterSize=1;
 		for(String filter: filters){
 			if(filterManager.isFilterEnabled(filter)){
-			pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
-					filterManager.getFilterImage(filter), 
-					filterSize, filters.size(),filter));
-			filterSize++;
+				pane.addTab(filter,null,createTab(filterManager.getFilterSetting(filter),
+						filterManager.getFilterImage(filter), 
+						filterSize, filters.size(),filter));
+				filterSize++;
 			}
 
 		}
@@ -149,10 +149,13 @@ public class FilterPanel implements Runnable {
 			addButton( new JButton(), "Previous", null, 10, 90, 70, 38,p,PREVIOUS_BUTTON_PRESSED , null);
 		if(size != maxFilters)
 			addButton( new JButton(), "Next", null, 480, 90, 70, 38,p ,NEXT_BUTTON_PRESSED , null);
-		Icon icon = new ImageIcon( image );
-		JLabel imagelabel= new JLabel(icon);
-		imagelabel.setBounds(100, 3,210,225);
-		p.add(imagelabel);
+		
+		if(image!=null){
+			Icon icon = new ImageIcon( image );
+			JLabel imagelabel= new JLabel(icon);
+			imagelabel.setBounds(100, 3,210,225);
+			p.add(imagelabel);
+		}
 
 		List<JTextField> jtextList= new ArrayList<JTextField>();
 		for (String key: settingsMap.keySet()){

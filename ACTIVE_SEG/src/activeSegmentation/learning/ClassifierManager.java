@@ -48,6 +48,7 @@ public class ClassifierManager implements ILearningManager {
 
 		try {
 			currentClassifier.buildClassifier(dataManager.getDataSet());
+			System.out.println("Training Results");
 			System.out.println(currentClassifier.toString());
 			classifierMap.put(currentClassifier.getClass().getCanonicalName(), currentClassifier);
 		} catch (Exception e) {
@@ -92,7 +93,7 @@ public class ClassifierManager implements ILearningManager {
 
     @Override
 	public List<double[]> applyClassifier(List<IDataSet> testDataSet){
-		
+		System.out.println("Testing Results");
 		List<double[]> results= new ArrayList<double[]>();
 		for(IDataSet dataSet: testDataSet){
 			System.out.println("INSTANCE SIZE"+ dataSet.getNumInstances());
@@ -103,7 +104,7 @@ public class ClassifierManager implements ILearningManager {
 					pool.invoke(applyTask);
 			
 				for(int j=0;j<classificationResult.length;j++){
-				//	System.out.println(classificationResult[j]+"ssss");
+					System.out.println(classificationResult[j]);
 				}
 				
 			results.add(classificationResult);			
