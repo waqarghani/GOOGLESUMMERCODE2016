@@ -1,6 +1,7 @@
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import activeSegmentation.learning.LVQ;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.WindowManager;
 import ij.gui.ImageCanvas;
 import ij.gui.NewImage;
 import ij.gui.Overlay;
@@ -47,10 +49,69 @@ public class example {
 		}
 		return attributes;
 	}
+	LUT overlayLUT;
+	// Create overlay LUT
+		byte[] red = new byte[ 256 ];
+		byte[] green = new byte[ 256 ];
+		byte[] blue = new byte[ 256 ];
+
+	public void setLut(List<Color> colors ){
+		int i=0;
+		for(Color color: colors){
+			red[i] = (byte) color.getRed();
+			green[i] = (byte) color.getGreen();
+			blue[i] = (byte) color.getBlue();
+			i++;
+		}
+		overlayLUT = new LUT(red, green, blue);
+	}
 	
 	public static void main(String[] args) throws Exception{
-		ImagePlus t= IJ.openImage("/home/mg/Downloads/tifs/image.tif");
-		ImagePlus classifiedImage= null;
+		
+		
+	//	ImagePlus t= IJ.openImage("/home/mg/Downloads/tifs/image.tif");
+		 ImagePlus img = IJ.openImage("/home/mg/Downloads/tifs/image.tif");
+		   
+		    //IJ.saveAs("Tiff", "/Users/wayne/blobs2.tif"); 
+	/*	ImageStack c = new ImageStack(t.getWidth(), t.getHeight());
+		c.addSlice(t.getStack().getProcessor(1));
+		*/
+		//NewImage ne = new NewImage();
+		
+		ImagePlus ip= NewImage.createImage("Ch", 500, 500, 12, 8, 0);
+		//ip.getProcessor().setColor(Color.BLUE);
+		//ip.getProcessor().fill();p.show();
+		example ss =new example();
+		ss.setLut(Util.setDefaultColors());
+		ip.show();
+		    
+		ip.getStack().getProcessor(1).setColorModel(ss.overlayLUT);
+		 WindowManager.setTempCurrentImage(img);
+		    IJ.run("Fire");
+		ip.getStack().getProcessor(1).fill();
+		ip.updateAndDraw();
+	
+		/*ImagePlus ss = new ImagePlus("sss",c);
+		ss.show();
+		ss.getProcessor().convertToRGB().setColor(Color.RED);;
+		ss.getProcessor().fill();
+		ss.updateAndDraw();*/
+		/*
+		
+		example ss =new example();
+		ss.setLut(Util.setDefaultColors());
+		
+		ImagePlus sd = new ImagePlus("sss",c);
+		sd.setColor(Color.RED);
+		sd.show();
+		Overlay ov = new Overlay();
+		ov.setFillColor(Color.RED);
+		
+		sd.setOverlay(ov);
+		
+		sd.updateAndDraw();
+*/		
+		/*ImagePlus classifiedImage= null;
 
 		ImageStack classStack = new ImageStack(t.getWidth(), t.getHeight());
 		ImagePlus tempImage = t.duplicate();
@@ -64,30 +125,17 @@ public class example {
 			}	
 			classStack.addSlice(tempImage.getStack().getSliceLabel(i), tempImage.getStack().getProcessor(i));
 		}
+		
 		classifiedImage= new ImagePlus("Classified Image", classStack);
 		classifiedImage.setCalibration(t.getCalibration());
-		classifiedImage.show();
+		classifiedImage.show();*/
 /*		//drawOutline(t);
 		
 		//ImageConverter ii = new ImageConverter(t);
 		//ii.convertoriginalImageToRGB();
 		//t.setColor(Color.blue);
 		t.show();
-		LUT overlayLUT;
-		byte[] red = new byte[ 256 ];
-		byte[] green = new byte[ 256 ];
-		byte[] blue = new byte[ 256 ];
-		 List<Color>colors=Util.setDefaultColors();
-
-		for(Color color: colors){
-			red[14] = (byte) color.getRed();
-			green[14] = (byte) color.getGreen();
-			blue[14] = (byte) color.getBlue();
-			red[13] = (byte) color.getRed();
-			green[13] = (byte) color.getGreen();
-			blue[13] = (byte) color.getBlue();
-		}
-		overlayLUT = new LUT(red, green, blue);
+		
 		ImageProcessor ip2 = t.getProcessor();
 		ip2.convertToRGB();
 		ip2.setColor(Color.RED);;	

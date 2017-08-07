@@ -137,8 +137,8 @@ public class GuiController {
 		return featureManager.getDataImageTypeId(ClassNum);
 	}
 	
-	public ArrayList<Integer> getDataImageTestTypeId(){
-		return featureManager.getDataImageTestTypeId();
+	public ArrayList<Integer> getDataImageTestTypeId(int ClassNum){
+		return featureManager.getDataImageTestTypeId(ClassNum);
 	}
 	public void addExamples(int id, Roi r, int currentSlice) {
 		// TODO Auto-generated method stub
@@ -150,13 +150,11 @@ public class GuiController {
 		featureManager.addImageType(id, SliceNo);	
 	}
 	
-	public void addTestImageType(int SliceNo){
-		featureManager.addTestImageType(SliceNo);
+	public void addTestImageType(int id, int SliceNo){
+		featureManager.addTestImageType(id, SliceNo);
 	}
 	
-	public String getImageStatus(int SliceNo){
-		return featureManager.getImageStatus(SliceNo);
-	}
+	
 	
 	public ImagePlus pixellevelTraining(ImagePlus classifiedImage, String featureType){
 		learningManager.trainClassifier();
@@ -185,12 +183,12 @@ public class GuiController {
 		int id=0;
 		for (int i=1;i<=tempImage.getStackSize(); i++)
 		{
-			if(featureManager.getDataImageTestTypeId().contains(i)){
+			/*if(featureManager.getDataImageTestTypeId().contains(i)){
 				tempImage.getStack().getProcessor(i).setColor(Util.setDefaultColors().get(id++));
 				tempImage.getStack().getProcessor(i).fill();
 				tempImage.updateAndDraw();
-			}	
-			classStack.addSlice(tempImage.getStack().getSliceLabel(i), tempImage.getStack().getProcessor(i));
+			}*/
+			//classStack.addSlice(tempImage.getStack().getSliceLabel(i), tempImage.getStack().getProcessor(i));
 		}
 		classifiedImage= new ImagePlus("Classified Image", classStack);
 		classifiedImage.setCalibration(originalImage.getCalibration());

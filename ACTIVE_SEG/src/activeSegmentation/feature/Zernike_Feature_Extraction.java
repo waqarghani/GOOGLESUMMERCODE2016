@@ -97,20 +97,22 @@ public class Zernike_Feature_Extraction implements IFeature {
 	}
 
 	@Override
-	public List<IDataSet> createTestInstance(List<String> classLabels, int classes, ArrayList<Integer> testimageindex) {
+	public List<IDataSet> createTestInstance(List<String> classLabels, int classes, List<ArrayList<Integer>> testimageindex) {
 		// TODO Auto-generated method stub
 		
 		List<IDataSet> dataSets= new ArrayList<IDataSet>();
 		for(int i=0; i<testimageindex.size();i++){
-			Instances testingData;
-			classindex=0;
-			ArrayList<Attribute> attributes = createFeatureHeader();
-			attributes.add(new Attribute(Common.CLASS,classLabels));
-			testingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
-			// Set the index of the class attribute
-			testingData.setClassIndex(classindex);
-			testingData.add(filterManager.createInstance(featureName, 0, testimageindex.get(i)));
-			dataSets.add(new WekaDataSet(testingData));
+			for(int j=0;j<testimageindex.get(i).size();j++){
+				Instances testingData;
+				classindex=0;
+				ArrayList<Attribute> attributes = createFeatureHeader();
+				attributes.add(new Attribute(Common.CLASS,classLabels));
+				testingData =  new Instances(Common.INSTANCE_NAME, attributes, 1 );
+				// Set the index of the class attribute
+				testingData.setClassIndex(classindex);
+				testingData.add(filterManager.createInstance(featureName, i, testimageindex.get(i).get(j)));
+				dataSets.add(new WekaDataSet(testingData));
+			}
 		}
 		
 		return dataSets;        

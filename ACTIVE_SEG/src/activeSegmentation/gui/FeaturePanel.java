@@ -105,7 +105,8 @@ public class FeaturePanel extends StackWindow
 	JPanel classJPanel;
 	int originajFrameJ=0, originalFrameK=0;
 	LUT overlayLUT;
-
+	ArrayList<Integer> arr = new ArrayList<Integer>();
+	
 	/** array of roi list overlays to paint the transparent rois of each class */
 	private List<RoiListOverlay> roiOverlayList;
 
@@ -284,7 +285,6 @@ public class FeaturePanel extends StackWindow
 		updateExampleLists();
 		updateallExampleLists();
 		updateImageTypeLists();
-		updateImageTestTypeLists();
 	}
 
 	private void showOption(){
@@ -324,9 +324,41 @@ public class FeaturePanel extends StackWindow
 		controlsBox.setVisible(false);
 	}
 
-	
-	
 	private void addsidepanelforClass(int i){
+		JList current=Util.model();
+		current.setForeground(colors.get(i));
+		imageTypeList.add(current);
+		
+		JList current2=Util.model();
+		current2.setForeground(colors.get(i));
+		imagetestingTypeList.add(current2);
+		
+		RoiListOverlay roiOverlay = new RoiListOverlay();
+		roiOverlay.setComposite( transparency050 );
+		((OverlayedImageCanvas)ic).addOverlay(roiOverlay);
+		roiOverlayList.add(roiOverlay);
+
+		
+	}
+	
+	private void example(int i, int type){
+		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddImageType");
+		addbuttonAction.setSource(type);
+		addButton(controller.getclassLabel(i+1),null ,ClasslabelstrainingJPanel,
+				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
+		originalJ1++;
+		if(type==1){
+			imageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
+			ClasslabelstrainingJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
+			Util.getGbc(0,originalJ1, 1, false, false));
+		}else{
+			imagetestingTypeList.get(i).addMouseListener(mouseListenerClassLevel);
+			ClasslabelstrainingJPanel.add( Util.addScrollPanel(imagetestingTypeList.get(i),null), 
+			Util.getGbc(0,originalJ1, 1, false, false));
+		}
+		originalJ1++;
+	}
+	/*private void addsidepanelforClass(int i){
 		JList current=Util.model();
 		current.setForeground(colors.get(i));
 		imageTypeList.add(current);
@@ -361,7 +393,7 @@ public class FeaturePanel extends StackWindow
 		ClasslabelstestingJPanel.add( Util.addScrollPanel(imagetestingTypeList.get(0),null), 
 				Util.getGbc(0,1, 1, false, false));
 		
-	}
+	}*/
 	
 	private void createPanelforClassLevel(){
 		
@@ -385,11 +417,16 @@ public class FeaturePanel extends StackWindow
 			addsidepanelforClass(i);
 		}
 		
-		
 		ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstrainingJPanel, 
 				ClasslabelstrainingJPanel.getPreferredSize()), Util.getGbc(0, 1, 0, false, true));
 		
-		addsideTestPanelforClass();
+		ClasslabelstrainingJPanel.removeAll();		
+		originalJ1 = 0;
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			example(i,1);		
+		}
+		
+		//addsideTestPanelforClass();
 		
 		datatype.addActionListener(new ActionListener(){
 
@@ -398,16 +435,27 @@ public class FeaturePanel extends StackWindow
 				// TODO Auto-generated method stub
 				JComboBox combo = (JComboBox)e.getSource();
 				if(combo.getSelectedItem().equals("Training")){
-					ClasslabelsJPanel.removeAll();
+					ClasslabelstrainingJPanel.removeAll();
+					originalJ1 = 0;
+					for(int i = 0; i < controller.getNumberofClasses(); i++){
+						example(i,1);		
+					}
+					/*ClasslabelsJPanel.removeAll();
 					ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstrainingJPanel, 
 							ClasslabelstrainingJPanel.getPreferredSize()), Util.getGbc(0, 1, 0, false, true));
-					ClasslabelstestingJPanel.setVisible(true);
+					ClasslabelstestingJPanel.setVisible(true);*/
 				
 				}else{
-					ClasslabelsJPanel.removeAll();
+					ClasslabelstrainingJPanel.removeAll();
+					originalJ1 = 0;
+					for(int i = 0; i < controller.getNumberofClasses(); i++){
+						example(i,2);		
+					}
+					updateGui();
+					/*ClasslabelsJPanel.removeAll();
 					ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstestingJPanel, 
 							ClasslabelstestingJPanel.getPreferredSize()), Util.getGbc(0, 0, 1, false, true));
-					ClasslabelstestingJPanel.setVisible(true);
+					ClasslabelstestingJPanel.setVisible(true);*/
 
 				}
 				
@@ -524,13 +572,11 @@ public class FeaturePanel extends StackWindow
 		
 		if(event.getActionCommand()== "AddImageType"){	
 			displayImage.killRoi();
-			controller.addImageType(event.getID(), currentSlice);			
-			updateGui();
-		}
-
-		if(event.getActionCommand()=="AddTestImageType"){
-			displayImage.killRoi();
-			controller.addTestImageType(currentSlice);
+			if(event.getSource().equals(1))
+				controller.addImageType(event.getID(), currentSlice);			
+			else{ 
+				controller.addTestImageType(event.getID(), currentSlice);
+			}
 			updateGui();
 		}
 		
@@ -648,6 +694,7 @@ public class FeaturePanel extends StackWindow
 			imageTypeList.get(i).removeAll();
 			Vector<String> listModel = new Vector<String>();
 			ArrayList<Integer> SliceNums = controller.getDataImageTypeId(i);
+			System.out.println(SliceNums.size()+"sss");
 			if(SliceNums!=null){
 				for(int j=0; j<SliceNums.size(); j++){	
 					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
@@ -657,23 +704,22 @@ public class FeaturePanel extends StackWindow
 			}
 		}
 
-	}
-	
-	/**
-	 * Update the imagetestingTypeList lists in the GUI
-	 */
-	private void updateImageTestTypeLists(){
-		imagetestingTypeList.get(0).removeAll();
-		Vector<String> listModel = new Vector<String>();
-		ArrayList<Integer> SliceNums = controller.getDataImageTestTypeId();
-		if(SliceNums!=null){
-			for(int j=0; j<SliceNums.size(); j++){	
-				listModel.addElement("imageNo "+ SliceNums.get(j));
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			imagetestingTypeList.get(i).removeAll();
+			Vector<String> listModel = new Vector<String>();
+			ArrayList<Integer> SliceNums = controller.getDataImageTestTypeId(i);
+			System.out.println(SliceNums.size()+"sss");
+			if(SliceNums!=null){
+				for(int j=0; j<SliceNums.size(); j++){	
+					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
+				}
+				imagetestingTypeList.get(i).setListData(listModel);
+				imagetestingTypeList.get(i).setForeground(colors.get(i));
 			}
-			imagetestingTypeList.get(0).setListData(listModel);
-			imageTypeList.get(0).setForeground(colors.get(0));
 		}
 	}
+	
+	
 	private  MouseListener mouseListener = new MouseAdapter() {
 		public void mouseClicked(MouseEvent mouseEvent) {
 			JList theList = ( JList) mouseEvent.getSource();

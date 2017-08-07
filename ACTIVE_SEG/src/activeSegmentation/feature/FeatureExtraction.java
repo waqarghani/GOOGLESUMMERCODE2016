@@ -234,7 +234,7 @@ public class FeatureExtraction implements IFeature {
 
 	}
 	@Override
-	public List<IDataSet> createTestInstance(List<String> classLabels, int classes, ArrayList<Integer> testimageindex) {
+	public List<IDataSet> createTestInstance(List<String> classLabels, int classes, List<ArrayList<Integer>> testimageindex) {
 		// TODO Auto-generated method stub
 		return null;
 	}

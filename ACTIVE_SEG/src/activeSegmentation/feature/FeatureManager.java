@@ -54,7 +54,7 @@ public class FeatureManager implements IFeatureManager {
 	 * and each class (arraylist index) of the training image */
 	private List<Vector<ArrayList<Roi>>> examples;
 	private List<ArrayList<Integer>> imageType;
-	private ArrayList<Integer> imageTestType;
+	private List<ArrayList<Integer>> imageTestType;
 	private IDataManager dataManager;
 	private MetaInfo metaInfo;
 	private Map<String,IFeature> featureMap= new HashMap<String, IFeature>();
@@ -73,13 +73,14 @@ public class FeatureManager implements IFeatureManager {
 		this.stackSize=stackSize;
 		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
 		this.imageType = new ArrayList<ArrayList<Integer>>();
-		this.imageTestType = new ArrayList<Integer>();
+		this.imageTestType = new ArrayList<ArrayList<Integer>>();
 		this.dataManager= dataManager;	
 		// update list of examples
 		for(int i=0; i < stackSize; i++)
 		{
 			examples.add(new Vector<ArrayList<Roi>>());			
 			imageType.add(new ArrayList<Integer>());
+			imageTestType.add(new ArrayList<Integer>());
 		}
 
 		for(int i=1; i<=numOfClasses;i++ ){
@@ -101,21 +102,23 @@ public class FeatureManager implements IFeatureManager {
 	
 	public void addImageType(int classNum, int nSlice) 
 	{
-		if(imageTestType.contains(nSlice))
-			imageTestType.remove(imageTestType.indexOf(nSlice));
 		for(int i=0;i<imageType.size();i++){
 			if(imageType.get(i).contains(nSlice))
 				imageType.get(i).remove(imageType.get(i).indexOf(nSlice));
+			if(imageTestType.get(i).contains(nSlice))
+				imageTestType.get(i).remove(imageTestType.get(i).indexOf(nSlice));
 		}
 		imageType.get(classNum).add(nSlice);
 	}
 
-	public void addTestImageType(int nSlice){
-		for(int i=0;i<imageType.size();i++){
+	public void addTestImageType(int classNum, int nSlice){
+		for(int i=0;i<imageTestType.size();i++){
 			if(imageType.get(i).contains(nSlice))
 				imageType.get(i).remove(imageType.get(i).indexOf(nSlice));
+			if(imageTestType.get(i).contains(nSlice))
+				imageTestType.get(i).remove(imageTestType.get(i).indexOf(nSlice));
 		}
-		imageTestType.add(nSlice);
+		imageTestType.get(classNum).add(nSlice);
 	}
 	@Override
 	public void addExampleList(int classNum, List<Roi> roiList, int n) {
@@ -142,16 +145,7 @@ public class FeatureManager implements IFeatureManager {
 		return examples.get(n-1).get(classNum);
 	}
 
-	@Override
-	public String getImageStatus(int nSlice){
-		/*if(imageType.containsKey(nSlice))
-		{
-			if(imageType.get(nSlice)==0)
-				return "Training";
-			return "Testing";
-		}*/
-		return null;
-	}
+	
 
 
 	@Override
@@ -189,10 +183,10 @@ public class FeatureManager implements IFeatureManager {
 	 */
 	public void deleteImageType(int classId, int sliceNum)
 	{
-		if(classId!=-1 &&imageType.get(classId).indexOf(sliceNum)!=-1)
+		if(imageType.get(classId).indexOf(sliceNum)!=-1)
 			imageType.get(classId).remove(imageType.get(classId).indexOf(sliceNum));
 		else
-			imageTestType.remove(imageTestType.indexOf(sliceNum));
+			imageTestType.get(classId).remove(imageType.get(classId).indexOf(sliceNum));
 	}
 
 	/**
@@ -456,9 +450,9 @@ public class FeatureManager implements IFeatureManager {
 
 
 	@Override
-	public ArrayList<Integer> getDataImageTestTypeId() {
+	public ArrayList<Integer> getDataImageTestTypeId(int ClassNum) {
 		// TODO Auto-generated method stub
-		return imageTestType;
+		return imageTestType.get(ClassNum);
 	}
 
 	
