@@ -337,11 +337,9 @@ public class FeaturePanel extends StackWindow
 		roiOverlay.setComposite( transparency050 );
 		((OverlayedImageCanvas)ic).addOverlay(roiOverlay);
 		roiOverlayList.add(roiOverlay);
-
-		
 	}
 	
-	private void example(int i, int type){
+	private void addContainerinPanelforClass(int i, int type){
 		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddImageType");
 		addbuttonAction.setSource(type);
 		addButton(controller.getclassLabel(i+1),null ,ClasslabelstrainingJPanel,
@@ -358,42 +356,7 @@ public class FeaturePanel extends StackWindow
 		}
 		originalJ1++;
 	}
-	/*private void addsidepanelforClass(int i){
-		JList current=Util.model();
-		current.setForeground(colors.get(i));
-		imageTypeList.add(current);
-		RoiListOverlay roiOverlay = new RoiListOverlay();
-		roiOverlay.setComposite( transparency050 );
-		((OverlayedImageCanvas)ic).addOverlay(roiOverlay);
-		roiOverlayList.add(roiOverlay);
-
-		JPanel buttonsPanel = new JPanel(new GridBagLayout());
-		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddImageType");
-		
-		addButton(controller.getclassLabel(i+1),null ,ClasslabelstrainingJPanel,
-				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
-		ClasslabelstrainingJPanel.add(buttonsPanel,Util.getGbc(1,originalJ1 , 1, false, false) );
-		originalJ1++;
-		imageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
-		ClasslabelstrainingJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
-				Util.getGbc(0,originalJ1, 1, false, false));
-		originalJ1++;		
-	}
-
-	private void addsideTestPanelforClass(){
-		JList current=Util.model();
-		current.setForeground(colors.get(0));
-		imagetestingTypeList.add(current);
-		JPanel buttonsPanel = new JPanel(new GridBagLayout());
-		ActionEvent addbuttonAction= new ActionEvent(this, 0,"AddTestImageType");
-		addButton("Add Test Image",null ,ClasslabelstestingJPanel,
-				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,0 , 1, false, false),null );
-		ClasslabelstestingJPanel.add(buttonsPanel,Util.getGbc(1,0 , 1, false, false) );
-		imagetestingTypeList.get(0).addMouseListener(mouseListenerClassLevel);
-		ClasslabelstestingJPanel.add( Util.addScrollPanel(imagetestingTypeList.get(0),null), 
-				Util.getGbc(0,1, 1, false, false));
-		
-	}*/
+	
 	
 	private void createPanelforClassLevel(){
 		
@@ -423,10 +386,9 @@ public class FeaturePanel extends StackWindow
 		ClasslabelstrainingJPanel.removeAll();		
 		originalJ1 = 0;
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
-			example(i,1);		
+			addContainerinPanelforClass(i,1);		
 		}
 		
-		//addsideTestPanelforClass();
 		
 		datatype.addActionListener(new ActionListener(){
 
@@ -438,25 +400,16 @@ public class FeaturePanel extends StackWindow
 					ClasslabelstrainingJPanel.removeAll();
 					originalJ1 = 0;
 					for(int i = 0; i < controller.getNumberofClasses(); i++){
-						example(i,1);		
+						addContainerinPanelforClass(i,1);		
 					}
-					/*ClasslabelsJPanel.removeAll();
-					ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstrainingJPanel, 
-							ClasslabelstrainingJPanel.getPreferredSize()), Util.getGbc(0, 1, 0, false, true));
-					ClasslabelstestingJPanel.setVisible(true);*/
-				
+					updateGui();
 				}else{
 					ClasslabelstrainingJPanel.removeAll();
 					originalJ1 = 0;
 					for(int i = 0; i < controller.getNumberofClasses(); i++){
-						example(i,2);		
+						addContainerinPanelforClass(i,2);		
 					}
 					updateGui();
-					/*ClasslabelsJPanel.removeAll();
-					ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstestingJPanel, 
-							ClasslabelstestingJPanel.getPreferredSize()), Util.getGbc(0, 0, 1, false, true));
-					ClasslabelstestingJPanel.setVisible(true);*/
-
 				}
 				
 			}});
@@ -468,27 +421,6 @@ public class FeaturePanel extends StackWindow
 		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 4, 0, false, true));
 		add(controlsBoxForClass, BorderLayout.EAST);
 		controlsBoxForClass.setVisible(false);
-		/*
-		int currentSlice= displayImage.getCurrentSlice();
-
-		sliceStatus= new JTextArea();
-		sliceStatus.setText("Image "+currentSlice+" : Null");
-		sliceStatus.setSize(dimension);
-		controlsBoxForClass.add(sliceStatus, Util.getGbc(0, 0, 1, false, true));
-
-		
-		
-		
-		
-			    
-
-		
-		
-		
-		
-		//dataJPanel.add(datatype);
-		//configureJPanel.add(dataJPanel);*/
-		
 		
 	}
 	
