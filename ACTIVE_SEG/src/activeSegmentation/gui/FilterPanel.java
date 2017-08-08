@@ -4,7 +4,6 @@ package activeSegmentation.gui;
 import ij.ImagePlus;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;

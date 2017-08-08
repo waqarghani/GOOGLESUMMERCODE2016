@@ -4,10 +4,8 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
 import ijaux.scale.Pair;
-import ijaux.scale.ZernikeMoment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 

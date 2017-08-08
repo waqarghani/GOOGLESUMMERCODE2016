@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,7 +45,7 @@ import ij.gui.Roi;
  *      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-public class FeatureExtraction implements IFeature {
+public class PixelLevel_FeatureExtraction implements IFeature {
 
 
 	private IFilterManager filterManager;	
@@ -56,7 +55,7 @@ public class FeatureExtraction implements IFeature {
 	private String featureName="pixelLevel";
 	private ImagePlus originalImage;
 
-	public FeatureExtraction(IFilterManager filterManager, ImagePlus originalImage){
+	public PixelLevel_FeatureExtraction(IFilterManager filterManager, ImagePlus originalImage){
 
 		this.filterManager= filterManager;
 		this.originalImage= originalImage;

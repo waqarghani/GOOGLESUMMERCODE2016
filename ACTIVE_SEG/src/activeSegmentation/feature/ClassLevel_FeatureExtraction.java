@@ -1,9 +1,7 @@
 package activeSegmentation.feature;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import activeSegmentation.Common;
 import activeSegmentation.IDataSet;
@@ -11,18 +9,17 @@ import activeSegmentation.IFeature;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.learning.WekaDataSet;
 import ij.ImagePlus;
-import ij.gui.Roi;
 import weka.core.Attribute;
 import weka.core.Instances;
 
-public class Zernike_Feature_Extraction implements IFeature {
+public class ClassLevel_FeatureExtraction implements IFeature {
 
 	private IFilterManager filterManager;	
 
 	private Instances trainingData;
 	private String featureName="classlevel";
 	int classindex = 0;
-	public Zernike_Feature_Extraction(IFilterManager filterManager, ImagePlus originalImage){
+	public ClassLevel_FeatureExtraction(IFilterManager filterManager, ImagePlus originalImage){
 		this.filterManager= filterManager;
 	}
 	
@@ -30,6 +27,7 @@ public class Zernike_Feature_Extraction implements IFeature {
 	public void createTrainingInstance(List<String> classLabels, int classes, List<?> features) {
 		// TODO Auto-generated method stub
 
+		@SuppressWarnings("unchecked")
 		List<ArrayList<Integer>> imageType = (List<ArrayList<Integer>>) features;
 		
 		ArrayList<Attribute> attributes = createFeatureHeader();

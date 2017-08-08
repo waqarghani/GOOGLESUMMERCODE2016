@@ -11,9 +11,9 @@ import activeSegmentation.IDataManager;
 import activeSegmentation.IFeatureManager;
 import activeSegmentation.IFilterManager;
 import activeSegmentation.ILearningManager;
-import activeSegmentation.feature.FeatureExtraction;
+import activeSegmentation.feature.PixelLevel_FeatureExtraction;
 import activeSegmentation.feature.FeatureManager;
-import activeSegmentation.feature.Zernike_Feature_Extraction;
+import activeSegmentation.feature.ClassLevel_FeatureExtraction;
 import activeSegmentation.filterImpl.FilterManager;
 import activeSegmentation.gui.GenericDialogPlus;
 import activeSegmentation.gui.Gui;
@@ -83,8 +83,8 @@ public class Weka_Segmentation_ implements PlugIn {
 			//IEvaluation evaluation= new EvaluationMetrics();
 			IFeatureManager featureManager = new FeatureManager(
 					trainingImage.getImageStack().getSize(),2,dataManager);
-			featureManager.addFeatures(new FeatureExtraction(filterManager,dataManager.getOriginalImage()));
-			featureManager.addFeatures(new Zernike_Feature_Extraction(filterManager,dataManager.getOriginalImage()));
+			featureManager.addFeatures(new PixelLevel_FeatureExtraction(filterManager,dataManager.getOriginalImage()));
+			featureManager.addFeatures(new ClassLevel_FeatureExtraction(filterManager,dataManager.getOriginalImage()));
 			
 			ILearningManager  learningManager= new ClassifierManager(dataManager);
 			GuiController guiController= new GuiController(filterManager, featureManager, learningManager,dataManager);

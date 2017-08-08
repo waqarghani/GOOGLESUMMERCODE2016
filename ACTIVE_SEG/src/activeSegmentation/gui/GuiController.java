@@ -8,7 +8,6 @@ import ij.io.SaveDialog;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,9 +189,9 @@ public class GuiController {
 			}*/
 			//classStack.addSlice(tempImage.getStack().getSliceLabel(i), tempImage.getStack().getProcessor(i));
 		}
-		classifiedImage= new ImagePlus("Classified Image", classStack);
-		classifiedImage.setCalibration(originalImage.getCalibration());
-		classifiedImage.show();
+		//classifiedImage= new ImagePlus("Classified Image", classStack);
+	//	classifiedImage.setCalibration(originalImage.getCalibration());
+		//classifiedImage.show();
 		return classifiedImage;
 	}
 	
