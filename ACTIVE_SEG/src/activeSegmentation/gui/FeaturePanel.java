@@ -222,9 +222,9 @@ public class FeaturePanel extends StackWindow
 		}
 		
 		showOption();
-		createPanel();
+		createPanelforPixelLevel();
 		createPanelforClassLevel();
-		//updateGui();
+		updateGui();
 		Panel all = new Panel();
 		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
 		all.setLayout(box);
@@ -294,15 +294,17 @@ public class FeaturePanel extends StackWindow
 				PIXEL_LEVEL_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
 		addButton( "Class Level",null ,optionBox,
 				CLASS_LEVEL_BUTTON_PRESSED,dimension,Util.getGbc(1,0 , 1, false, false),null );
-	}
-
-	private void createPanel(){
-
 		addButton( "CONFIGURE",null ,configureJPanel,
 				CONFIGURE_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
+		optionBox.add(configureJPanel, Util.getGbc(2, 0, 1, false, true));
+	}
 
+	private void createPanelforPixelLevel(){
 		controlsBox=new JPanel(new GridBagLayout());
-
+		
+		add(controlsBox, BorderLayout.EAST);
+		configureFrame();
+		controlsBox.setVisible(false);
 		labelsJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
 
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
@@ -315,13 +317,11 @@ public class FeaturePanel extends StackWindow
 				TOGGLE_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false),null );
 		addButton( "SAVE",null ,resetJPanel,
 				SAVE_BUTTON_PRESSED,dimension,Util.getGbc(2, 0, 1, false, false), null );
-		controlsBox.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
 		controlsBox.add(Util.addScrollPanel(labelsJPanel, 
 				labelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
 		controlsBox.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
-		add(controlsBox, BorderLayout.EAST);
-		configureFrame();
-		controlsBox.setVisible(false);
+		
+		
 	}
 
 	private void addsidepanelforClass(int i){
@@ -362,10 +362,6 @@ public class FeaturePanel extends StackWindow
 		
 		controlsBoxForClass=new JPanel(new GridBagLayout());
 		
-		addButton( "CONFIGURE",null ,configureJPanel,
-				CONFIGURE_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
-		controlsBoxForClass.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
-
 		String[] types = {"Training", "Testing"};
 		JPanel dataJPanel = new JPanel();
 		JComboBox datatype = new JComboBox(types);
@@ -418,6 +414,8 @@ public class FeaturePanel extends StackWindow
 				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 3, 0, false, true));
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
+		addButton( "SAVE",null ,resetJPanel,
+				SAVE_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false), null );
 		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 4, 0, false, true));
 		add(controlsBoxForClass, BorderLayout.EAST);
 		controlsBoxForClass.setVisible(false);
@@ -626,7 +624,6 @@ public class FeaturePanel extends StackWindow
 			imageTypeList.get(i).removeAll();
 			Vector<String> listModel = new Vector<String>();
 			ArrayList<Integer> SliceNums = controller.getDataImageTypeId(i);
-			System.out.println(SliceNums.size()+"sss");
 			if(SliceNums!=null){
 				for(int j=0; j<SliceNums.size(); j++){	
 					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
@@ -640,7 +637,6 @@ public class FeaturePanel extends StackWindow
 			imagetestingTypeList.get(i).removeAll();
 			Vector<String> listModel = new Vector<String>();
 			ArrayList<Integer> SliceNums = controller.getDataImageTestTypeId(i);
-			System.out.println(SliceNums.size()+"sss");
 			if(SliceNums!=null){
 				for(int j=0; j<SliceNums.size(); j++){	
 					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
@@ -696,7 +692,6 @@ public class FeaturePanel extends StackWindow
 					System.out.println("ITEM : "+ item);
 					String[] arr= item.split(" ");
 					int classId= controller.getClassId(arr[0].trim())-1;
-					System.out.println(classId+"sssssssss");
 					controller.deleteImageType(classId,Integer.parseInt(arr[1].trim()));
 					updateGui();
 				}

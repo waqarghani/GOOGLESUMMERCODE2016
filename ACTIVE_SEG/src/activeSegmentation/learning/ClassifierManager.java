@@ -104,7 +104,7 @@ public class ClassifierManager implements ILearningManager {
 					pool.invoke(applyTask);
 			
 				for(int j=0;j<classificationResult.length;j++){
-					System.out.println(classificationResult[j]);
+				//	System.out.println(classificationResult[j]);
 				}
 				
 			results.add(classificationResult);			

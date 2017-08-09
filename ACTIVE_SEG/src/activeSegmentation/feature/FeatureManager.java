@@ -374,7 +374,7 @@ public class FeatureManager implements IFeatureManager {
 
 			String fileName=Common.ROISET+classIndex+Common.FORMAT;
 			if(classRois!=null & classRois.size()>0){
-				System.out.println("examples");
+				System.out.println("examples"+metaInfo.getPath());
 				dataManager.saveExamples(metaInfo.getPath()+fileName,classRois );
 				featureInfo.setZipFile(fileName);
 			}
