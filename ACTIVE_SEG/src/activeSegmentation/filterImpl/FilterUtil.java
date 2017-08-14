@@ -76,7 +76,7 @@ public class FilterUtil {
 		return new DenseInstance(1.0, values);
 	}
 
-	public DenseInstance createInstance(Complex rv, int classValue){
+	public DenseInstance createInstance(Complex rv, int classValue) throws Exception{
 		int size=0;
 		for(int i=0;i<rv.getReal().length;i++){
 			size++;
@@ -93,6 +93,13 @@ public class FilterUtil {
 			}
 			
 		}
+		
+		System.out.println("Results:----------");
+		for(int i=0;i<final_result.length;i++){
+			System.out.println(final_result[i]);
+		}
+		
+		
 		// Assign class
 		final_result[final_result.length-1] = (double) classValue;
 		return new DenseInstance(1.0,final_result);

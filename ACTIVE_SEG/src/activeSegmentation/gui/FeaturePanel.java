@@ -178,10 +178,11 @@ public class FeaturePanel extends StackWindow
 						displayImage.killRoi();
 					//	updateImageStatus();
 						updateGui();
-						if(showColorOverlay)
-						{
+						//if(!showColorOverlay)
+						//{
+					
 							updateResultOverlay();		
-						}						
+						//}						
 					}
 				}
 			});
@@ -765,6 +766,7 @@ public class FeaturePanel extends StackWindow
 	 */
 	public void updateResultOverlay()
 	{
+		System.out.println("ddddddd");
 		ImageProcessor overlay = classifiedImage.getImageStack().getProcessor(displayImage.getCurrentSlice()).duplicate();
 		overlay = overlay.convertToByte(false);
 		overlay.setColorModel(overlayLUT);

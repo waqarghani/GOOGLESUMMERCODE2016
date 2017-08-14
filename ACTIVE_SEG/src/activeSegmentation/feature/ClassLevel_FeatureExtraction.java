@@ -42,7 +42,11 @@ public class ClassLevel_FeatureExtraction implements IFeature {
 		for(int classIndex = 0; classIndex < classes; classIndex++)
 		{
 			for(int i=0; i<imageType.get(classIndex).size();i++){
-				trainingData.add(filterManager.createInstance(featureName, classIndex, imageType.get(classIndex).get(i)));
+				try{
+					trainingData.add(filterManager.createInstance(featureName, classIndex, imageType.get(classIndex).get(i)));
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}	
 		}
 		

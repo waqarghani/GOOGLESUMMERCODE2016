@@ -12,6 +12,7 @@ import activeSegmentation.gui.OverlayedImageCanvas;
 import activeSegmentation.gui.RoiListOverlay;
 import activeSegmentation.gui.Util;
 import activeSegmentation.learning.LVQ;
+import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -68,29 +69,42 @@ public class example {
 	
 	public static void main(String[] args) throws Exception{
 		
-		
+		LUT[] luts;
 	//	ImagePlus t= IJ.openImage("/home/mg/Downloads/tifs/image.tif");
-		 ImagePlus img = IJ.openImage("/home/mg/Downloads/tifs/image.tif");
-		   
+		 ImagePlus imp = IJ.openImage("/home/mg/Downloads/tifs/image.tif");
+		 imp.show();
+		 ImageStack ss = imp.getStack();
+		 imp.getProcessor().setOverColor(180, 180, 180);;
+		 imp.show();
+		 
+		 /*if (imp instanceof CompositeImage) {
+			 System.out.println("ss");
+			    luts = imp.getLuts();
+			    luts[0] = LUT.createLutFromColor(Color.CYAN);
+			    luts[1] = LUT.createLutFromColor(Color.MAGENTA);
+			    
+			    imp.setLut(luts[0]);
+			    imp.updateAndDraw(); 
+			}*/
 		    //IJ.saveAs("Tiff", "/Users/wayne/blobs2.tif"); 
 	/*	ImageStack c = new ImageStack(t.getWidth(), t.getHeight());
 		c.addSlice(t.getStack().getProcessor(1));
 		*/
 		//NewImage ne = new NewImage();
 		
-		ImagePlus ip= NewImage.createImage("Ch", 500, 500, 12, 8, 0);
+	/*	ImagePlus ip= NewImage.createImage("Ch", 500, 500, 12, 8, 0);
 		//ip.getProcessor().setColor(Color.BLUE);
 		//ip.getProcessor().fill();p.show();
 		example ss =new example();
 		ss.setLut(Util.setDefaultColors());
 		ip.show();
 		    
-		ip.getStack().getProcessor(1).setColorModel(ss.overlayLUT);
+			ip.getStack().getProcessor(1).setColorModel(ss.overlayLUT);
 		 WindowManager.setTempCurrentImage(img);
 		    IJ.run("Fire");
 		ip.getStack().getProcessor(1).fill();
 		ip.updateAndDraw();
-	
+	*/
 		/*ImagePlus ss = new ImagePlus("sss",c);
 		ss.show();
 		ss.getProcessor().convertToRGB().setColor(Color.RED);;
