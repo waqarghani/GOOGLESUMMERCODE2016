@@ -1,8 +1,10 @@
 package activeSegmentation.gui;
 
 import ij.ImagePlus;
+import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.gui.StackWindow;
+import ij.gui.TextRoi;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 
@@ -12,6 +14,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Panel;
@@ -25,6 +28,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -83,6 +87,7 @@ public class FeaturePanel extends StackWindow
 	JTextArea sliceStatus;
 	private JFrame frame = new JFrame("CONFIGURE");
 	private ImagePlus classifiedImage;
+	private HashMap<Integer,Integer> indextolabel = null;
 	Panel all;
 	/** 50% alpha composite */
 	final Composite transparency050 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f );
@@ -176,13 +181,11 @@ public class FeaturePanel extends StackWindow
 					if(e.getSource() == sliceSelector)
 					{
 						displayImage.killRoi();
-					//	updateImageStatus();
 						updateGui();
-						//if(!showColorOverlay)
-						//{
-					
+						if(!showColorOverlay)
+						{
 							updateResultOverlay();		
-						//}						
+						}						
 					}
 				}
 			});
@@ -512,9 +515,15 @@ public class FeaturePanel extends StackWindow
 		}
 		
 		if(event==COMPUTE_BUTTON_PRESSED){
-			classifiedImage=controller.computeFeatures(feature_extraction_type);
+			if(feature_extraction_type =="pixelLevel")
+			{
+				classifiedImage=controller.computeFeaturespixellevel(feature_extraction_type);
+			}else{
+				indextolabel = controller.computeFeatureclasslevel(feature_extraction_type);
+			}
 			toggleOverlay();
 		}
+		
 		if(event==SAVE_BUTTON_PRESSED){
 			controller.saveMetadata();
 
@@ -766,12 +775,23 @@ public class FeaturePanel extends StackWindow
 	 */
 	public void updateResultOverlay()
 	{
-		System.out.println("ddddddd");
-		ImageProcessor overlay = classifiedImage.getImageStack().getProcessor(displayImage.getCurrentSlice()).duplicate();
-		overlay = overlay.convertToByte(false);
-		overlay.setColorModel(overlayLUT);
-		resultOverlay.setImage(overlay);
-		displayImage.updateAndDraw();
+		if(feature_extraction_type == "pixelLevel")
+		{
+			ImageProcessor overlay = classifiedImage.getImageStack().getProcessor(displayImage.getCurrentSlice()).duplicate();
+			overlay = overlay.convertToByte(false);
+			overlay.setColorModel(overlayLUT);
+			resultOverlay.setImage(overlay);
+			displayImage.updateAndDraw();
+		}else{
+			 if(!indextolabel.containsKey(displayImage.getCurrentSlice()))
+				 return;
+		     Font font = new Font("Arial", Font.PLAIN, 38);
+			 TextRoi textRoi = new TextRoi(displayImage.getWidth()/2, displayImage.getHeight()/2, controller.getClassLabel(
+					 indextolabel.get(displayImage.getCurrentSlice())), font);
+			 textRoi.setNonScalable(true);                                
+			 textRoi.drawPixels(displayImage.getStack().getProcessor(displayImage.getCurrentSlice()));
+			 displayImage.updateAndDraw();
+		}
 	}
 
 	/**
@@ -780,7 +800,7 @@ public class FeaturePanel extends StackWindow
 	void toggleOverlay()
 	{
 		showColorOverlay = !showColorOverlay;
-		if (showColorOverlay && null != classifiedImage)
+		if (showColorOverlay && (null != classifiedImage || null != indextolabel))
 		{
 			updateResultOverlay();
 		}

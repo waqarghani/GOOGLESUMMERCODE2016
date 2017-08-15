@@ -9,6 +9,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -174,38 +175,47 @@ public class GuiController {
 		return classifiedImage;
 	}
 	
-	public ImagePlus classlevelTraining(ImagePlus classifiedImage, String featureType){
+	public HashMap<Integer,Integer> classlevelTraining(String featureType){
 		learningManager.trainClassifier();
 		List<double[]> classificationResult=learningManager.applyClassifier(featureManager.extractAll(featureType));
-		ImageStack classStack = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
+		int t=0;
+		HashMap<Integer,Integer> indextolabel = new HashMap<Integer, Integer>();
+		ArrayList<Integer> testindex = featureManager.getImageTestType();
+		for(double[] arr : classificationResult){
+			for(int i=0;i<arr.length;i++){
+				indextolabel.put(testindex.get(t),(int)arr[i]);
+				t++;
+			}
+		}
+		
+		return indextolabel;
+		/*ImageStack classStack = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
 		ImagePlus tempImage = originalImage.duplicate();
 		int id=0;
 		for (int i=1;i<=tempImage.getStackSize(); i++)
 		{
-			/*if(featureManager.getDataImageTestTypeId().contains(i)){
+			if(featureManager.getDataImageTestTypeId().contains(i)){
 				tempImage.getStack().getProcessor(i).setColor(Util.setDefaultColors().get(id++));
 				tempImage.getStack().getProcessor(i).fill();
 				tempImage.updateAndDraw();
-			}*/
+			}
 			//classStack.addSlice(tempImage.getStack().getSliceLabel(i), tempImage.getStack().getProcessor(i));
 		}
 		//classifiedImage= new ImagePlus("Classified Image", classStack);
 	//	classifiedImage.setCalibration(originalImage.getCalibration());
 		//classifiedImage.show();
-		return classifiedImage;
+		return classifiedImage;*/
 	}
 	
-	public ImagePlus computeFeatures(String featureType) {
+	public ImagePlus computeFeaturespixellevel(String featureType) {
 		ImagePlus classifiedImage= null;
 		featureManager.extractFeatures(featureType);
-		
-		if(featureType.contains("classlevel"))
-			return classlevelTraining(classifiedImage, featureType);
-		
-		else if(featureType.contains("pixelLevel"))
-			return pixellevelTraining(classifiedImage, featureType);
-		
-		return null;
+		return pixellevelTraining(classifiedImage, featureType);
+	}
+	
+	public HashMap<Integer,Integer> computeFeatureclasslevel(String featureType){
+		featureManager.extractFeatures(featureType);
+		return classlevelTraining(featureType);
 	}
 
 	public void setClassifier(Object classifier){
@@ -219,7 +229,10 @@ public class GuiController {
 		return originalImage.duplicate();
 	}
 
-	
+	public String getClassLabel(int index) {
+		// TODO Auto-generated method stub
+		return featureManager.getClassLabel(index);
+	}
 
 	public void setOriginalImage(ImagePlus originalImage) {
 		this.originalImage = originalImage;

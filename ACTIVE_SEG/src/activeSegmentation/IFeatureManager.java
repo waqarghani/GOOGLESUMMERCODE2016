@@ -83,6 +83,8 @@ public interface IFeatureManager {
 	 * @return List<Roi>
 	 */
 	public List<Roi> getExamples(int classNum, int n);
+
+	public ArrayList<Integer> getImageTestType();
 	
 	/**
 	 * This method return key used for particular class

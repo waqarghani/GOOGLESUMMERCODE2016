@@ -143,9 +143,16 @@ public class FeatureManager implements IFeatureManager {
 		System.out.println("class Num"+ classNum+ " slice No"+ n);
 		return examples.get(n-1).get(classNum);
 	}
-
 	
-
+	public ArrayList<Integer> getImageTestType(){
+		ArrayList<Integer> imageindex = new ArrayList<Integer>();
+		
+		for(ArrayList<Integer> arr : imageTestType){
+			for(Integer i:arr)
+				imageindex.add(i);
+		}
+		return imageindex;		
+	}
 
 	@Override
 	public int  getclassKey(String classNum){
