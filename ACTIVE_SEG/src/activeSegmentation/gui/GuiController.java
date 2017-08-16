@@ -183,28 +183,12 @@ public class GuiController {
 		ArrayList<Integer> testindex = featureManager.getImageTestType();
 		for(double[] arr : classificationResult){
 			for(int i=0;i<arr.length;i++){
-				indextolabel.put(testindex.get(t),(int)arr[i]);
+				indextolabel.put(testindex.get(t),((int)arr[i])+1);
 				t++;
 			}
 		}
 		
 		return indextolabel;
-		/*ImageStack classStack = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
-		ImagePlus tempImage = originalImage.duplicate();
-		int id=0;
-		for (int i=1;i<=tempImage.getStackSize(); i++)
-		{
-			if(featureManager.getDataImageTestTypeId().contains(i)){
-				tempImage.getStack().getProcessor(i).setColor(Util.setDefaultColors().get(id++));
-				tempImage.getStack().getProcessor(i).fill();
-				tempImage.updateAndDraw();
-			}
-			//classStack.addSlice(tempImage.getStack().getSliceLabel(i), tempImage.getStack().getProcessor(i));
-		}
-		//classifiedImage= new ImagePlus("Classified Image", classStack);
-	//	classifiedImage.setCalibration(originalImage.getCalibration());
-		//classifiedImage.show();
-		return classifiedImage;*/
 	}
 	
 	public ImagePlus computeFeaturespixellevel(String featureType) {

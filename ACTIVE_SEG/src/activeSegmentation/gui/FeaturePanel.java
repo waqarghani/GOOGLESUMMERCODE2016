@@ -284,8 +284,9 @@ public class FeaturePanel extends StackWindow
 	}
 
 
-	private void updateGui(){
-		drawExamples();
+	private void updateGui(){	
+		if(feature_extraction_type.equals("pixelLevel"))
+			drawExamples();
 		updateExampleLists();
 		updateallExampleLists();
 		updateImageTypeLists();
@@ -520,6 +521,7 @@ public class FeaturePanel extends StackWindow
 				classifiedImage=controller.computeFeaturespixellevel(feature_extraction_type);
 			}else{
 				indextolabel = controller.computeFeatureclasslevel(feature_extraction_type);
+				System.out.println(indextolabel.size()+"Size of indextolabel");
 			}
 			toggleOverlay();
 		}
@@ -783,9 +785,11 @@ public class FeaturePanel extends StackWindow
 			resultOverlay.setImage(overlay);
 			displayImage.updateAndDraw();
 		}else{
-			 if(!indextolabel.containsKey(displayImage.getCurrentSlice()))
+			System.out.println(indextolabel.get(displayImage.getCurrentSlice())+"sss"+displayImage.getCurrentSlice()); 
+			if(!indextolabel.containsKey(displayImage.getCurrentSlice()))
 				 return;
-		     Font font = new Font("Arial", Font.PLAIN, 38);
+		     
+			 Font font = new Font("Arial", Font.PLAIN, 38);
 			 TextRoi textRoi = new TextRoi(displayImage.getWidth()/2, displayImage.getHeight()/2, controller.getClassLabel(
 					 indextolabel.get(displayImage.getCurrentSlice())), font);
 			 textRoi.setNonScalable(true);                                
