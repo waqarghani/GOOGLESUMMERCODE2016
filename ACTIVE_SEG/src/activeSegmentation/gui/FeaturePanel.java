@@ -792,8 +792,11 @@ public class FeaturePanel extends StackWindow
 			 Font font = new Font("Arial", Font.PLAIN, 38);
 			 TextRoi textRoi = new TextRoi(displayImage.getWidth()/2, displayImage.getHeight()/2, controller.getClassLabel(
 					 indextolabel.get(displayImage.getCurrentSlice())), font);
-			 textRoi.setNonScalable(true);                                
-			 textRoi.drawPixels(displayImage.getStack().getProcessor(displayImage.getCurrentSlice()));
+			 textRoi.setStrokeColor(colors.get(indextolabel.get(displayImage.getCurrentSlice())-1));
+			 textRoi.setNonScalable(true);                               
+			 Overlay overlay = new Overlay(textRoi);
+			 textRoi.setPosition(displayImage.getCurrentSlice());
+			 displayImage.setOverlay(overlay);
 			 displayImage.updateAndDraw();
 		}
 	}
