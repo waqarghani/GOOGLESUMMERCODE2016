@@ -182,8 +182,9 @@ public class FeaturePanel extends StackWindow
 					{
 						displayImage.killRoi();
 						updateGui();
-						if(!showColorOverlay)
+						if(showColorOverlay)
 						{
+							System.out.println("Inside the showColor");
 							updateResultOverlay();		
 						}						
 					}
@@ -285,11 +286,14 @@ public class FeaturePanel extends StackWindow
 
 
 	private void updateGui(){	
-		if(feature_extraction_type.equals("pixelLevel"))
+		try{
 			drawExamples();
-		updateExampleLists();
-		updateallExampleLists();
-		updateImageTypeLists();
+			updateExampleLists();
+			updateallExampleLists();
+			updateImageTypeLists();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	private void showOption(){
