@@ -34,11 +34,20 @@ import java.util.List;
 public interface IFeature {
 	
 	public String getFeatureName();
+	/*
+	 * Create Instances of Training DataSet
+	 */
 	public void createTrainingInstance(List<String> classLabels,
 			int classes, List<?> features);
 	public IDataSet getDataSet();
 	public void setDataset(IDataSet trainingData);
+	/*
+	 * Create Instances of Testing DataSet at Pixel level
+	 */
 	public List<IDataSet> createAllInstance(List<String> classLabels, int classes);
-	public List<IDataSet> createTestInstance(List<String> classLabels, int classes,List<ArrayList<Integer>> testimageindex);
+	/*
+	 * Create Instances of Testing DataSet at Class level
+	 */
+	public List<IDataSet> createAllInstance(List<String> classLabels, int classes,List<ArrayList<Integer>> testimageindex);
 
 }

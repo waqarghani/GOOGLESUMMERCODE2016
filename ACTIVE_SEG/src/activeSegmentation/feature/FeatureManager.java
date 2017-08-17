@@ -422,7 +422,7 @@ public class FeatureManager implements IFeatureManager {
 		if(featureType.equals("pixelLevel"))
 			dataset= featureMap.get(featureType).createAllInstance(new ArrayList<String>(classLabels.values()),numOfClasses);
 		else
-			dataset = featureMap.get(featureType).createTestInstance(new ArrayList<String>(classLabels.values()),numOfClasses, imageTestType);
+			dataset = featureMap.get(featureType).createAllInstance(new ArrayList<String>(classLabels.values()),numOfClasses, imageTestType);
 		return dataset;
 	}
 

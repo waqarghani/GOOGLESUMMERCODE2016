@@ -140,14 +140,20 @@ public class FilterManager implements IFilterManager {
 							featureType = featurStackMap.get(pr.first);
 						featureType.add(pr.second);
 						featurStackMap.put(pr.first, featureType);
-						//System.out.println(featurStackMap.get(pr.first).getfinalStack()+"sssss");
 					}
 				}
 				else{
+					/*
+					 * Pair class used for mapping image index number to 
+					 * imageStack(It is the stack of images generated after applying filter on particular image) 
+					 */
 					ArrayList<Pair<Integer, ImageStack>> arr=(ArrayList<Pair<Integer, ImageStack>>) ApplyFilter.ComputeFeatures(originalImage, filter);
 					System.out.println(arr.size());
 					for(Pair<Integer,ImageStack> pr:arr){
 						FeatureType featureType;
+						/*
+						 * @param pr.first is a image index and pr.second is a result after applying filter.
+						 */
 						if(!featurStackMap.containsKey(pr.first)){
 							featureType = new FeatureType();
 							featureType.combineStacks(pr.second);
@@ -157,7 +163,6 @@ public class FilterManager implements IFilterManager {
 							featureType.combineStacks(pr.second);
 						}
 						featurStackMap.put(pr.first, featureType);
-						//System.out.println(featurStackMap.get(pr.first).getfinalStack()+"sssss");
 					}
 				
 				}

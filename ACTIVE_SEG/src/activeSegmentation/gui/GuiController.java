@@ -187,7 +187,6 @@ public class GuiController {
 				t++;
 			}
 		}
-		
 		return indextolabel;
 	}
 	

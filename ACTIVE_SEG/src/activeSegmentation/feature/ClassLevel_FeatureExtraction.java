@@ -99,7 +99,7 @@ public class ClassLevel_FeatureExtraction implements IFeature {
 	}
 
 	@Override
-	public List<IDataSet> createTestInstance(List<String> classLabels, int classes, List<ArrayList<Integer>> testimageindex) {
+	public List<IDataSet> createAllInstance(List<String> classLabels, int classes, List<ArrayList<Integer>> testimageindex) {
 		// TODO Auto-generated method stub
 		
 		List<IDataSet> dataSets= new ArrayList<IDataSet>();
