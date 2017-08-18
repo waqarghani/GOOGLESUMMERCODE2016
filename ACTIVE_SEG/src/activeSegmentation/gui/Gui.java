@@ -12,9 +12,6 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
-
-
-
 public class Gui {
 	private JFrame mainFrame;
 	private JPanel controlPanel;
@@ -44,7 +41,6 @@ public class Gui {
 		prepareGUI();
 		
 	}
-
 
 	private static void initLookAndFeel() {
 		String lookAndFeel = null;
@@ -112,7 +108,6 @@ public class Gui {
 		}
 	}
 
-
 	public void doAction( final ActionEvent event )
 	{
 		System.out.println("IN DO ACTION");
@@ -139,10 +134,7 @@ public class Gui {
 		//	EvaluationPanel evaluationPanel = new EvaluationPanel(dataManager, evaluation);
 		//	SwingUtilities.invokeLater(evaluationPanel);
 		}
-
 	}
-
-
 
 	private void prepareGUI(){
 		initLookAndFeel();
@@ -167,7 +159,6 @@ public class Gui {
 
 	}
 
-
 	private JButton addButton( final String label, final Icon icon, final int x,
 			final int y, final int width, final int height,JPanel panel,final ActionEvent action)
 	{
@@ -190,10 +181,7 @@ public class Gui {
 		return button;
 	}
 
-
 	public void showGridBagLayoutDemo(){
-
-
 		mainFrame.setVisible(true);  
 	}
 }

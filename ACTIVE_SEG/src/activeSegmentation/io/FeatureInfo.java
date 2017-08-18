@@ -37,6 +37,4 @@ public class FeatureInfo {
 				+ ", sliceList=" + sliceList + "]";
 	}
 	
-	
-	
 }

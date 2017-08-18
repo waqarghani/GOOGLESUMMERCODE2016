@@ -28,7 +28,6 @@ public class ApplyTask extends RecursiveAction{
 		this.mStart= mStart;
 		this.mLength= length;
 
-
 	}
 
 	@Override

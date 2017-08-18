@@ -154,9 +154,6 @@ public class Zernike_Filter_ implements ExtendedPlugInFilter, DialogListener, IF
 		return null;
 	}
 
-	
-	
-	
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub

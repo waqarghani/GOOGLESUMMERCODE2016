@@ -31,7 +31,6 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SerializedObject;
 
-
 public class WekaClassifier implements IClassifier, Serializable {
 
 	private static final long serialVersionUID = 1765269739169476036L;
@@ -88,7 +87,6 @@ public class WekaClassifier implements IClassifier, Serializable {
 		}
 		return null;
 	}
-
 
 	/**
 	 * The simple name of the class.
@@ -151,8 +149,5 @@ public class WekaClassifier implements IClassifier, Serializable {
 		// TODO Auto-generated method stub
 		return (IClassifier) new SerializedObject(this).getObject();
 	}
-
-
-  
 
 }

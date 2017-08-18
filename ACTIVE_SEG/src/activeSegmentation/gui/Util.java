@@ -71,6 +71,4 @@ public class Util {
 		return colors;
 	}
 
-
-
 }

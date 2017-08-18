@@ -10,17 +10,23 @@ import ijaux.scale.ZernikeMoment.Complex;
  * This Class used for storing Class level features and Pixel level features.
  */
 public class FeatureType {
-	private List<ImageStack> tempStack;
-	// Hold all the stack which is getting after apply filter on each image.
-	private ImageStack finalStack = null;
-	private Complex zernikeMoments;
 	
+	// Hold stack of images which is getting after apply filter on current Slice 
+	private List<ImageStack> tempStack;
+	
+	// Hold all the stack of images which is getting after apply filter on each image.
+	private ImageStack finalStack = null;
+	
+	// Hold Zernike Polynomials Values which is getting after apply filter on each image.
+	private Complex zernikeMoments;
+
 	public FeatureType(){
 		tempStack= new ArrayList<ImageStack>();
 	}
+	
 	public void add(ImageStack imageStack){
 		this.tempStack.add(imageStack);
-	}
+	}	
 	
 	public void add(Complex zernikeMoments){
 		this.zernikeMoments = zernikeMoments;
@@ -46,9 +52,11 @@ public class FeatureType {
 	public List<ImageStack> gettempStack(){
 		return tempStack;
 	}
+	
 	public ImageStack getfinalStack(){
 		return finalStack;
 	}
+	
 	public Complex getzernikeMoments(){
 		return zernikeMoments;
 	}

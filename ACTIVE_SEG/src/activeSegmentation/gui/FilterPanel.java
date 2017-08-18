@@ -45,10 +45,7 @@ import javax.swing.JTextField;
 import activeSegmentation.Common;
 import activeSegmentation.IFilterManager;
 
-
-
 public class FilterPanel implements Runnable {
-
 
 	private IFilterManager filterManager;
 	private JTabbedPane pane;
@@ -57,9 +54,6 @@ public class FilterPanel implements Runnable {
 	private Map<String,List<JTextField>> textMap;
 	private ImagePlus trainingImage;
 	
-
-
-
 	/** This {@link ActionEvent} is fired when the 'next' button is pressed. */
 	final ActionEvent NEXT_BUTTON_PRESSED = new ActionEvent( this, 0, "Next" );
 
@@ -68,16 +62,20 @@ public class FilterPanel implements Runnable {
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 2, "Compute" );
+	
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	//final ActionEvent LOAD_BUTTON_PRESSED = new ActionEvent( this, 3, "Load" );
+	
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent SAVE_BUTTON_PRESSED = new ActionEvent( this, 4, "Save" );
+	
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent DEFAULT_BUTTON_PRESSED = new ActionEvent( this, 5, "Default" );
+	
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent VIEW_BUTTON_PRESSED = new ActionEvent( this, 6, "View" );
+	
 	final JFrame frame = new JFrame("FILTER");
-
 
 	public FilterPanel(GuiController controller) {
 
@@ -87,7 +85,6 @@ public class FilterPanel implements Runnable {
 		this.filterList.setForeground(Color.GREEN);
 		textMap= new HashMap<String, List<JTextField>>();
 	}
-
 
 	@Override
 	public void run() {
@@ -247,7 +244,6 @@ public class FilterPanel implements Runnable {
 
 	}
 
-
 	private void updateTabbedGui(String key){
 		int i=0;
 		Map<String,String> settingsMap=filterManager.getFilterSetting(key);
@@ -258,6 +254,7 @@ public class FilterPanel implements Runnable {
 		}
 
 	}
+
 	private void updateFiterList() {
 		// TODO Auto-generated method stub
 		Set<String> filters= filterManager.getFilters();  
@@ -313,11 +310,9 @@ public class FilterPanel implements Runnable {
 				System.out.println("CLICKED");
 				doAction(action);
 			}
-		} );
+		});
 
 		return button;
 	}
-
-
 
 }

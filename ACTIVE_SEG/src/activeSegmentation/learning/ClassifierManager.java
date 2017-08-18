@@ -1,7 +1,5 @@
 package activeSegmentation.learning;
 
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +20,6 @@ import activeSegmentation.io.MetaInfo;
 
 public class ClassifierManager implements ILearningManager {
 
-
 	private IClassifier currentClassifier= new WekaClassifier(new SMO());
 	Map<String,IClassifier> classifierMap= new HashMap<String, IClassifier>();
 	private IDataManager dataManager;
@@ -32,8 +29,6 @@ public class ClassifierManager implements ILearningManager {
 	private IDataSet dataset;
 	private ForkJoinPool pool; 
 	
-
-
 	public ClassifierManager(IDataManager dataManager){
 		learningList.add(Common.ACTIVELEARNING);
 		learningList.add(Common.PASSIVELEARNING);
@@ -41,7 +36,6 @@ public class ClassifierManager implements ILearningManager {
 		pool=  new ForkJoinPool();
 
 	}
-
 
     @Override
 	public void trainClassifier(){
@@ -57,8 +51,6 @@ public class ClassifierManager implements ILearningManager {
 		}
 	}
 
-
-
 	@Override
 	public void saveLearningMetaData(){	
 		metaInfo= dataManager.getMetaInfo();
@@ -72,8 +64,6 @@ public class ClassifierManager implements ILearningManager {
 		metaInfo.setLearning(learningMap);
 		dataManager.writeMetaInfo(metaInfo);		
 	}
-
-
 
 	@Override
 	public void loadLearningMetaData() {

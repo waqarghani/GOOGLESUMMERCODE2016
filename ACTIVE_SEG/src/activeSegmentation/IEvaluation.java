@@ -36,6 +36,7 @@ public interface IEvaluation {
 	 * @return List of metrics
 	 */
 	public List<String> getMetrics();
+	
 	/**
 	 * This method is used to test the testdata set using selected metrics
 	 * @param  instances

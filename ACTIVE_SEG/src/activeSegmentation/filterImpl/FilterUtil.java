@@ -31,8 +31,6 @@ import weka.core.DenseInstance;
  */
 public class FilterUtil {
 
-	
-	
 	/**
 	 * Create instance (feature vector) of a specific coordinate
 	 * 
@@ -112,5 +110,5 @@ public class FilterUtil {
 		return new DenseInstance(1.0,final_result);
 		
 	}
-	
+
 }

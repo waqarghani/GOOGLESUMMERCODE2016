@@ -4,7 +4,6 @@ package activeSegmentation;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * 				
  *   
@@ -34,6 +33,7 @@ import java.util.List;
 public interface IFeature {
 	
 	public String getFeatureName();
+	
 	/**
 	 * Create Instances of Training DataSet
 	 * @param classLabels
@@ -47,17 +47,20 @@ public interface IFeature {
 	 * @return Weka Format DataSet 
 	 */
 	public IDataSet getDataSet();
+	
 	/**
 	 * 
 	 * @param trainingData
 	 */
 	public void setDataset(IDataSet trainingData);
+	
 	/**
 	 * Create Instances of Testing DataSet at Pixel level
 	 * @param classLabels
 	 * @param classes
 	 */
 	public List<IDataSet> createAllInstance(List<String> classLabels, int classes);
+	
 	/**
 	 * Create Instances of Testing DataSet at Class level
 	 * @param classLabels

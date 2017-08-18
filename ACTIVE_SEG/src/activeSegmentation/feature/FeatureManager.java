@@ -20,8 +20,6 @@ import activeSegmentation.IFeature;
 import activeSegmentation.io.FeatureInfo;
 import activeSegmentation.io.MetaInfo;
 
-
-
 /**
  * 				
  *   
@@ -52,25 +50,32 @@ public class FeatureManager implements IFeatureManager {
 	/** array of lists of Rois for each slice (vector index) 
 	 * and each class (arraylist index) of the training image */
 	private List<Vector<ArrayList<Roi>>> examples;
+
 	/**
 	 * A list contains classes and each class contain another list of image index of the training image
 	 */
 	private List<ArrayList<Integer>> imageType;
+
 	/**
 	 * A list contains classes and each class contain another list of image index of the testing image
 	 */
 	private List<ArrayList<Integer>> imageTestType;
+
 	private IDataManager dataManager;
+
 	private MetaInfo metaInfo;
+
 	private Map<String,IFeature> featureMap= new HashMap<String, IFeature>();
 
 	/** maximum number of classes (labels) allowed */
 	/** names of the current classes */
 	private Map<Integer,String> classLabels = new HashMap<Integer, String>();
+	
 	private static RoiManager roiman= new RoiManager();
 
 	/** current number of classes */
 	private int numOfClasses = 0;
+	
 	private int stackSize=0;
 
 	public FeatureManager(int stackSize, int numOfClasses,IDataManager dataManager)
@@ -94,15 +99,12 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 
-
 	public void addExample(int classNum, Roi roi, int n) 
 	{
-
 		System.out.println(roi);
 		System.out.println("ADD EXAMLE");
 		examples.get(n-1).get(classNum).add(roi);
 		roiman.addRoi(roi);
-
 	}
 	
 	public void addImageType(int classNum, int nSlice) 
@@ -125,6 +127,7 @@ public class FeatureManager implements IFeatureManager {
 		}
 		imageTestType.get(classNum).add(nSlice);
 	}
+
 	@Override
 	public void addExampleList(int classNum, List<Roi> roiList, int n) {
 		// TODO Auto-generated method stub
@@ -132,10 +135,8 @@ public class FeatureManager implements IFeatureManager {
 			if(processibleRoi(roi)){
 				addExample(classNum, roi, n);
 			}
-
 		}
 	}
-
 
 	/**
 	 * Return the list of examples for a certain class.
@@ -162,7 +163,6 @@ public class FeatureManager implements IFeatureManager {
 
 	@Override
 	public int  getclassKey(String classNum){
-
 		for (Map.Entry<Integer,String> e : classLabels.entrySet()) {
 			Integer key = e.getKey();
 			Object value2 = e.getValue();
@@ -173,8 +173,6 @@ public class FeatureManager implements IFeatureManager {
 		} 
 		return 0;
 	}
-
-
 
 	/**
 	 * Remove an example list from a class and specific slice
@@ -216,8 +214,6 @@ public class FeatureManager implements IFeatureManager {
 		// TODO Auto-generated method stub
 		return classLabels.get(index);
 	}
-
-
 
 	/**
 	 * Set the name of a class.
@@ -269,7 +265,6 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 
-
 	private boolean processibleRoi(Roi roi) {
 		boolean ret=(roi!=null && !(roi.getType()==Roi.LINE || 
 				roi.getType()==Roi.POLYLINE ||
@@ -283,23 +278,15 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 
-
 	public int getStackSize() {
 		return stackSize;
 	}
-
 
 	public void setStackSize(int stackSize) {
 		this.stackSize = stackSize;
 	}
 
-
-
 	@Override
-	/*
-	 *
-	 */
-
 	public void setFeatureMetadata(){
 		metaInfo= dataManager.getMetaInfo();
 		Map<String,String> keywordList= metaInfo.getKeywordList();
@@ -442,13 +429,11 @@ public class FeatureManager implements IFeatureManager {
 		featureMap.put(feature.getFeatureName(), feature);
 	}
 
-
 	@Override
 	public int getSize(int i, int currentSlice) {
 		// TODO Auto-generated method stub
 		return getExamples(i, currentSlice).size();
 	}
-
 
 	@Override
 	public ArrayList<Integer> getDataImageTypeId(int ClassNum) {
@@ -460,12 +445,10 @@ public class FeatureManager implements IFeatureManager {
 		return imageType.get(ClassNum);
 	}
 
-
 	@Override
 	public ArrayList<Integer> getDataImageTestTypeId(int ClassNum) {
 		// TODO Auto-generated method stub
 		return imageTestType.get(ClassNum);
 	}
-
 	
 }

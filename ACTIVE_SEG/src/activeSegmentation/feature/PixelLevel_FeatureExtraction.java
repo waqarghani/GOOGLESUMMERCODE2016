@@ -1,6 +1,5 @@
 package activeSegmentation.feature;
 
-
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -53,13 +52,14 @@ public class PixelLevel_FeatureExtraction implements IFeature {
 	private Instances trainingData;
 
 	private String featureName="pixelLevel";
+
 	private ImagePlus originalImage;
 
 	public PixelLevel_FeatureExtraction(IFilterManager filterManager, ImagePlus originalImage){
-
 		this.filterManager= filterManager;
 		this.originalImage= originalImage;
 	}
+	
 	/**
 	 * Create training instances out of the user markings
 	 * @return set of instances (feature vectors in Weka format)
@@ -77,7 +77,6 @@ public class PixelLevel_FeatureExtraction implements IFeature {
 		for(int classIndex = 0; classIndex < classes; classIndex++)
 		{
 			int nl = 0;
-
 			// Read all lists of examples
 			for(int sliceNum = 1; sliceNum <= filterManager.getOriginalImageSize(); sliceNum ++)
 				for(int j=0; j < examples.get(sliceNum-1).get(classIndex).size(); j++)
@@ -87,11 +86,8 @@ public class PixelLevel_FeatureExtraction implements IFeature {
 				}
 			IJ.log("# of pixels selected as " + classLabels.get(classIndex) + ": " +nl);
 		}
-
 		System.out.println(trainingData);
 	}
-
-
 
 	/**
 	 * Add training samples from a rectangular roi
@@ -109,7 +105,6 @@ public class PixelLevel_FeatureExtraction implements IFeature {
 			Roi r) 
 	{		
 		int numInstances = 0;
-
 		final Rectangle rect = r.getBounds();
 		final Polygon poly=r.getPolygon();
 		final int x0 = rect.x;
@@ -161,18 +156,14 @@ public class PixelLevel_FeatureExtraction implements IFeature {
 	@Override
 	public List<IDataSet> createAllInstance(List<String> classLabels,
 			int classes)
-			{
+	{
 		List<IDataSet> dataSets= new ArrayList<IDataSet>();
-
 		// Read all lists of examples
 		for(int sliceNum = 1; sliceNum <= filterManager.getOriginalImageSize(); sliceNum ++){
-
 			dataSets.add(new WekaDataSet(addRectangleRoiInstances(sliceNum, classLabels, classes)));
-
 		}
-
 		return dataSets;
-			}
+	}
 
 	/**
 	 * Add training samples from a rectangular roi
@@ -199,14 +190,12 @@ public class PixelLevel_FeatureExtraction implements IFeature {
 
 		for( int y = 0; y < originalImage.getHeight(); y++ )				
 		{
-		for( int x = 0; x < originalImage.getWidth(); x++ ){
-			
+			for( int x = 0; x < originalImage.getWidth(); x++ ){
 				testingData.add( filterManager.createInstance(featureName, x, y, 0, sliceNum) );
 				
 			}		
 		}
 		// increase number of instances for this class
-
 		System.out.println(testingData.get(1).toString());
 		return testingData;		
 	}
@@ -219,6 +208,7 @@ public class PixelLevel_FeatureExtraction implements IFeature {
 		// TODO Auto-generated method stub
 		return featureName;
 	}
+	
 	@Override
 	public IDataSet getDataSet() {
 		// TODO Auto-generated method stub
@@ -226,19 +216,18 @@ public class PixelLevel_FeatureExtraction implements IFeature {
 		System.out.println(trainingData.toString());
 		return new WekaDataSet(trainingData);
 	}
+	
 	@Override
 	public void setDataset(IDataSet trainingData) {
 		// TODO Auto-generated method stub
 		this.trainingData= trainingData.getDataset();
 
 	}
+	
 	@Override
 	public List<IDataSet> createAllInstance(List<String> classLabels, int classes, List<ArrayList<Integer>> testimageindex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	
 
 }

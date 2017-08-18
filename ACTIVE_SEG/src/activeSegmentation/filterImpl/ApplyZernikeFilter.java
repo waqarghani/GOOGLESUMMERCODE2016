@@ -36,11 +36,11 @@ import ijaux.scale.ZernikeMoment.Complex;
  *      License along with this library; if not, write to the Free Software
  *      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 public class ApplyZernikeFilter extends RecursiveTask<Pair<Integer,Complex>>{
 	ImageProcessor imp;
 	private IFilter filter;
 	private int index;
+	
 	public ApplyZernikeFilter(IFilter filter, ImageProcessor imp, int index){
 		this.imp=imp;
 		this.filter=filter;
@@ -85,4 +85,5 @@ public class ApplyZernikeFilter extends RecursiveTask<Pair<Integer,Complex>>{
 		System.out.println("Time Taken after applying Zernike filter on each slice= "+(currTime-prevTime));
 		return arr;
 	}
+
 }

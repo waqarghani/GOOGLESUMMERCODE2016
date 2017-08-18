@@ -53,10 +53,6 @@ import javax.swing.JTextArea;
 
 import activeSegmentation.Common;
 
-
-
-
-
 /**
  * 
  *  
@@ -584,11 +580,6 @@ public class FeaturePanel extends StackWindow
 
 	}	
 
-
-
-
-
-
 	private void addClass(final ActionEvent  event) {
 		controller.addClass();
 		addclasses(controller.getNumberofClasses()-1, originajFrameJ, originalFrameK);
@@ -596,7 +587,6 @@ public class FeaturePanel extends StackWindow
 		addsidepanelforClass(controller.getNumberofClasses()-1);
 		validateFrame();
 	}
-
 
 	/**
 	 * Draw the painted traces on the display image
@@ -610,8 +600,6 @@ public class FeaturePanel extends StackWindow
 
 		displayImage.updateAndDraw();
 	}
-
-
 
 	/**
 	 * Update the example lists in the GUI
@@ -627,9 +615,7 @@ public class FeaturePanel extends StackWindow
 			exampleList.get(i).setListData(listModel);
 			exampleList.get(i).setForeground(colors.get(i));
 		}
-
-	}
-	
+	}	
 	
 	/**
 	 * Update the imagetype lists in the GUI
@@ -661,8 +647,7 @@ public class FeaturePanel extends StackWindow
 			}
 		}
 	}
-	
-	
+
 	private  MouseListener mouseListener = new MouseAdapter() {
 		public void mouseClicked(MouseEvent mouseEvent) {
 			JList theList = ( JList) mouseEvent.getSource();
@@ -680,7 +665,6 @@ public class FeaturePanel extends StackWindow
 					showSelected( arr[0].trim(),index ,sliceNum);
 					
 				}
-
 			}
 
 			if (mouseEvent.getClickCount() == 2) {
@@ -749,8 +733,6 @@ public class FeaturePanel extends StackWindow
 			allexampleList.get(i).setForeground(colors.get(i));
 		}
 	}
-
-
 
 	private void addclasses(int i , int j, int k){
 		JCheckBox  checkBox = new JCheckBox("Class :"+ (i+1));
@@ -830,7 +812,6 @@ public class FeaturePanel extends StackWindow
 		}
 		overlayLUT = new LUT(red, green, blue);
 	}
-
 
 	private void addAction(JButton button ,final  ActionEvent action){
 		button.addActionListener( new ActionListener()

@@ -8,7 +8,6 @@ import ij.process.LUT;
 public class LutSetting {
 
 	LUT overlayLUT;
-
 	// Create overlay LUT
 	byte[] red = new byte[ 256 ];
 	byte[] green = new byte[ 256 ];

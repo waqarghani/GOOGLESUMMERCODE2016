@@ -38,7 +38,6 @@ public class GuiController {
 
 	}
 
-
 	public List<ArrayList<Roi>> getRois(int currentSlice){
 		List<ArrayList< Roi >> roiList= new ArrayList<ArrayList<Roi>>();
 
@@ -105,11 +104,13 @@ public class GuiController {
 		if(learningFlag)
 		learningManager.loadLearningMetaData();
 	}
+
 	public void  saveMetadata() {	
 		filterManager.saveFiltersMetaData();
 		featureManager.saveFeatureMetadata();
 		learningManager.saveLearningMetaData();
 	}
+	
 	public boolean saveRoi(int  i, int n) {
 
 		String path;
@@ -125,6 +126,7 @@ public class GuiController {
 		return dataManager.saveExamples(path, featureManager.getExamples(i, n));
 
 	}
+	
 	public int getNumberofClasses() {
 		return featureManager.getNumOfClasses();
 	}
@@ -140,6 +142,7 @@ public class GuiController {
 	public ArrayList<Integer> getDataImageTestTypeId(int ClassNum){
 		return featureManager.getDataImageTestTypeId(ClassNum);
 	}
+	
 	public void addExamples(int id, Roi r, int currentSlice) {
 		// TODO Auto-generated method stub
 		featureManager.addExample(id, r, currentSlice);	
@@ -153,8 +156,6 @@ public class GuiController {
 	public void addTestImageType(int id, int SliceNo){
 		featureManager.addTestImageType(id, SliceNo);
 	}
-	
-	
 	
 	public ImagePlus pixellevelTraining(ImagePlus classifiedImage, String featureType){
 		learningManager.trainClassifier();
@@ -226,8 +227,8 @@ public class GuiController {
 		return filterManager;
 	}
 
-
 	public void setFilterManager(IFilterManager filterManager) {
 		this.filterManager = filterManager;
 	}
+
 }
