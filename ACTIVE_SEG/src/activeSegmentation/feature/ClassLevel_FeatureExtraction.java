@@ -12,12 +12,37 @@ import ij.ImagePlus;
 import weka.core.Attribute;
 import weka.core.Instances;
 
+/**
+ * 				
+ *   
+ * 
+ * @author Mukesh Gupta, Sumit Kumar Vohra and Dimiter Prodanov , IMEC
+ *
+ *
+ * @contents
+ *  Feature extraction at Class Level
+ * 
+ * 
+ * @license This library is free software; you can redistribute it and/or
+ *      modify it under the terms of the GNU Lesser General Public
+ *      License as published by the Free Software Foundation; either
+ *      version 2.1 of the License, or (at your option) any later version.
+ *
+ *      This library is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *       Lesser General Public License for more details.
+ *
+ *      You should have received a copy of the GNU Lesser General Public
+ *      License along with this library; if not, write to the Free Software
+ *      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 public class ClassLevel_FeatureExtraction implements IFeature {
 
 	private IFilterManager filterManager;	
-
 	private Instances trainingData;
-	private String featureName="classlevel";
+	private String featureName="classLevel";
 	int classindex = 0;
 	public ClassLevel_FeatureExtraction(IFilterManager filterManager, ImagePlus originalImage){
 		this.filterManager= filterManager;
@@ -38,7 +63,6 @@ public class ClassLevel_FeatureExtraction implements IFeature {
 					
 		//Set the index of the class attribute
 		trainingData.setClassIndex(classindex);
-		System.out.println(imageType.get(0).size()+"ssssssssssssss");
 		for(int classIndex = 0; classIndex < classes; classIndex++)
 		{
 			for(int i=0; i<imageType.get(classIndex).size();i++){

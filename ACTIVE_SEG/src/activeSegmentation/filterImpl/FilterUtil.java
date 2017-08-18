@@ -76,6 +76,13 @@ public class FilterUtil {
 		return new DenseInstance(1.0, values);
 	}
 
+	/**
+	 * Create instance (feature vector) of a specific slice index
+	 * @param rv zernike values of specific slice
+	 * @param classValue
+	 * @return corresponding instance
+	 * @throws Exception
+	 */
 	public DenseInstance createInstance(Complex rv, int classValue) throws Exception{
 		int size=0;
 		for(int i=0;i<rv.getReal().length;i++){
@@ -94,7 +101,7 @@ public class FilterUtil {
 			
 		}
 		
-		System.out.println("Results:----------");
+		System.out.println("Zernike Values Checking:");
 		for(int i=0;i<final_result.length;i++){
 			System.out.println(final_result[i]);
 		}

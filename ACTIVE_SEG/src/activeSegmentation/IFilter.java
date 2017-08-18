@@ -94,6 +94,10 @@ public interface IFilter {
 
 	public void setImageStack(ImageStack imageStack);
 	
+	/**
+	 * 
+	 * @return Zernike Polynomial Degree
+	 */
 	public int getDegree();
 	
 

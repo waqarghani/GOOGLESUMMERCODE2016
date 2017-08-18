@@ -11,6 +11,32 @@ import ij.process.ImageProcessor;
 import ijaux.scale.Pair;
 import ijaux.scale.ZernikeMoment.Complex;
 
+/**
+ * 				
+ *   
+ * 
+ * @author Mukesh Gupta, Sumit Kumar Vohra and Dimiter Prodanov , IMEC
+ *
+ *
+ * @contents
+ * ApplyZernikeFilter is responsible for apply Zernike Polynomial Filter on each slice of imageStack in parallel 
+ * 
+ * 
+ * @license This library is free software; you can redistribute it and/or
+ *      modify it under the terms of the GNU Lesser General Public
+ *      License as published by the Free Software Foundation; either
+ *      version 2.1 of the License, or (at your option) any later version.
+ *
+ *      This library is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *       Lesser General Public License for more details.
+ *
+ *      You should have received a copy of the GNU Lesser General Public
+ *      License along with this library; if not, write to the Free Software
+ *      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 public class ApplyZernikeFilter extends RecursiveTask<Pair<Integer,Complex>>{
 	ImageProcessor imp;
 	private IFilter filter;
@@ -28,6 +54,12 @@ public class ApplyZernikeFilter extends RecursiveTask<Pair<Integer,Complex>>{
 		return filter.applyFilter(imp);
 	}
 	
+	/**
+	 * 
+	 * @param originalImage
+	 * @param filter
+	 * @return ArrayList of Zernike Complex Values getting after applying filter on each slice
+	 */
 	public static ArrayList<Pair<Integer,Complex>> ComputeValues(ImagePlus originalImage, IFilter filter) {
     	ArrayList<Pair<Integer,Complex>> arr= new ArrayList<Pair<Integer,Complex>>();    	
     	synchronized(filter) {
@@ -36,7 +68,7 @@ public class ApplyZernikeFilter extends RecursiveTask<Pair<Integer,Complex>>{
     		arr.add(rv);
     		filter.notifyAll();
     	}
-		long as=System.currentTimeMillis();		
+		long prevTime=System.currentTimeMillis();		
 		List<ApplyZernikeFilter> tasks = new ArrayList<>();
 		for(int i=2; i<originalImage.getStackSize(); i++){
 			ApplyZernikeFilter ezm =new ApplyZernikeFilter(filter, originalImage.getImageStack().getProcessor(i),i);
@@ -49,8 +81,8 @@ public class ApplyZernikeFilter extends RecursiveTask<Pair<Integer,Complex>>{
         		arr.add(rv);
             }
 		}
-		long aa=System.currentTimeMillis();
-		System.out.println(aa-as);
+		long currTime=System.currentTimeMillis();
+		System.out.println("Time Taken after applying Zernike filter on each slice= "+(currTime-prevTime));
 		return arr;
 	}
 }

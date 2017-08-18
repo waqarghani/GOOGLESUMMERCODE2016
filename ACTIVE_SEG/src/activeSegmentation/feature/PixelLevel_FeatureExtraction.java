@@ -27,7 +27,7 @@ import ij.gui.Roi;
  *
  *
  * @contents
- *  Feature extration at Pixel Level
+ *  Feature extraction at Pixel Level
  * 
  * 
  * @license This library is free software; you can redistribute it and/or

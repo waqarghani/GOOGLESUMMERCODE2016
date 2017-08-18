@@ -52,7 +52,13 @@ public class FeatureManager implements IFeatureManager {
 	/** array of lists of Rois for each slice (vector index) 
 	 * and each class (arraylist index) of the training image */
 	private List<Vector<ArrayList<Roi>>> examples;
+	/**
+	 * A list contains classes and each class contain another list of image index of the training image
+	 */
 	private List<ArrayList<Integer>> imageType;
+	/**
+	 * A list contains classes and each class contain another list of image index of the testing image
+	 */
 	private List<ArrayList<Integer>> imageTestType;
 	private IDataManager dataManager;
 	private MetaInfo metaInfo;
@@ -398,7 +404,7 @@ public class FeatureManager implements IFeatureManager {
 	@Override
 	public IDataSet extractFeatures(String featureType){
 		
-		if(featureType.equals("classlevel"))
+		if(featureType.equals("classLevel"))
 		{
 			numOfClasses = imageType.size();
 			featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),

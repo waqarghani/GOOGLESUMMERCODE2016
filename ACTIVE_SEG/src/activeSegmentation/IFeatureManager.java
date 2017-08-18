@@ -84,8 +84,11 @@ public interface IFeatureManager {
 	 */
 	public List<Roi> getExamples(int classNum, int n);
 
+	/**
+	 * 
+	 * @return list of index number of test images
+	 */
 	public ArrayList<Integer> getImageTestType();
-	
 	/**
 	 * This method return key used for particular class
 	 * @param classNum
@@ -104,10 +107,18 @@ public interface IFeatureManager {
 	public String getClassLabel(int index);
 	
 	public int getSize(int i, int currentSlice);
-	
-	public ArrayList<Integer> getDataImageTypeId(int DataImageTypeId);
-	
-	public ArrayList<Integer> getDataImageTestTypeId(int DataImageTypeId);
+	/**
+	 * 
+	 * @param ClassNum 
+	 * @return Training image indexes which is selected under given ClassNum
+	 */
+	public ArrayList<Integer> getDataImageTypeId(int ClassNum);
+	/**
+	 * 
+	 * @param ClassNum
+	 * @return Testing image indexes which is selected under given ClassNum
+	 */
+	public ArrayList<Integer> getDataImageTestTypeId(int ClassNum);
 	/**
 	 * This method will set class name 
 	 * @param classNum

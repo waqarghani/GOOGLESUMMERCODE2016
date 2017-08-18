@@ -184,7 +184,6 @@ public class FeaturePanel extends StackWindow
 						updateGui();
 						if(showColorOverlay)
 						{
-							System.out.println("Inside the showColor");
 							updateResultOverlay();		
 						}						
 					}
@@ -506,7 +505,7 @@ public class FeaturePanel extends StackWindow
 		if(event==CLASS_LEVEL_BUTTON_PRESSED){
 			controlsBox.setVisible(false);
 			controlsBoxForClass.setVisible(true);
-			feature_extraction_type = "classlevel";
+			feature_extraction_type = "classLevel";
 		}
 		
 		if(event.getActionCommand()== "AddImageType"){	

@@ -212,7 +212,7 @@ public class FilterManager implements IFilterManager {
 	}
 	
 	public int getNumOfFeatures(String featureName) {
-		if(featureName.equals("classlevel"))
+		if(featureName.equals("classLevel"))
 			return filterMap.get("ZMC").getDegree();
 		else
 			return featurStackMap.get(featurStackMap.size()).getfinalStack().getSize();
