@@ -81,9 +81,9 @@ public class Test_Zernike_Radial_Poly {
     		String mann=String.format("%.14f", radial_manual_values[i]);	
         	if(exp.equals(mann))
         		count++;
-        	//assert exp.equals(mann);
 		}	
-		System.out.println(count);
+		System.out.println("Total number of features:- "+2500);
+		System.out.println("Number of features matches:- "+count);
 	}
 
 	public double calculate_zernike_values(ImagePlus imp, double[] radial_values){
@@ -105,19 +105,19 @@ public class Test_Zernike_Radial_Poly {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		String path="../other_res/test_image3.tiff";
+		String path="../other_res/test_image.tif";
     	ImagePlus imp=IJ.openImage(path);
     	ImageConverter ic=new ImageConverter(imp);
     	ic.convertToGray8();
-       	System.out.println(imp.getWidth()+"ss"+imp.getHeight());
+       	System.out.println("Size of the image:- "+imp.getWidth()+"*"+imp.getHeight());
 		
        	Test_Zernike_Radial_Poly test = new Test_Zernike_Radial_Poly ();
        	test.validate_radial_values(imp);
        	double real_exp = test.calculate_zernike_values(imp, test.radial_exp_values);
        	double real_mann = test.calculate_zernike_values(imp, test.radial_manual_values);
        	
-       	System.out.println(real_exp);
-       	System.out.println(real_mann);
+       	System.out.println("Zernike Value computed experimently:- "+real_exp);
+       	System.out.println("Zernike Value computed mannually:- "+real_mann);
 	}
 
 }

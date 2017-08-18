@@ -110,7 +110,7 @@ public class ZernikeMoment {
         	}
         }
         for(int i=0;i<real_result.length;i++){
-        	System.out.println(real_result[i]+"sss"+ imag_result[i]);
+        	System.out.println("Real Value:-" +real_result[i]+" Imaginary Value:- "+ imag_result[i]);
         }
         
 		return new Complex(real_result, imag_result);
