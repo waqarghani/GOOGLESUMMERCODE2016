@@ -24,7 +24,7 @@ public interface IFilter {
 	public boolean updateSettings(Map< String, String > settingsMap);
 
 	/**
-	 * It is image index w
+	 * Tell the filter for which slice index it is computed the values.
 	 * @param position_id
 	 */
 	public void updatePosition(int position_id);
@@ -88,8 +88,7 @@ public interface IFilter {
 	public boolean isEnabled();
 	
 	/**
-	 * Get ive image
-	 * @return Image
+	 * Reset all setting of filters
 	 */
 	public boolean reset();
 	
@@ -105,8 +104,8 @@ public interface IFilter {
 	public void setImageStack(ImageStack imageStack);
 	
 	/**
-	 * 
-	 * @return Zernike Polynomial Degree
+	 * @return Zernike Polynomial parameters
+	 * It can be extended by returning list of parameters when other filter is used
 	 */
 	public int getDegree();
 	
