@@ -23,6 +23,10 @@ public interface IFilter {
 	 */
 	public boolean updateSettings(Map< String, String > settingsMap);
 
+	/**
+	 * It is image index w
+	 * @param position_id
+	 */
 	public void updatePosition(int position_id);
 	
 	/**

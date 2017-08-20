@@ -59,6 +59,14 @@ public class GuiController {
 		return featureManager.getClassLabel(index);
 	}
 
+	public int getClassIdofCurrentSlicetraining(int currentSlice){
+		return featureManager.getClassIdofCurrentSlicetraining(currentSlice);
+	}
+	
+	public int getClassIdofCurrentSlicetesting(int currentSlice){
+		return featureManager.getClassIdofCurrentSlicetesting(currentSlice);
+	}
+	
 	public void deleteExample(int classId,int currentSlice, int index ){
 		featureManager.deleteExample(classId, currentSlice, index);
 	}

@@ -97,7 +97,9 @@ public class FeaturePanel extends StackWindow
 	private List<JList> exampleList;
 	private List<JList> allexampleList;
 	private List<JList> imageTypeList;
+	private List<JList> allimageTypeList;
 	private List<JList> imagetestingTypeList;
+	private List<JList> allimagetestingTypeList;
 	private List<Color> colors ;
 	/** flag to display the overlay image */
 	private boolean showColorOverlay=false;
@@ -151,7 +153,9 @@ public class FeaturePanel extends StackWindow
 		this.exampleList = new ArrayList<JList>();
 		this.allexampleList = new ArrayList<JList>();
 		this.imageTypeList = new ArrayList<JList>();
+		this.allimageTypeList = new ArrayList<JList>();
 		this.imagetestingTypeList = new ArrayList<JList>();
+		this.allimagetestingTypeList = new ArrayList<JList>();
 		this.controller= controller;	
 		colors=Util.setDefaultColors();
 		roiOverlayList = new ArrayList<RoiListOverlay>();
@@ -286,6 +290,7 @@ public class FeaturePanel extends StackWindow
 			updateExampleLists();
 			updateallExampleLists();
 			updateImageTypeLists();
+			updateallImageTypeLists();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -333,9 +338,17 @@ public class FeaturePanel extends StackWindow
 		current.setForeground(colors.get(i));
 		imageTypeList.add(current);
 		
+		JList current1=Util.model();
+		current1.setForeground(colors.get(i));
+		allimageTypeList.add(current1);
+		
 		JList current2=Util.model();
 		current2.setForeground(colors.get(i));
 		imagetestingTypeList.add(current2);
+		
+		JList current3=Util.model();
+		current3.setForeground(colors.get(i));
+		allimagetestingTypeList.add(current3);
 		
 		RoiListOverlay roiOverlay = new RoiListOverlay();
 		roiOverlay.setComposite( transparency050 );
@@ -350,13 +363,18 @@ public class FeaturePanel extends StackWindow
 				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
 		originalJ1++;
 		if(type==1){
-			imageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
+		
+			allimageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
 			ClasslabelstrainingJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
-			Util.getGbc(0,originalJ1, 1, false, false));
+					Util.getGbc(0,originalJ1, 1, false, false));
+			ClasslabelstrainingJPanel.add( Util.addScrollPanel(allimageTypeList.get(i),null), 
+			Util.getGbc(1,originalJ1, 1, false, false));
 		}else{
-			imagetestingTypeList.get(i).addMouseListener(mouseListenerClassLevel);
+			allimagetestingTypeList.get(i).addMouseListener(mouseListenerClassLevel);
 			ClasslabelstrainingJPanel.add( Util.addScrollPanel(imagetestingTypeList.get(i),null), 
 			Util.getGbc(0,originalJ1, 1, false, false));
+			ClasslabelstrainingJPanel.add( Util.addScrollPanel(allimagetestingTypeList.get(i),null), 
+					Util.getGbc(1,originalJ1, 1, false, false));
 		}
 		originalJ1++;
 	}
@@ -365,7 +383,6 @@ public class FeaturePanel extends StackWindow
 	private void createPanelforClassLevel(){
 		
 		controlsBoxForClass=new JPanel(new GridBagLayout());
-		
 		String[] types = {"Training", "Testing"};
 		JPanel dataJPanel = new JPanel();
 		JComboBox datatype = new JComboBox(types);
@@ -621,29 +638,57 @@ public class FeaturePanel extends StackWindow
 	 * Update the imagetype lists in the GUI
 	 */
 	private void updateImageTypeLists()	{
+		final int currentSlice = displayImage.getCurrentSlice();
+		int classid = controller.getClassIdofCurrentSlicetraining(currentSlice);
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			imageTypeList.get(i).removeAll();
+			if(classid!=-1){
+				Vector<String> listModel = new Vector<String>();
+				listModel.addElement(controller.getclassLabel(classid+1)+ " "+ currentSlice);
+				imageTypeList.get(classid).setListData(listModel);
+				imageTypeList.get(classid).setForeground(colors.get(i));
+			}
+		}
+
+		classid = controller.getClassIdofCurrentSlicetesting(currentSlice);
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			imagetestingTypeList.get(i).removeAll();
+			if(classid!=-1){
+				Vector<String> listModel = new Vector<String>();
+				listModel.addElement(controller.getclassLabel(classid+1)+ " "+ currentSlice);
+				imagetestingTypeList.get(classid).setListData(listModel);
+				imagetestingTypeList.get(classid).setForeground(colors.get(i));
+			}
+		}
+	}
+	
+	/**
+	 * Update the allimagetype lists in the GUI
+	 */
+	private void updateallImageTypeLists()	{
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			allimageTypeList.get(i).removeAll();
 			Vector<String> listModel = new Vector<String>();
 			ArrayList<Integer> SliceNums = controller.getDataImageTypeId(i);
 			if(SliceNums!=null){
 				for(int j=0; j<SliceNums.size(); j++){	
 					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
 				}
-				imageTypeList.get(i).setListData(listModel);
-				imageTypeList.get(i).setForeground(colors.get(i));
+				allimageTypeList.get(i).setListData(listModel);
+				allimageTypeList.get(i).setForeground(colors.get(i));
 			}
 		}
 
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
-			imagetestingTypeList.get(i).removeAll();
+			allimagetestingTypeList.get(i).removeAll();
 			Vector<String> listModel = new Vector<String>();
 			ArrayList<Integer> SliceNums = controller.getDataImageTestTypeId(i);
 			if(SliceNums!=null){
 				for(int j=0; j<SliceNums.size(); j++){	
 					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
 				}
-				imagetestingTypeList.get(i).setListData(listModel);
-				imagetestingTypeList.get(i).setForeground(colors.get(i));
+				allimagetestingTypeList.get(i).setListData(listModel);
+				allimagetestingTypeList.get(i).setForeground(colors.get(i));
 			}
 		}
 	}
@@ -700,7 +745,6 @@ public class FeaturePanel extends StackWindow
 	
 	/**
 	 * Select a list and deselect the others
-	 * 
 	 * @param e item event (originated by a list)
 	 * @param i list index
 	 */

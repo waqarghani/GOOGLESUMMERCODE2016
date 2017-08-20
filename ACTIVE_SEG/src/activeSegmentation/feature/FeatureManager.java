@@ -196,7 +196,7 @@ public class FeatureManager implements IFeatureManager {
 		if(imageType.get(classId).indexOf(sliceNum)!=-1)
 			imageType.get(classId).remove(imageType.get(classId).indexOf(sliceNum));
 		else
-			imageTestType.get(classId).remove(imageType.get(classId).indexOf(sliceNum));
+			imageTestType.get(classId).remove(imageTestType.get(classId).indexOf(sliceNum));
 	}
 
 	/**
@@ -449,6 +449,26 @@ public class FeatureManager implements IFeatureManager {
 	public ArrayList<Integer> getDataImageTestTypeId(int ClassNum) {
 		// TODO Auto-generated method stub
 		return imageTestType.get(ClassNum);
+	}
+
+	@Override
+	public int getClassIdofCurrentSlicetraining(int currentSlice) {
+		// TODO Auto-generated method stub
+		for(int i=0;i<imageType.size();i++){
+			if(imageType.get(i).contains(currentSlice))
+				return i;
+		}
+		return -1;
+	}
+
+	@Override
+	public int getClassIdofCurrentSlicetesting(int currentSlice) {
+		// TODO Auto-generated method stub
+		for(int i=0;i<imageTestType.size();i++){
+			if(imageTestType.get(i).contains(currentSlice))
+				return i;
+		}
+		return -1;
 	}
 	
 }

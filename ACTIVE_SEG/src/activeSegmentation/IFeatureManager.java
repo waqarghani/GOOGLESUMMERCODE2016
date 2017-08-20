@@ -110,6 +110,22 @@ public interface IFeatureManager {
 	 */
 	public List<String> getClassLabels();
 	
+	/** 
+	 * find the class id of this currentSlice in the training DataSet
+	 * @param currentSlice
+	 * @return the classId in which this slice present, it return -1 if doesn't find the slice
+	 * in the training DataSet
+	 */
+	public int getClassIdofCurrentSlicetraining(int currentSlice);
+	
+	/** 
+	 * find the class id of this currentSlice in the testing DataSet
+	 * @param currentSlice
+	 * @return the classId in which this slice present, it return -1 if doesn't find the slice
+	 * in the testing DataSet
+	 */
+	public int getClassIdofCurrentSlicetesting(int currentSlice);
+	
 	/**
 	 * This method will return names of the classes according to key or index
 	 * @return String
