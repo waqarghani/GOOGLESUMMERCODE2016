@@ -639,10 +639,14 @@ public class FeaturePanel extends StackWindow
 	 */
 	private void updateImageTypeLists()	{
 		final int currentSlice = displayImage.getCurrentSlice();
+		displayImage.killRoi();
 		int classid = controller.getClassIdofCurrentSlicetraining(currentSlice);
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			imageTypeList.get(i).removeAll();
 			if(classid!=-1){
+				Roi roi = new Roi(0,0,displayImage.getWidth(),displayImage.getHeight());
+				displayImage.setRoi(roi);
+				displayImage.updateAndDraw();
 				Vector<String> listModel = new Vector<String>();
 				listModel.addElement(controller.getclassLabel(classid+1)+ " "+ currentSlice);
 				imageTypeList.get(classid).setListData(listModel);
@@ -654,6 +658,9 @@ public class FeaturePanel extends StackWindow
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			imagetestingTypeList.get(i).removeAll();
 			if(classid!=-1){
+				Roi roi = new Roi(0,0,displayImage.getWidth(),displayImage.getHeight());
+				displayImage.setRoi(roi);
+				displayImage.updateAndDraw();
 				Vector<String> listModel = new Vector<String>();
 				listModel.addElement(controller.getclassLabel(classid+1)+ " "+ currentSlice);
 				imagetestingTypeList.get(classid).setListData(listModel);
