@@ -1,10 +1,10 @@
-#Active Segmentation plugin for ImageJ
+# Active Segmentation plugin for ImageJ
 
 This project is sponsored by Google Inc. as a part of the Google Summer of Code 2016-2017 program: 
 
 1. **Organization:** [International Neuroinformatics Coordinating Facility(INCF)](http://incf.org)
 2. **Mentor:** Dimiter Prodanov, [INCF Belgian Node](http://www.neuroinformatics.be)
-3. **Student Developer:** Mukesh Gupta, Sumit Kumar Vohra
+3. **Student Developer:** [Mukesh Gupta](https://github.com/mukesh14149), [Sumit Kumar Vohra](https://github.com/sumit3203/)
 
 
 ## Project description
@@ -73,12 +73,46 @@ Active Segmentation Filters Screen
 6. The "Default" button is used to set the set default settings for the filter as provided by the developers.
 
 ##  Feature Screen
-Feature Screen of the active segmentation is very similar to the TWS(Trainable Weka Segmentation). It will start with two classes i.e Binary Classification
+Feature Screen of the active segmentation is very similar to the TWS(Trainable Weka Segmentation).
+In the starting user need to selects Pixel level or Class level feature extraction. 
+![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/MainfeaturesScreen.png)
 
-This screen showing the Class level pixel classification
+Active Segmentation Pixel Level Features Screen
+![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/FeatureScreen.png)
+<ul>
+<li>The Configure button is used to go "Class Screen". The details regarding the class screen is discussed in the next section</li>
+<li>The user can add region of interest to class using "class button" i.e BCK, ASTRO etc.</li>
+<li>As seen in "Red Box in Feature Screen", the user can also upload or download region of interest to class using "upload or download buttons" </li>
+<li>As seen in "Box 1 in Feature Screen", It will show all the ROI's belong to current slice.
+The user can delete the region of interest by double click on particular ROI.</li>
+<li>As seen in "Box 2 in Feature Screen", It will show all the ROI's belong to class.
+The user can delete the region of interest by double click on particular ROI.</li>
+<li>Meta Data is dumped using the "SAVE" button.</li>
+<li>Learning is started using the "COMPUTE" button. Once the learning is completed, The "overlay image" will be generated</li>
+<li>Meta Data is dumped using the "SAVE" button.</li>
+<li>The "TOGGLE" button is used to switch between "overlay image" and "original image". </li>
+</ul>
 
-User selects images which can be used for training purpose.
+Active Segmentation Class Level Features Screen
+This is default Screen for selecting features for training purposes
+![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/training.png)
 
 
+This is default Screen for selecting features for testing purposes
+![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/training.png)
 
-  
+<ul>
+<li>The Configure button is used to go "Class Screen". The details regarding the class screen is discussed in the next section</li>
+<li>User selects images and put into given class</li>
+</ul>
+
+## Configure Screen
+Configure screen is used to configure classes. The user can add,update or delete classes. The default classes will be two.
+<ul>
+<li>The user can add new class using "ADD CLASS" button.</li>
+<li>In order to delete the class,the user have to select the class using checkbox and then click "DELETE" button. </li>
+<li>The user can change the color of the class using "COLOR" button.</li>
+</ul>
+
+![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/ClassScreen.png)
+![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/COLOR.png)
