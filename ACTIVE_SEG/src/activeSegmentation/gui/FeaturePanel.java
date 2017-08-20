@@ -289,6 +289,10 @@ public class FeaturePanel extends StackWindow
 			drawExamples();
 			updateExampleLists();
 			updateallExampleLists();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		try{
 			updateImageTypeLists();
 			updateallImageTypeLists();
 		}catch(Exception e){
@@ -643,30 +647,42 @@ public class FeaturePanel extends StackWindow
 		int classid = controller.getClassIdofCurrentSlicetraining(currentSlice);
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			imageTypeList.get(i).removeAll();
-			if(classid!=-1){
+			if(classid==-1||classid!=i){
+				Vector<String> listModel = new Vector<String>();
+				imageTypeList.get(i).setListData(listModel);
+				imageTypeList.get(i).setForeground(colors.get(i));
+			}
+		}	
+		if(classid!=-1){
 				Roi roi = new Roi(0,0,displayImage.getWidth(),displayImage.getHeight());
 				displayImage.setRoi(roi);
 				displayImage.updateAndDraw();
 				Vector<String> listModel = new Vector<String>();
 				listModel.addElement(controller.getclassLabel(classid+1)+ " "+ currentSlice);
 				imageTypeList.get(classid).setListData(listModel);
-				imageTypeList.get(classid).setForeground(colors.get(i));
-			}
+				imageTypeList.get(classid).setForeground(colors.get(classid));
 		}
+		
 
 		classid = controller.getClassIdofCurrentSlicetesting(currentSlice);
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			imagetestingTypeList.get(i).removeAll();
-			if(classid!=-1){
+			if(classid==-1||classid!=i){
+				Vector<String> listModel = new Vector<String>();
+				imagetestingTypeList.get(i).setListData(listModel);
+				imagetestingTypeList.get(i).setForeground(colors.get(i));
+			}
+		}	
+		if(classid!=-1){
 				Roi roi = new Roi(0,0,displayImage.getWidth(),displayImage.getHeight());
 				displayImage.setRoi(roi);
 				displayImage.updateAndDraw();
 				Vector<String> listModel = new Vector<String>();
 				listModel.addElement(controller.getclassLabel(classid+1)+ " "+ currentSlice);
 				imagetestingTypeList.get(classid).setListData(listModel);
-				imagetestingTypeList.get(classid).setForeground(colors.get(i));
-			}
+				imagetestingTypeList.get(classid).setForeground(colors.get(classid));
 		}
+		
 	}
 	
 	/**
@@ -821,7 +837,7 @@ public class FeaturePanel extends StackWindow
 			resultOverlay.setImage(overlay);
 			displayImage.updateAndDraw();
 		}else{
-			System.out.println(indextolabel.get(displayImage.getCurrentSlice())+"sss"+displayImage.getCurrentSlice()); 
+			System.out.println(indextolabel.get(displayImage.getCurrentSlice())+"AAA"+displayImage.getCurrentSlice()); 
 			if(!indextolabel.containsKey(displayImage.getCurrentSlice()))
 				 return;
 		     

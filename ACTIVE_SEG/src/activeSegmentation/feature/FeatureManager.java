@@ -393,9 +393,8 @@ public class FeatureManager implements IFeatureManager {
 		
 		if(featureType.equals("classLevel"))
 		{
-			numOfClasses = imageType.size();
 			featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),
-				numOfClasses, imageType);
+					imageType.size(), imageType);
 			
 		}
 		else {

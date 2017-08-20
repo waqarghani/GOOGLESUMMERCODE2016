@@ -109,9 +109,9 @@ public class ZernikeMoment {
         		imag_result[j]+=(temp.get(j)) / Math.PI;
         	}
         }
-        for(int i=0;i<real_result.length;i++){
+        /*for(int i=0;i<real_result.length;i++){
         	System.out.println("Real Value:-" +real_result[i]+" Imaginary Value:- "+ imag_result[i]);
-        }
+        }*/
         
 		return new Complex(real_result, imag_result);
 	}
