@@ -3,7 +3,6 @@ package activeSegmentation;
 
 import java.util.List;
 
-
 /**
  * 				
  *   
@@ -40,21 +39,30 @@ public interface ILearningManager {
 	 * @param classifier 
 	 */
 	public void setClassifier(Object classifier);
+
 	/**
 	 * This method will train the classifier 
 	 * 
 	 */
 	public void trainClassifier();
+	
 	/**
 	 * This method will save the training metadata using MetaInfo
 	 * 
 	 */
 	public void saveLearningMetaData();
+	
 	/**
 	 * This method will load the training metadata using MetaInfo
 	 * 
 	 */
 	public void loadLearningMetaData();
+	
+	/**
+	 * This method apply Classifier on test DataSet
+	 * @param testDataSet
+	 * @return Predicted class of test DataSet
+	 */
 	public  List<double[]> applyClassifier(List<IDataSet> testDataSet);
 	
 }

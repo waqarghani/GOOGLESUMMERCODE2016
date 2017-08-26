@@ -23,9 +23,7 @@ import activeSegmentation.IDataSet;
 import weka.core.Instance;
 import weka.core.Instances;
 
-
 public class WekaDataSet implements IDataSet {
-
 	
 	private Instances dataset;
 

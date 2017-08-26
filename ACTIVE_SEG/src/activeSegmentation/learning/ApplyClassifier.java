@@ -1,7 +1,5 @@
 package activeSegmentation.learning;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
@@ -15,7 +13,6 @@ public class ApplyClassifier {
 	private IClassifier iclassifier;
 	private List<IDataSet> testDataSet;
 	private ForkJoinPool pool; 
-
 
 	public ApplyClassifier(IClassifier iclassifier, List<IDataSet> testDataSet) {
 		this.iclassifier = iclassifier;
@@ -40,8 +37,5 @@ public class ApplyClassifier {
 	public void generateProbabilityMask(){
 
 	}
-
-
-
 
 }

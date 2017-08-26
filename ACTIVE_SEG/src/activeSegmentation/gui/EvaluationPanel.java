@@ -2,22 +2,16 @@ package activeSegmentation.gui;
 
 import ij.io.OpenDialog;
 
-import java.awt.BorderLayout;
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,12 +22,6 @@ import javax.swing.JPanel;
 import activeSegmentation.Common;
 import activeSegmentation.IDataManager;
 import activeSegmentation.IEvaluation;
-import activeSegmentation.learning.SMO;
-import weka.classifiers.Classifier;
-import weka.core.OptionHandler;
-import weka.core.Utils;
-import weka.gui.GenericObjectEditor;
-import weka.gui.PropertyPanel;
 
 public class EvaluationPanel  implements Runnable {
 

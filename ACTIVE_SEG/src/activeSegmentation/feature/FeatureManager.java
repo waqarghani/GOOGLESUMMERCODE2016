@@ -20,8 +20,6 @@ import activeSegmentation.IFeature;
 import activeSegmentation.io.FeatureInfo;
 import activeSegmentation.io.MetaInfo;
 
-
-
 /**
  * 				
  *   
@@ -52,28 +50,47 @@ public class FeatureManager implements IFeatureManager {
 	/** array of lists of Rois for each slice (vector index) 
 	 * and each class (arraylist index) of the training image */
 	private List<Vector<ArrayList<Roi>>> examples;
+
+	/**
+	 * A list contains classes and each class contain another list of image index of the training image
+	 */
+	private List<ArrayList<Integer>> imageType;
+
+	/**
+	 * A list contains classes and each class contain another list of image index of the testing image
+	 */
+	private List<ArrayList<Integer>> imageTestType;
+
 	private IDataManager dataManager;
+
 	private MetaInfo metaInfo;
+
 	private Map<String,IFeature> featureMap= new HashMap<String, IFeature>();
 
 	/** maximum number of classes (labels) allowed */
 	/** names of the current classes */
 	private Map<Integer,String> classLabels = new HashMap<Integer, String>();
+	
 	private static RoiManager roiman= new RoiManager();
 
 	/** current number of classes */
 	private int numOfClasses = 0;
+	
 	private int stackSize=0;
 
 	public FeatureManager(int stackSize, int numOfClasses,IDataManager dataManager)
 	{
 		this.stackSize=stackSize;
 		this.examples= new ArrayList<Vector<ArrayList<Roi>>>();
+		this.imageType = new ArrayList<ArrayList<Integer>>();
+		this.imageTestType = new ArrayList<ArrayList<Integer>>();
 		this.dataManager= dataManager;	
 		// update list of examples
 		for(int i=0; i < stackSize; i++)
 		{
 			examples.add(new Vector<ArrayList<Roi>>());			
+			imageType.add(new ArrayList<Integer>());
+			imageTestType.add(new ArrayList<Integer>());
 		}
 
 		for(int i=1; i<=numOfClasses;i++ ){
@@ -82,15 +99,33 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 
-
 	public void addExample(int classNum, Roi roi, int n) 
 	{
-
 		System.out.println(roi);
 		System.out.println("ADD EXAMLE");
 		examples.get(n-1).get(classNum).add(roi);
 		roiman.addRoi(roi);
+	}
+	
+	public void addImageType(int classNum, int nSlice) 
+	{
+		for(int i=0;i<imageType.size();i++){
+			if(imageType.get(i).contains(nSlice))
+				imageType.get(i).remove(imageType.get(i).indexOf(nSlice));
+			if(imageTestType.get(i).contains(nSlice))
+				imageTestType.get(i).remove(imageTestType.get(i).indexOf(nSlice));
+		}
+		imageType.get(classNum).add(nSlice);
+	}
 
+	public void addTestImageType(int classNum, int nSlice){
+		for(int i=0;i<imageTestType.size();i++){
+			if(imageType.get(i).contains(nSlice))
+				imageType.get(i).remove(imageType.get(i).indexOf(nSlice));
+			if(imageTestType.get(i).contains(nSlice))
+				imageTestType.get(i).remove(imageTestType.get(i).indexOf(nSlice));
+		}
+		imageTestType.get(classNum).add(nSlice);
 	}
 
 	@Override
@@ -100,10 +135,8 @@ public class FeatureManager implements IFeatureManager {
 			if(processibleRoi(roi)){
 				addExample(classNum, roi, n);
 			}
-
 		}
 	}
-
 
 	/**
 	 * Return the list of examples for a certain class.
@@ -117,12 +150,19 @@ public class FeatureManager implements IFeatureManager {
 		System.out.println("class Num"+ classNum+ " slice No"+ n);
 		return examples.get(n-1).get(classNum);
 	}
-
-
+	
+	public ArrayList<Integer> getImageTestType(){
+		ArrayList<Integer> imageindex = new ArrayList<Integer>();
+		
+		for(ArrayList<Integer> arr : imageTestType){
+			for(Integer i:arr)
+				imageindex.add(i);
+		}
+		return imageindex;		
+	}
 
 	@Override
 	public int  getclassKey(String classNum){
-
 		for (Map.Entry<Integer,String> e : classLabels.entrySet()) {
 			Integer key = e.getKey();
 			Object value2 = e.getValue();
@@ -134,8 +174,6 @@ public class FeatureManager implements IFeatureManager {
 		return 0;
 	}
 
-
-
 	/**
 	 * Remove an example list from a class and specific slice
 	 * 
@@ -146,6 +184,19 @@ public class FeatureManager implements IFeatureManager {
 	public void deleteExample(int classNum, int nSlice, int index)
 	{
 		getExamples(classNum, nSlice).remove(index);
+	}
+	
+	/**
+	 * Remove an slice from dataset. 
+	 * 
+	 * @param sliceNum the number of the examples' class
+	 */
+	public void deleteImageType(int classId, int sliceNum)
+	{
+		if(imageType.get(classId).indexOf(sliceNum)!=-1)
+			imageType.get(classId).remove(imageType.get(classId).indexOf(sliceNum));
+		else
+			imageTestType.get(classId).remove(imageTestType.get(classId).indexOf(sliceNum));
 	}
 
 	/**
@@ -163,8 +214,6 @@ public class FeatureManager implements IFeatureManager {
 		// TODO Auto-generated method stub
 		return classLabels.get(index);
 	}
-
-
 
 	/**
 	 * Set the name of a class.
@@ -216,7 +265,6 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 
-
 	private boolean processibleRoi(Roi roi) {
 		boolean ret=(roi!=null && !(roi.getType()==Roi.LINE || 
 				roi.getType()==Roi.POLYLINE ||
@@ -230,23 +278,15 @@ public class FeatureManager implements IFeatureManager {
 
 	}
 
-
 	public int getStackSize() {
 		return stackSize;
 	}
-
 
 	public void setStackSize(int stackSize) {
 		this.stackSize = stackSize;
 	}
 
-
-
 	@Override
-	/*
-	 *
-	 */
-
 	public void setFeatureMetadata(){
 		metaInfo= dataManager.getMetaInfo();
 		Map<String,String> keywordList= metaInfo.getKeywordList();
@@ -334,7 +374,7 @@ public class FeatureManager implements IFeatureManager {
 
 			String fileName=Common.ROISET+classIndex+Common.FORMAT;
 			if(classRois!=null & classRois.size()>0){
-				System.out.println("examples");
+				System.out.println("examples"+metaInfo.getPath());
 				dataManager.saveExamples(metaInfo.getPath()+fileName,classRois );
 				featureInfo.setZipFile(fileName);
 			}
@@ -350,23 +390,32 @@ public class FeatureManager implements IFeatureManager {
 
 	@Override
 	public IDataSet extractFeatures(String featureType){
-
-		featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),
-				numOfClasses, examples);
+		
+		if(featureType.equals("classLevel"))
+		{
+			featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),
+					imageType.size(), imageType);
+			
+		}
+		else {
+			featureMap.get(featureType).createTrainingInstance(new ArrayList<String>(classLabels.values()),
+					numOfClasses, examples);
+		}
 		IDataSet dataset=featureMap.get(featureType).getDataSet();
 		dataManager.setData(dataset);
-		System.out.println("NUMBER OF INSTANCE"+dataset.toString());
+		System.out.println("NUMBER OF INSTANCE "+dataset.toString());
 		return dataset;
 
 	}
 
 	@Override
 	public List<IDataSet> extractAll(String featureType){
-		List<IDataSet> dataset= featureMap.get(featureType).
-				createAllInstance(new ArrayList<String>(classLabels.values()),
-						numOfClasses);
+		List<IDataSet> dataset = null;
+		if(featureType.equals("pixelLevel"))
+			dataset= featureMap.get(featureType).createAllInstance(new ArrayList<String>(classLabels.values()),numOfClasses);
+		else
+			dataset = featureMap.get(featureType).createAllInstance(new ArrayList<String>(classLabels.values()),numOfClasses, imageTestType);
 		return dataset;
-
 	}
 
 	@Override
@@ -379,13 +428,46 @@ public class FeatureManager implements IFeatureManager {
 		featureMap.put(feature.getFeatureName(), feature);
 	}
 
-
 	@Override
 	public int getSize(int i, int currentSlice) {
 		// TODO Auto-generated method stub
 		return getExamples(i, currentSlice).size();
 	}
 
+	@Override
+	public ArrayList<Integer> getDataImageTypeId(int ClassNum) {
+		// TODO Auto-generated method stub
+		
+		if(imageType.size()==0)
+			return null;
+		
+		return imageType.get(ClassNum);
+	}
 
+	@Override
+	public ArrayList<Integer> getDataImageTestTypeId(int ClassNum) {
+		// TODO Auto-generated method stub
+		return imageTestType.get(ClassNum);
+	}
 
+	@Override
+	public int getClassIdofCurrentSlicetraining(int currentSlice) {
+		// TODO Auto-generated method stub
+		for(int i=0;i<imageType.size();i++){
+			if(imageType.get(i).contains(currentSlice))
+				return i;
+		}
+		return -1;
+	}
+
+	@Override
+	public int getClassIdofCurrentSlicetesting(int currentSlice) {
+		// TODO Auto-generated method stub
+		for(int i=0;i<imageTestType.size();i++){
+			if(imageTestType.get(i).contains(currentSlice))
+				return i;
+		}
+		return -1;
+	}
+	
 }

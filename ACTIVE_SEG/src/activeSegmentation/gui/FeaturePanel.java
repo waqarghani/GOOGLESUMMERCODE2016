@@ -1,8 +1,10 @@
 package activeSegmentation.gui;
 
 import ij.ImagePlus;
+import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.gui.StackWindow;
+import ij.gui.TextRoi;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 
@@ -12,24 +14,21 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Panel;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -40,6 +39,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -52,10 +52,6 @@ import javax.swing.JTextArea;
 
 
 import activeSegmentation.Common;
-
-
-
-
 
 /**
  * 
@@ -74,11 +70,20 @@ public class FeaturePanel extends StackWindow
 	final JPanel labelsJPanel=new JPanel(new GridBagLayout());
 	final JPanel resetJPanel = new JPanel(new GridBagLayout());
 	final JPanel configureJPanel = new JPanel(new GridBagLayout());
+	final JPanel ClasslabelstrainingJPanel=new JPanel(new GridBagLayout());
+	final JPanel ClasslabelstestingJPanel=new JPanel(new GridBagLayout());
+	final JPanel ClasslabelsJPanel=new JPanel(new GridBagLayout());
+
+	
 	private List<JCheckBox> jCheckBoxList= new ArrayList<JCheckBox>();
 	JPanel imagePanel;
 	JPanel controlsBox;
+	JPanel controlsBoxForClass;
+	JPanel optionBox;
+	JTextArea sliceStatus;
 	private JFrame frame = new JFrame("CONFIGURE");
 	private ImagePlus classifiedImage;
+	private HashMap<Integer,Integer> indextolabel = null;
 	Panel all;
 	/** 50% alpha composite */
 	final Composite transparency050 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f );
@@ -91,14 +96,20 @@ public class FeaturePanel extends StackWindow
 	GuiController controller;
 	private List<JList> exampleList;
 	private List<JList> allexampleList;
+	private List<JList> imageTypeList;
+	private List<JList> allimageTypeList;
+	private List<JList> imagetestingTypeList;
+	private List<JList> allimagetestingTypeList;
 	private List<Color> colors ;
 	/** flag to display the overlay image */
 	private boolean showColorOverlay=false;
 	int originalJ=0;
+	int originalJ1=0;
 	JPanel classJPanel;
 	int originajFrameJ=0, originalFrameK=0;
 	LUT overlayLUT;
-
+	ArrayList<Integer> arr = new ArrayList<Integer>();
+	
 	/** array of roi list overlays to paint the transparent rois of each class */
 	private List<RoiListOverlay> roiOverlayList;
 
@@ -107,6 +118,11 @@ public class FeaturePanel extends StackWindow
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent COMPUTE_BUTTON_PRESSED = new ActionEvent( this, 21, "TRAIN" );
+
+	/** This {@link ActionEvent} is fired when the 'pixel level' button is pressed. */
+	final ActionEvent PIXEL_LEVEL_BUTTON_PRESSED = new ActionEvent( this, 21, "PIXEL LEVEL EXTRACTION" );
+	/** This {@link ActionEvent} is fired when the 'class level' button is pressed. */
+	final ActionEvent CLASS_LEVEL_BUTTON_PRESSED = new ActionEvent( this, 21, "CLASS LEVEL EXTRACTION" );
 
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -126,7 +142,8 @@ public class FeaturePanel extends StackWindow
 	Dimension dimension=new Dimension(100, 25);
 	ImageOverlay resultOverlay;
 
-
+	String feature_extraction_type = "pixelLevel";
+	
 	public FeaturePanel(GuiController controller, ImagePlus image)
 	{
 		super(image, new CustomCanvas(image));	
@@ -135,6 +152,10 @@ public class FeaturePanel extends StackWindow
 		this.setTitle("Active Segmentation");
 		this.exampleList = new ArrayList<JList>();
 		this.allexampleList = new ArrayList<JList>();
+		this.imageTypeList = new ArrayList<JList>();
+		this.allimageTypeList = new ArrayList<JList>();
+		this.imagetestingTypeList = new ArrayList<JList>();
+		this.allimagetestingTypeList = new ArrayList<JList>();
 		this.controller= controller;	
 		colors=Util.setDefaultColors();
 		roiOverlayList = new ArrayList<RoiListOverlay>();
@@ -147,6 +168,7 @@ public class FeaturePanel extends StackWindow
 		imagePanel.add(zSelector,Util.getGbc(0, 0, 0, false, false));
 		imagePanel.add(sliceSelector,Util.getGbc(0, 1, 1, false, true));
 
+		
 		if(null != sliceSelector){
 			sliceSelector.setEnabled(true);
 			// set slice selector to the correct number
@@ -202,14 +224,20 @@ public class FeaturePanel extends StackWindow
 			canvas.addKeyListener(keyListener);
 
 		}
-
-		createPanel();
+		
+		showOption();
+		createPanelforPixelLevel();
+		createPanelforClassLevel();
 		updateGui();
 		Panel all = new Panel();
 		BoxLayout box = new BoxLayout(all, BoxLayout.X_AXIS);
 		all.setLayout(box);
 		all.add(imagePanel);
-		all.add(controlsBox);
+		JPanel subpanel=new JPanel(new GridBagLayout());
+		subpanel.add(optionBox,Util.getGbc(0, 0, 0, false, true));
+		subpanel.add(controlsBoxForClass,Util.getGbc(0, 20, 0, false, true));
+		subpanel.add(controlsBox,Util.getGbc(0, 20, 0, false, true));
+		all.add(subpanel);
 		add(all);  	      	      	   
 		this.pack();	 	    
 		this.setVisible(true); 
@@ -256,41 +284,169 @@ public class FeaturePanel extends StackWindow
 	}
 
 
-	private void updateGui(){
-		drawExamples();
-		updateExampleLists();
-		updateallExampleLists();	
-
+	private void updateGui(){	
+		try{
+			drawExamples();
+			updateExampleLists();
+			updateallExampleLists();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		try{
+			updateImageTypeLists();
+			updateallImageTypeLists();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
-	private void createPanel(){
+	private void showOption(){
+		optionBox = new JPanel(new GridBagLayout());	
 
+		addButton( "Pixel Level",null ,optionBox,
+				PIXEL_LEVEL_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
+		addButton( "Class Level",null ,optionBox,
+				CLASS_LEVEL_BUTTON_PRESSED,dimension,Util.getGbc(1,0 , 1, false, false),null );
 		addButton( "CONFIGURE",null ,configureJPanel,
 				CONFIGURE_BUTTON_PRESSED,dimension,Util.getGbc(0,0 , 1, false, false),null );
+		optionBox.add(configureJPanel, Util.getGbc(2, 0, 1, false, true));
+	}
 
+	private void createPanelforPixelLevel(){
 		controlsBox=new JPanel(new GridBagLayout());
-
+		
+		add(controlsBox, BorderLayout.EAST);
+		configureFrame();
+		controlsBox.setVisible(false);
 		labelsJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
 
 		for(int i = 0; i < controller.getNumberofClasses(); i++){
 			addSidePanel(i);
 		}
-
+		
 		addButton( "COMPUTE",null ,resetJPanel,
 				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
 		addButton( "TOGGLE",null ,resetJPanel,
 				TOGGLE_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false),null );
 		addButton( "SAVE",null ,resetJPanel,
 				SAVE_BUTTON_PRESSED,dimension,Util.getGbc(2, 0, 1, false, false), null );
-		controlsBox.add(configureJPanel, Util.getGbc(0, 0, 1, false, true));
 		controlsBox.add(Util.addScrollPanel(labelsJPanel, 
 				labelsJPanel.getPreferredSize()), Util.getGbc(0, 1, 1, false, true));
 		controlsBox.add(resetJPanel, Util.getGbc(0, 2, 1, false, true));
-		add(controlsBox, BorderLayout.EAST);
-		configureFrame();
-
+		
+		
 	}
 
+	private void addsidepanelforClass(int i){
+		JList current=Util.model();
+		current.setForeground(colors.get(i));
+		imageTypeList.add(current);
+		
+		JList current1=Util.model();
+		current1.setForeground(colors.get(i));
+		allimageTypeList.add(current1);
+		
+		JList current2=Util.model();
+		current2.setForeground(colors.get(i));
+		imagetestingTypeList.add(current2);
+		
+		JList current3=Util.model();
+		current3.setForeground(colors.get(i));
+		allimagetestingTypeList.add(current3);
+		
+		RoiListOverlay roiOverlay = new RoiListOverlay();
+		roiOverlay.setComposite( transparency050 );
+		((OverlayedImageCanvas)ic).addOverlay(roiOverlay);
+		roiOverlayList.add(roiOverlay);
+	}
+	
+	private void addContainerinPanelforClass(int i, int type){
+		ActionEvent addbuttonAction= new ActionEvent(this, i,"AddImageType");
+		addbuttonAction.setSource(type);
+		addButton(controller.getclassLabel(i+1),null ,ClasslabelstrainingJPanel,
+				addbuttonAction,new Dimension(100, 21),Util.getGbc(0 ,originalJ1 , 1, false, false),null );
+		originalJ1++;
+		if(type==1){
+		
+			allimageTypeList.get(i).addMouseListener(mouseListenerClassLevel);
+			ClasslabelstrainingJPanel.add( Util.addScrollPanel(imageTypeList.get(i),null), 
+					Util.getGbc(0,originalJ1, 1, false, false));
+			ClasslabelstrainingJPanel.add( Util.addScrollPanel(allimageTypeList.get(i),null), 
+			Util.getGbc(1,originalJ1, 1, false, false));
+		}else{
+			allimagetestingTypeList.get(i).addMouseListener(mouseListenerClassLevel);
+			ClasslabelstrainingJPanel.add( Util.addScrollPanel(imagetestingTypeList.get(i),null), 
+			Util.getGbc(0,originalJ1, 1, false, false));
+			ClasslabelstrainingJPanel.add( Util.addScrollPanel(allimagetestingTypeList.get(i),null), 
+					Util.getGbc(1,originalJ1, 1, false, false));
+		}
+		originalJ1++;
+	}
+	
+	
+	private void createPanelforClassLevel(){
+		
+		controlsBoxForClass=new JPanel(new GridBagLayout());
+		String[] types = {"Training", "Testing"};
+		JPanel dataJPanel = new JPanel();
+		JComboBox datatype = new JComboBox(types);
+		datatype.setVisible(true);
+		datatype.setSelectedIndex(0);
+		dataJPanel.add(datatype);
+		controlsBoxForClass.add(dataJPanel, Util.getGbc(0, 2, 0, false, true));		
+		
+		final JPanel resetJPanel = new JPanel(new GridBagLayout());
+		ClasslabelstrainingJPanel.setBorder(BorderFactory.createTitledBorder("LABELS"));
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			addsidepanelforClass(i);
+		}
+		
+		ClasslabelsJPanel.add(Util.addScrollPanel(ClasslabelstrainingJPanel, 
+				ClasslabelstrainingJPanel.getPreferredSize()), Util.getGbc(0, 1, 0, false, true));
+		
+		ClasslabelstrainingJPanel.removeAll();		
+		originalJ1 = 0;
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			addContainerinPanelforClass(i,1);		
+		}
+		
+		
+		datatype.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				JComboBox combo = (JComboBox)e.getSource();
+				if(combo.getSelectedItem().equals("Training")){
+					ClasslabelstrainingJPanel.removeAll();
+					originalJ1 = 0;
+					for(int i = 0; i < controller.getNumberofClasses(); i++){
+						addContainerinPanelforClass(i,1);		
+					}
+					updateGui();
+				}else{
+					ClasslabelstrainingJPanel.removeAll();
+					originalJ1 = 0;
+					for(int i = 0; i < controller.getNumberofClasses(); i++){
+						addContainerinPanelforClass(i,2);		
+					}
+					updateGui();
+				}
+				
+			}});
+		
+		controlsBoxForClass.add(Util.addScrollPanel(ClasslabelsJPanel, 
+				ClasslabelsJPanel.getPreferredSize()), Util.getGbc(0, 3, 0, false, true));
+		addButton( "COMPUTE",null ,resetJPanel,
+				COMPUTE_BUTTON_PRESSED,dimension,Util.getGbc(0, 0, 1, false, false),null);
+		addButton( "SAVE",null ,resetJPanel,
+				SAVE_BUTTON_PRESSED,dimension,Util.getGbc(1, 0, 1, false, false), null );
+		controlsBoxForClass.add(resetJPanel, Util.getGbc(0, 4, 0, false, true));
+		add(controlsBoxForClass, BorderLayout.EAST);
+		controlsBoxForClass.setVisible(false);
+		
+	}
+	
 
 	private void configureFrame(){
 
@@ -324,9 +480,7 @@ public class FeaturePanel extends StackWindow
 
 	}
 
-
 	
-
 	private JButton addButton( final String label, final Icon icon,JComponent panel, 
 			final ActionEvent action, Dimension dimension,GridBagConstraints labelsConstraints,Color color ){
 		final JButton button = new JButton();
@@ -360,10 +514,38 @@ public class FeaturePanel extends StackWindow
 
 	public void doAction( final ActionEvent event )	{
 		int currentSlice= displayImage.getCurrentSlice();
+		if(event==PIXEL_LEVEL_BUTTON_PRESSED){
+			controlsBox.setVisible(true);
+			controlsBoxForClass.setVisible(false);
+			feature_extraction_type = "pixelLevel";
+		}
+		if(event==CLASS_LEVEL_BUTTON_PRESSED){
+			controlsBox.setVisible(false);
+			controlsBoxForClass.setVisible(true);
+			feature_extraction_type = "classLevel";
+		}
+		
+		if(event.getActionCommand()== "AddImageType"){	
+			displayImage.killRoi();
+			if(event.getSource().equals(1))
+				controller.addImageType(event.getID(), currentSlice);			
+			else{ 
+				controller.addTestImageType(event.getID(), currentSlice);
+			}
+			updateGui();
+		}
+		
 		if(event==COMPUTE_BUTTON_PRESSED){
-			classifiedImage=controller.computeFeatures("pixelLevel");
+			if(feature_extraction_type =="pixelLevel")
+			{
+				classifiedImage=controller.computeFeaturespixellevel(feature_extraction_type);
+			}else{
+				indextolabel = controller.computeFeatureclasslevel(feature_extraction_type);
+				System.out.println(indextolabel.size()+"Size of indextolabel");
+			}
 			toggleOverlay();
 		}
+		
 		if(event==SAVE_BUTTON_PRESSED){
 			controller.saveMetadata();
 
@@ -396,6 +578,7 @@ public class FeaturePanel extends StackWindow
 
 
 		if(event.getActionCommand()== "AddButton"){	
+			
 			final Roi r = displayImage.getRoi();
 			if (null == r)
 				return;
@@ -418,25 +601,19 @@ public class FeaturePanel extends StackWindow
 
 	}	
 
-
-
-
-
-
 	private void addClass(final ActionEvent  event) {
 		controller.addClass();
 		addclasses(controller.getNumberofClasses()-1, originajFrameJ, originalFrameK);
 		addSidePanel(controller.getNumberofClasses()-1);
+		addsidepanelforClass(controller.getNumberofClasses()-1);
 		validateFrame();
 	}
-
 
 	/**
 	 * Draw the painted traces on the display image
 	 */
 	protected void drawExamples(){
 		final int currentSlice = displayImage.getCurrentSlice();
-
 		for(int i = 0; i < controller.getRois(currentSlice).size(); i++){
 			roiOverlayList.get(i).setColor(colors.get(i));
 			roiOverlayList.get(i).setRoi(controller.getRois(currentSlice).get(i));
@@ -444,8 +621,6 @@ public class FeaturePanel extends StackWindow
 
 		displayImage.updateAndDraw();
 	}
-
-
 
 	/**
 	 * Update the example lists in the GUI
@@ -461,13 +636,92 @@ public class FeaturePanel extends StackWindow
 			exampleList.get(i).setListData(listModel);
 			exampleList.get(i).setForeground(colors.get(i));
 		}
+	}	
+	
+	/**
+	 * Update the imagetype lists in the GUI
+	 */
+	private void updateImageTypeLists()	{
+		final int currentSlice = displayImage.getCurrentSlice();
+		displayImage.killRoi();
+		int classid = controller.getClassIdofCurrentSlicetraining(currentSlice);
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			imageTypeList.get(i).removeAll();
+			if(classid==-1||classid!=i){
+				Vector<String> listModel = new Vector<String>();
+				imageTypeList.get(i).setListData(listModel);
+				imageTypeList.get(i).setForeground(colors.get(i));
+			}
+		}	
+		if(classid!=-1){
+				Roi roi = new Roi(0,0,displayImage.getWidth(),displayImage.getHeight());
+				displayImage.setRoi(roi);
+				displayImage.updateAndDraw();
+				Vector<String> listModel = new Vector<String>();
+				listModel.addElement(controller.getclassLabel(classid+1)+ " "+ currentSlice);
+				imageTypeList.get(classid).setListData(listModel);
+				imageTypeList.get(classid).setForeground(colors.get(classid));
+		}
+		
 
+		classid = controller.getClassIdofCurrentSlicetesting(currentSlice);
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			imagetestingTypeList.get(i).removeAll();
+			if(classid==-1||classid!=i){
+				Vector<String> listModel = new Vector<String>();
+				imagetestingTypeList.get(i).setListData(listModel);
+				imagetestingTypeList.get(i).setForeground(colors.get(i));
+			}
+		}	
+		if(classid!=-1){
+				Roi roi = new Roi(0,0,displayImage.getWidth(),displayImage.getHeight());
+				displayImage.setRoi(roi);
+				displayImage.updateAndDraw();
+				Vector<String> listModel = new Vector<String>();
+				listModel.addElement(controller.getclassLabel(classid+1)+ " "+ currentSlice);
+				imagetestingTypeList.get(classid).setListData(listModel);
+				imagetestingTypeList.get(classid).setForeground(colors.get(classid));
+		}
+		
 	}
+	
+	/**
+	 * Update the allimagetype lists in the GUI
+	 */
+	private void updateallImageTypeLists()	{
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			allimageTypeList.get(i).removeAll();
+			Vector<String> listModel = new Vector<String>();
+			ArrayList<Integer> SliceNums = controller.getDataImageTypeId(i);
+			if(SliceNums!=null){
+				for(int j=0; j<SliceNums.size(); j++){	
+					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
+				}
+				allimageTypeList.get(i).setListData(listModel);
+				allimageTypeList.get(i).setForeground(colors.get(i));
+			}
+		}
+
+		for(int i = 0; i < controller.getNumberofClasses(); i++){
+			allimagetestingTypeList.get(i).removeAll();
+			Vector<String> listModel = new Vector<String>();
+			ArrayList<Integer> SliceNums = controller.getDataImageTestTypeId(i);
+			if(SliceNums!=null){
+				for(int j=0; j<SliceNums.size(); j++){	
+					listModel.addElement(controller.getclassLabel(i+1)+ " "+ SliceNums.get(j));
+				}
+				allimagetestingTypeList.get(i).setListData(listModel);
+				allimagetestingTypeList.get(i).setForeground(colors.get(i));
+			}
+		}
+	}
+
 	private  MouseListener mouseListener = new MouseAdapter() {
 		public void mouseClicked(MouseEvent mouseEvent) {
 			JList theList = ( JList) mouseEvent.getSource();
 			if (mouseEvent.getClickCount() == 1) {
 				int index = theList.getSelectedIndex();
+				
 				if (index >= 0) {
 					String item =theList.getSelectedValue().toString();
 					String[] arr= item.split(" ");
@@ -479,7 +733,6 @@ public class FeaturePanel extends StackWindow
 					showSelected( arr[0].trim(),index ,sliceNum);
 					
 				}
-
 			}
 
 			if (mouseEvent.getClickCount() == 2) {
@@ -496,10 +749,25 @@ public class FeaturePanel extends StackWindow
 		}
 	};
 
+	private  MouseListener mouseListenerClassLevel = new MouseAdapter() {
+		public void mouseClicked(MouseEvent mouseEvent) {
+			JList theList = ( JList) mouseEvent.getSource();
+			if (mouseEvent.getClickCount() == 2) {
+				int index = theList.getSelectedIndex();
+				if (index >= 0) {
+					String item =theList.getSelectedValue().toString();
+					System.out.println("ITEM : "+ item);
+					String[] arr= item.split(" ");
+					int classId= controller.getClassId(arr[0].trim())-1;
+					controller.deleteImageType(classId,Integer.parseInt(arr[1].trim()));
+					updateGui();
+				}
+			}
+		}
+	};
 	
 	/**
 	 * Select a list and deselect the others
-	 * 
 	 * @param e item event (originated by a list)
 	 * @param i list index
 	 */
@@ -533,8 +801,6 @@ public class FeaturePanel extends StackWindow
 		}
 	}
 
-
-
 	private void addclasses(int i , int j, int k){
 		JCheckBox  checkBox = new JCheckBox("Class :"+ (i+1));
 		jCheckBoxList.add(checkBox);
@@ -563,11 +829,28 @@ public class FeaturePanel extends StackWindow
 	 */
 	public void updateResultOverlay()
 	{
-		ImageProcessor overlay = classifiedImage.getImageStack().getProcessor(displayImage.getCurrentSlice()).duplicate();
-		overlay = overlay.convertToByte(false);
-		overlay.setColorModel(overlayLUT);
-		resultOverlay.setImage(overlay);
-		displayImage.updateAndDraw();
+		if(feature_extraction_type == "pixelLevel")
+		{
+			ImageProcessor overlay = classifiedImage.getImageStack().getProcessor(displayImage.getCurrentSlice()).duplicate();
+			overlay = overlay.convertToByte(false);
+			overlay.setColorModel(overlayLUT);
+			resultOverlay.setImage(overlay);
+			displayImage.updateAndDraw();
+		}else{
+			System.out.println(indextolabel.get(displayImage.getCurrentSlice())+"AAA"+displayImage.getCurrentSlice()); 
+			if(!indextolabel.containsKey(displayImage.getCurrentSlice()))
+				 return;
+		     
+			 Font font = new Font("Arial", Font.PLAIN, 38);
+			 TextRoi textRoi = new TextRoi(displayImage.getWidth()/2, displayImage.getHeight()/2, controller.getClassLabel(
+					 indextolabel.get(displayImage.getCurrentSlice())), font);
+			 textRoi.setStrokeColor(colors.get(indextolabel.get(displayImage.getCurrentSlice())-1));
+			 textRoi.setNonScalable(true);                               
+			 Overlay overlay = new Overlay(textRoi);
+			 textRoi.setPosition(displayImage.getCurrentSlice());
+			 displayImage.setOverlay(overlay);
+			 displayImage.updateAndDraw();
+		}
 	}
 
 	/**
@@ -576,7 +859,7 @@ public class FeaturePanel extends StackWindow
 	void toggleOverlay()
 	{
 		showColorOverlay = !showColorOverlay;
-		if (showColorOverlay && null != classifiedImage)
+		if (showColorOverlay && (null != classifiedImage || null != indextolabel))
 		{
 			updateResultOverlay();
 		}
@@ -596,7 +879,6 @@ public class FeaturePanel extends StackWindow
 		}
 		overlayLUT = new LUT(red, green, blue);
 	}
-
 
 	private void addAction(JButton button ,final  ActionEvent action){
 		button.addActionListener( new ActionListener()

@@ -1,0 +1,66 @@
+//Maxima calculating zernike code.
+
+Zr(m,n,x):=block([ret:0],
+	if m=0 and n=0 then return(1),
+	if m=n then return(x^m),
+	if n<m or n<0 or m<0 then return (0),
+	if evenp(n-m) then  (
+		ret:x*( Zr(abs(m-1), n-1, x) +  Zr(m+1, n-1, x) ) - Zr(m, n-2, x),
+		ret:ratsimp(ret)
+	),
+	ret
+);
+
+
+
+Zr2(m,n,x):=block([ret:0],
+	if m=0 and n=0 then return(1),
+	if m=n then return(x^m),
+	if n<m or n<0 or m<0 then return (0),
+	if evenp(n-m) then  (
+		ret: 2*n*x*Zr2(abs(m-1), n-1, x) +  (m-n)*Zr2(m, n-2, x),
+		ret:ratsimp(ret/(m+n))
+	),
+	ret
+);
+
+
+/* [wxMaxima: input   start ] */
+Z(m,n,r):=block([ret],
+	ret:integrate(chebyshev_u (n, r*cos(theta))*cos(m*theta),theta,0, 2*%pi)/(2*%pi),
+	ratsimp(ret)
+);
+/* [wxMaxima: input   end   ] */
+
+
+
+//Calculate radial poly for 50*50 image
+radius:sqrt(2 * 25 * 25);
+for i:0 step 1 while i<50 do
+( 
+    for j:0 step 1 while j<50 do
+    (
+        x:j-25,
+        y:i-25,
+        r:float(sqrt((x*x)+(y*y)))/float(radius),
+        value:float(Zr(4,8,r)),
+        print(value)
+    )
+);
+
+
+
+radius:sqrt(2 * 25 * 25);
+for i:0 step 1 while i<50 do
+( 
+    for j:0 step 1 while j<50 do
+    (
+        x:j-25,
+        y:i-25,
+        r:float(sqrt((x*x)+(y*y)))/float(radius),
+        value:float(Zr(4,8,r)),
+        stringout("zernike_radial_values",value)
+    )
+);
+
+file_output_append

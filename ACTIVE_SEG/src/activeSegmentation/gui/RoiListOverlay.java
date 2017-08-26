@@ -35,8 +35,6 @@ import java.util.ArrayList;
 
 import activeSegmentation.gui.OverlayedImageCanvas.Overlay;
 
-
-
 /**
  * This class implements an overlay based on the image ROI.
  * The overlay paints the ROI with a specific color and composite mode.

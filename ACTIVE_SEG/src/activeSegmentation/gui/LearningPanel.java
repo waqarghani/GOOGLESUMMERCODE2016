@@ -41,7 +41,6 @@ public class LearningPanel  implements Runnable {
 		this.controller= controller;
 	}
 
-
 	public static final Font FONT = new Font( "Arial", Font.PLAIN, 10 );
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
@@ -58,18 +57,12 @@ public class LearningPanel  implements Runnable {
 	public void doAction( final ActionEvent event )
 	{
 		if(event==COMPUTE_BUTTON_PRESSED){
-
 			controller.setClassifier(setClassifier());
-
-
 		}
 		if(event==SAVE_BUTTON_PRESSED){
 			controller.saveMetadata();
 		}
-
 	}
-
-
 
 	@Override
 	public void run() {
@@ -189,6 +182,5 @@ public class LearningPanel  implements Runnable {
 
 		return button;
 	}
-
 
 }

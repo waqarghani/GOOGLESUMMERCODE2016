@@ -9,6 +9,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -37,7 +38,6 @@ public class GuiController {
 
 	}
 
-
 	public List<ArrayList<Roi>> getRois(int currentSlice){
 		List<ArrayList< Roi >> roiList= new ArrayList<ArrayList<Roi>>();
 
@@ -59,8 +59,20 @@ public class GuiController {
 		return featureManager.getClassLabel(index);
 	}
 
+	public int getClassIdofCurrentSlicetraining(int currentSlice){
+		return featureManager.getClassIdofCurrentSlicetraining(currentSlice);
+	}
+	
+	public int getClassIdofCurrentSlicetesting(int currentSlice){
+		return featureManager.getClassIdofCurrentSlicetesting(currentSlice);
+	}
+	
 	public void deleteExample(int classId,int currentSlice, int index ){
 		featureManager.deleteExample(classId, currentSlice, index);
+	}
+	
+	public void deleteImageType(int classId, int sliceNum){
+		featureManager.deleteImageType(classId, sliceNum);
 	}
 	
 	public int getClassId(String classNum){
@@ -100,11 +112,13 @@ public class GuiController {
 		if(learningFlag)
 		learningManager.loadLearningMetaData();
 	}
+
 	public void  saveMetadata() {	
 		filterManager.saveFiltersMetaData();
 		featureManager.saveFeatureMetadata();
 		learningManager.saveLearningMetaData();
 	}
+	
 	public boolean saveRoi(int  i, int n) {
 
 		String path;
@@ -120,6 +134,7 @@ public class GuiController {
 		return dataManager.saveExamples(path, featureManager.getExamples(i, n));
 
 	}
+	
 	public int getNumberofClasses() {
 		return featureManager.getNumOfClasses();
 	}
@@ -128,24 +143,38 @@ public class GuiController {
 		return featureManager.getSize(i, currentSlice);
 	}
 
+	public ArrayList<Integer> getDataImageTypeId(int ClassNum ){
+		return featureManager.getDataImageTypeId(ClassNum);
+	}
+	
+	public ArrayList<Integer> getDataImageTestTypeId(int ClassNum){
+		return featureManager.getDataImageTestTypeId(ClassNum);
+	}
+	
 	public void addExamples(int id, Roi r, int currentSlice) {
 		// TODO Auto-generated method stub
 		featureManager.addExample(id, r, currentSlice);	
 	}
 
-
-	public ImagePlus computeFeatures(String featureType) {
-		ImagePlus classifiedImage= null;
-		featureManager.extractFeatures(featureType);
+	public void addImageType(int id, int SliceNo) {
+		// TODO Auto-generated method stub
+		featureManager.addImageType(id, SliceNo);	
+	}
+	
+	public void addTestImageType(int id, int SliceNo){
+		featureManager.addTestImageType(id, SliceNo);
+	}
+	
+	public ImagePlus pixellevelTraining(ImagePlus classifiedImage, String featureType){
 		learningManager.trainClassifier();
 		List<double[]> classificationResult=learningManager.applyClassifier(featureManager.extractAll(featureType));
+		
 		ImageStack classStack = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
 		int i=1;
 		for (double[] result: classificationResult)
 		{
 			ImageProcessor classifiedSliceProcessor = new FloatProcessor(originalImage.getWidth(),
 					originalImage.getHeight(), result);				
-			
 			classStack.addSlice(originalImage.getStack().getSliceLabel(i), classifiedSliceProcessor);
 			i++;
 		}
@@ -153,7 +182,32 @@ public class GuiController {
 		classifiedImage.setCalibration(originalImage.getCalibration());
 		classifiedImage.show();
 		return classifiedImage;
-
+	}
+	
+	public HashMap<Integer,Integer> classlevelTraining(String featureType){
+		learningManager.trainClassifier();
+		List<double[]> classificationResult=learningManager.applyClassifier(featureManager.extractAll(featureType));
+		int t=0;
+		HashMap<Integer,Integer> indextolabel = new HashMap<Integer, Integer>();
+		ArrayList<Integer> testindex = featureManager.getImageTestType();
+		for(double[] arr : classificationResult){
+			for(int i=0;i<arr.length;i++){
+				indextolabel.put(testindex.get(t),((int)arr[i])+1);
+				t++;
+			}
+		}
+		return indextolabel;
+	}
+	
+	public ImagePlus computeFeaturespixellevel(String featureType) {
+		ImagePlus classifiedImage= null;
+		featureManager.extractFeatures(featureType);
+		return pixellevelTraining(classifiedImage, featureType);
+	}
+	
+	public HashMap<Integer,Integer> computeFeatureclasslevel(String featureType){
+		featureManager.extractFeatures(featureType);
+		return classlevelTraining(featureType);
 	}
 
 	public void setClassifier(Object classifier){
@@ -167,7 +221,10 @@ public class GuiController {
 		return originalImage.duplicate();
 	}
 
-	
+	public String getClassLabel(int index) {
+		// TODO Auto-generated method stub
+		return featureManager.getClassLabel(index);
+	}
 
 	public void setOriginalImage(ImagePlus originalImage) {
 		this.originalImage = originalImage;
@@ -178,10 +235,8 @@ public class GuiController {
 		return filterManager;
 	}
 
-
 	public void setFilterManager(IFilterManager filterManager) {
 		this.filterManager = filterManager;
 	}
-
 
 }

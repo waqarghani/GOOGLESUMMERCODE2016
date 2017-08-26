@@ -5,10 +5,7 @@ import java.util.concurrent.ForkJoinPool;
 
 import activeSegmentation.IClassifier;
 import activeSegmentation.IDataManager;
-import activeSegmentation.IDataSet;
 import activeSegmentation.io.DataManagerImp;
-import activeSegmentation.learning.ApplyTask;
-import activeSegmentation.learning.WekaClassifier;
 import activeSegmentation.learning.WekaDataSet;
 import weka.classifiers.functions.SMO;
 import weka.core.Instances;

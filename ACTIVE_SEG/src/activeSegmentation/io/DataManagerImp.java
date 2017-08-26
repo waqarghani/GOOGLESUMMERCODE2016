@@ -41,13 +41,11 @@ import weka.core.Instances;
 
 public class DataManagerImp implements IDataManager {
 
-
 	private IDataSet dataSet;
 	private String path;
 	private MetaInfo metaInfo;
 	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	private ImagePlus originalImage;
-
 
 	/**
 	 * Read ARFF file
@@ -71,13 +69,11 @@ public class DataManagerImp implements IDataManager {
 		return null;
 	}
 
-
 	@Override
 	public IDataSet getDataSet() {
 
 		return  dataSet;
 	}
-
 
 	@Override
 	public void setData(IDataSet data) {
@@ -124,8 +120,6 @@ public class DataManagerImp implements IDataManager {
 		return true;
 
 	}
-
-	
 
 	@Override
 	public List<Roi> openZip(String path) {
@@ -199,8 +193,6 @@ public class DataManagerImp implements IDataManager {
 		return name2;
 	}
 
-
-
 	@Override
 	public boolean saveExamples(String filename, List<Roi> rois) {
 
@@ -227,15 +219,11 @@ public class DataManagerImp implements IDataManager {
 		return true;
 	}
 
-
-
 	@Override
 	public boolean loadTrainingData(String fileName) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-
 
 	@Override
 	public void writeMetaInfo( MetaInfo metaInfo) {
@@ -265,7 +253,6 @@ public class DataManagerImp implements IDataManager {
 		}
 	}
 
-
 	@Override
 	public MetaInfo getMetaInfo() {
 		if(metaInfo==null && path != null){
@@ -282,15 +269,12 @@ public class DataManagerImp implements IDataManager {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-
-			
+			}			
 			metaInfo= new MetaInfo();
 			metaInfo.setPath(path);
 		}
 		return metaInfo;
 	}
-
 
 	@Override
 	public String getPath() {
@@ -314,7 +298,5 @@ public class DataManagerImp implements IDataManager {
 	public void setOriginalImage(ImagePlus originalImage) {
 		this.originalImage = originalImage;
 	}
-
-
 
 }
