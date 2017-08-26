@@ -1,4 +1,4 @@
-package scalespace.filter;
+package activeSegmentation.filter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -22,7 +22,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import activeSegmentation.FeatureType;
+
 import activeSegmentation.IFilter;
 import dsp.Conv;
 

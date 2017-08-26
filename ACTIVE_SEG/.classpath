@@ -4,16 +4,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/IJ"/>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/weka-dev-3.7.11.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/ScaleSpace_Filters.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/pentaho-package-manager-1.0.8.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/jfreechart-1.0.19.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/jcommon-1.0.23.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/java-cup-0.11a.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/jackson-databind-2.3.1.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/jackson-core-2.3.1.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/jackson-annotations-2.3.1.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Desktop/GOOGLESUMMERCODE2016/jars/ACTIVE_SEG.jar"/>
-	<classpathentry kind="lib" path="/home/mg/Downloads/ACTIVE_SEGM/ImageJ/ij.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/plugins/activeSegmentation/weka-dev-3.7.11.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/plugins/activeSegmentation/pentaho-package-manager-1.0.8.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/plugins/activeSegmentation/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/plugins/activeSegmentation/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/plugins/activeSegmentation/java-cup-0.11a.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/plugins/activeSegmentation/jackson-databind-2.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/plugins/activeSegmentation/jackson-core-2.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/plugins/activeSegmentation/jackson-annotations-2.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/mg/Documents/ImageJ/ij.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

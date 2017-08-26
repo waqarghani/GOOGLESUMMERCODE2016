@@ -1,4 +1,4 @@
-package scalespace.filter;
+package activeSegmentation.filter;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;

@@ -1,4 +1,4 @@
-package scalespace.filter;
+package activeSegmentation.filter;
 
 import java.awt.AWTEvent;
 import java.awt.Image;
