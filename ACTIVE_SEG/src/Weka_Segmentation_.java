@@ -54,9 +54,9 @@ public class Weka_Segmentation_ implements PlugIn {
 	@Override
 	public void run(String arg0) {
 		IJ.log(System.getProperty("plugins.dir"));
-		String home = System.getProperty("plugins.dir")+"//plugins//activeSegmentation//";
+		//String home = System.getProperty("plugins.dir")+"//plugins//activeSegmentation//";
 		
-		//String home = System.getProperty("plugins.dir");
+		String home = System.getProperty("plugins.dir");
 
 		try {
 			if(showSettingsDialog()){
