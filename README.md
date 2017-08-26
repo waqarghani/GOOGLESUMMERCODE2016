@@ -95,11 +95,13 @@ The user can delete the region of interest by double click on particular ROI.</l
 
 Active Segmentation Class Level Features Screen
 This is default Screen for selecting features for training purposes
-![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/training.png)
+![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/FeatureClassTrainingScreen.png
+)
 
 
 This is default Screen for selecting features for testing purposes
-![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/training.png)
+![ScreenShot](https://github.com/mukesh14149/GOOGLESUMMERCODE2016/blob/master/other_res/FeatureClassTestingScreen.png
+)
 
 <ul>
 <li>The Configure button is used to go "Class Screen". The details regarding the class screen is discussed in the next section</li>
