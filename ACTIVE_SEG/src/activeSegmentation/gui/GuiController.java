@@ -101,10 +101,12 @@ public class GuiController {
 				.get(index);
 	}
 
-	public void  setMetadata(boolean filterFlag,boolean featureFlag, boolean learningFlag) {
+	public void  setMetadata(boolean filterFlag,boolean featureFlag, boolean learningFlag, String path) {
 		System.out.println("filterFlag"+filterFlag);
 		System.out.println("featureFlag"+featureFlag);
 		System.out.println("learingFlag"+learningFlag);
+		dataManager.setPath(path);
+		dataManager.getMetaInfo();
 		if(filterFlag)
 		filterManager.setFiltersMetaData();
 		if(featureFlag)

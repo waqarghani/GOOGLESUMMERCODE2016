@@ -76,6 +76,7 @@ public class FilterManager implements IFilterManager {
 	public FilterManager(IDataManager dataManager, String path){
 		this.dataManager= dataManager;
 		try {
+			System.out.println("path"+path);
 			loadFilters(path);
 		} catch (InstantiationException | IllegalAccessException
 				| ClassNotFoundException | IOException e) {
@@ -111,6 +112,7 @@ public class FilterManager implements IFilterManager {
 			Class<?>[] classesList=(classLoader.loadClass(plugin)).getInterfaces();
 			for(Class<?> cs:classesList){
 				if(cs.getSimpleName().equals(Common.IFILTER)){
+					System.out.println(cs.getSimpleName());
 					IFilter	thePlugIn =(IFilter) (classLoader.loadClass(plugin)).newInstance(); 
 					filterMap.put(thePlugIn.getKey(), thePlugIn);
 				}
