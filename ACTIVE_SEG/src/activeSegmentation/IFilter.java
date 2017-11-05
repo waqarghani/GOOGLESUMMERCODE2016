@@ -22,13 +22,20 @@ public interface IFilter {
 	 * @return boolean
 	 */
 	public boolean updateSettings(Map< String, String > settingsMap);
+
+	/**
+	 * Tell the filter for which slice index it is computed the values.
+	 * @param position_id
+	 */
+	public void updatePosition(int position_id);
 	
 	/**
 	 * Returns apply filter
 	 * 
 	 * @return String
 	 */	
-	public ImageStack applyFilter(ImageProcessor imageProcessor);
+	public <T> T applyFilter(ImageProcessor imageProcessor);
+	
 	/**
 	 * Returns a unique key of filter
 	 * 
@@ -48,17 +55,20 @@ public interface IFilter {
 	 * @return number of slices in the stack
 	 */
 	public int getSize();
+	
 	/**
 	 * Get slice label
 	 * @param index slice index (from 1 to max size)
 	 * @return slice label
 	 */
 	public String getSliceLabel(int index);
+	
 	/**
 	 * Get stack height
 	 * @return stack height
 	 */
 	public int getHeight();
+	
 	/**
 	 * Get stack width
 	 * @return stack width
@@ -76,11 +86,12 @@ public interface IFilter {
 	 * @return Image
 	 */
 	public boolean isEnabled();
+	
 	/**
-	 * Get ive image
-	 * @return Image
+	 * Reset all setting of filters
 	 */
 	public boolean reset();
+	
 	/**
 	 * Get ive image
 	 * @return Image
@@ -92,7 +103,10 @@ public interface IFilter {
 
 	public void setImageStack(ImageStack imageStack);
 	
+	/**
+	 * @return Zernike Polynomial parameters
+	 * It can be extended by returning list of parameters when other filter is used
+	 */
+	public int getDegree();
 	
-	
-
 }

@@ -59,6 +59,7 @@ public interface IDataManager {
 	 * @return List<Roi>
 	 */
 	public List<Roi> openZip(String filename);
+	
 	/**
 	 * This method will store Zip files of ROI
 	 * It will return true if examples are stored successfully
@@ -73,24 +74,28 @@ public interface IDataManager {
 	 * @return boolean
 	 */
 	public boolean loadTrainingData(String fileName);
+	
 	/**
 	 * This method will write session file in Meta info format
 	 * @param  filename
 	 * @return boolean
 	 */
 	public void writeMetaInfo(MetaInfo metaInfo);
+	
 	/**
 	 * This method will load session file in Meta info format
 	 * @param  filename
 	 * @return MetaInfo
 	 */
 	public MetaInfo getMetaInfo();
+	
 	/**
 	 * This method will get the path of the working dire
 	 * @param  filename
 	 * @return string
 	 */
 	public String getPath();
+	
 	/**
 	 * This method will set the path of the working directory
 	 * @param  filename
@@ -104,18 +109,20 @@ public interface IDataManager {
 	 * 
 	 */
 	public void setData(IDataSet data);
+	
 	/**
 	 * This method will return  the dataset
 	 */
 	public IDataSet getDataSet();
+	
 	/**
 	 * This method will return  the stored training image
 	 */
 	public ImagePlus getOriginalImage();
+	
 	/**
 	 * This method will set the training image
 	 */
 	public void setOriginalImage(ImagePlus originalImage);
 	
-
 }

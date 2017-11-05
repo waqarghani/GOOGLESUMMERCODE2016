@@ -23,7 +23,7 @@
 	<dependency>
 	<groupId>gov.nih.imagej</groupId>
 	<artifactId>imagej</artifactId>
-	<version>1.48</version>
+	<version>1.47</version>
   </dependency>
 
     

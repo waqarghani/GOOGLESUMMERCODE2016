@@ -2,18 +2,20 @@ package activeSegmentation.gui;
 
 
 
+import ij.io.OpenDialog;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
-
-
-
 
 public class Gui {
 	private JFrame mainFrame;
@@ -31,6 +33,8 @@ public class Gui {
 
 	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
 	final ActionEvent EVALUATION_BUTTON_PRESSED = new ActionEvent( this, 3, "Evaluation" );
+	/** This {@link ActionEvent} is fired when the 'previous' button is pressed. */
+	final ActionEvent SESSION_BUTTON_PRESSED = new ActionEvent( this, 4, "Session" );
 	private LearningPanel learningPanel;
 	private FilterPanel filterPanel;
 	private FeaturePanel featurePanel;
@@ -39,12 +43,15 @@ public class Gui {
 	final static String LOOKANDFEEL = "Metal";
 	final static String THEME = "Test";
 	public static final Font FONT = new Font( "Arial", Font.BOLD, 13 );
+	private  String path;
+	//private static String metaFileName;
+	private  boolean[] defaultValue = new boolean[3];
+
 	public Gui(GuiController controller){
 		this.controller= controller;
 		prepareGUI();
 		
 	}
-
 
 	private static void initLookAndFeel() {
 		String lookAndFeel = null;
@@ -112,7 +119,6 @@ public class Gui {
 		}
 	}
 
-
 	public void doAction( final ActionEvent event )
 	{
 		System.out.println("IN DO ACTION");
@@ -139,10 +145,16 @@ public class Gui {
 		//	EvaluationPanel evaluationPanel = new EvaluationPanel(dataManager, evaluation);
 		//	SwingUtilities.invokeLater(evaluationPanel);
 		}
-
+		if(event==SESSION_BUTTON_PRESSED){
+			
+		  showSettingsDialog();
+		  if(path!=null){
+			// SwingUtilities.
+			  controller.setMetadata(defaultValue[0], defaultValue[1], defaultValue[2], path);
+		  }
+		  
+			}
 	}
-
-
 
 	private void prepareGUI(){
 		initLookAndFeel();
@@ -150,7 +162,7 @@ public class Gui {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		mainFrame = new JFrame("ACTIVE SEGMENTATION");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setSize(500,300);
+		mainFrame.setSize(500,400);
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout(null);
@@ -158,7 +170,8 @@ public class Gui {
 		addButton( "FEATURE EXTRACTION", null, 275, 50, 200, 50, controlPanel,FEATURE_BUTTON_PRESSED);
 		addButton( "LEARNING", null, 25, 150, 200, 50, controlPanel, LEARNING_BUTTON_PRESSED );
 		addButton( "EVALUATION", null, 275, 150, 200, 50, controlPanel, EVALUATION_BUTTON_PRESSED );
-
+		addButton( "LOADSESSION", null, 150, 250, 200, 50, controlPanel, SESSION_BUTTON_PRESSED );
+		
 		// postioning
 
 		controlPanel.setLocation(0, 0);
@@ -166,7 +179,6 @@ public class Gui {
 		mainFrame.setVisible(true);  
 
 	}
-
 
 	private JButton addButton( final String label, final Icon icon, final int x,
 			final int y, final int width, final int height,JPanel panel,final ActionEvent action)
@@ -190,10 +202,55 @@ public class Gui {
 		return button;
 	}
 
-
 	public void showGridBagLayoutDemo(){
-
-
 		mainFrame.setVisible(true);  
 	}
+	
+	/**
+	 * Show advanced settings dialog
+	 *
+	 * @return false when canceled
+	 */
+	private  boolean showSettingsDialog()
+	{
+		List<String> settings= new ArrayList<String>();
+		settings.add("FILTER");
+		settings.add("FEATURES");
+		settings.add("LEARNING");
+
+		GenericDialogPlus gd = new GenericDialogPlus("Session settings");
+		gd.addButton("Choose Session File", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				loadSessionFile();
+			}
+		});
+		final int rows = (int)Math.round(settings.size()/2.0);
+		gd.addCheckboxGroup(rows, 2,settings.toArray(new String[0]),defaultValue);
+		gd.showDialog();
+
+		if (gd.wasCanceled())
+			return false;
+		for(int i = 0; i < settings.size(); i++)
+		{
+			defaultValue[i] = gd.getNextBoolean();
+		}	
+
+		if(path==null){
+			loadSessionFile();
+		}
+		return true;
+
+	}
+
+	private  void loadSessionFile(){
+		//get loaded file
+		OpenDialog od = new OpenDialog("Choose Session file", OpenDialog.getLastDirectory(), "data.json");
+		if (od.getFileName()==null)
+			return ;
+
+		path=od.getDirectory();
+	}
+
 }

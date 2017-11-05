@@ -25,8 +25,6 @@ import weka.core.Instance;
  */
 public class SMO extends weka.classifiers.functions.SMO {
 
-
-
     /**
 	 * 
 	 */

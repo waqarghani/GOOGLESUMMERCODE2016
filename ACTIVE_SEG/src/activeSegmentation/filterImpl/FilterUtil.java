@@ -1,6 +1,7 @@
 package activeSegmentation.filterImpl;
 
 import ij.ImageStack;
+import ijaux.scale.ZernikeMoment.Complex;
 import weka.core.DenseInstance;
 
 /**
@@ -30,8 +31,6 @@ import weka.core.DenseInstance;
  */
 public class FilterUtil {
 
-	
-	
 	/**
 	 * Create instance (feature vector) of a specific coordinate
 	 * 
@@ -50,7 +49,6 @@ public class FilterUtil {
 	{
 		
 		final int size=stack.getSize();
-
 		final double[] values = new double[ size + 1 ];
 		int n = 0;
 
@@ -65,25 +63,52 @@ public class FilterUtil {
 			{
 				int c  = (int) stack.getVoxel( x, y, z );
 				int r = (c&0xff0000)>>16;
-			int g = (c&0xff00)>>8;
-		int b = c&0xff;
-		values[ z ] = (r + g + b) / 3.0;
+				int g = (c&0xff00)>>8;
+				int b = c&0xff;
+				values[ z ] = (r + g + b) / 3.0;
 			}
 		}
 
-
 		// Assign class
 		values[values.length-1] = (double) classValue;
-
 		return new DenseInstance(1.0, values);
 	}
 
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Create instance (feature vector) of a specific slice index
+	 * @param rv zernike values of specific slice
+	 * @param classValue
+	 * @return corresponding instance
+	 * @throws Exception
+	 */
+	public DenseInstance createInstance(Complex rv, int classValue) throws Exception{
+		int size=0;
+		for(int i=0;i<rv.getReal().length;i++){
+			size++;
+			if(rv.getImaginary()[i]!=0.0)
+				size++;
+		}
+		double[] final_result = new double[size+1];
+
+		int t=0;
+		for(int i=0;i<rv.getReal().length;i++){
+			final_result[t++] = rv.getReal()[i];
+			if(rv.getImaginary()[i]!=0){
+				final_result[t++] = rv.getImaginary()[i];
+			}
+			
+		}
+		
+		System.out.println("Zernike Values Checking:");
+		for(int i=0;i<final_result.length;i++){
+			System.out.println(final_result[i]);
+		}
+		
+		
+		// Assign class
+		final_result[final_result.length-1] = (double) classValue;
+		return new DenseInstance(1.0,final_result);
+		
+	}
 
 }

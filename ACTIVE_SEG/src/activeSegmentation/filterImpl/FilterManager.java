@@ -16,6 +16,8 @@ import java.util.zip.ZipInputStream;
 
 
 import activeSegmentation.Common;
+import activeSegmentation.FeatureType;
+import activeSegmentation.filterImpl.ApplyZernikeFilter;
 import activeSegmentation.IDataManager;
 import activeSegmentation.IFilter;
 import activeSegmentation.IFilterManager;
@@ -24,6 +26,8 @@ import weka.core.Instance;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ijaux.scale.Pair;
+import ijaux.scale.ZernikeMoment.Complex;
 
 /**
  * 				
@@ -51,12 +55,10 @@ import ij.ImageStack;
  *      License along with this library; if not, write to the Free Software
  *      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-
 public class FilterManager implements IFilterManager {
 
 	private Map<String,IFilter> filterMap= new HashMap<String, IFilter>();
-	private Map<Integer,ImageStack> featurStackMap= new HashMap<Integer, ImageStack>();
+	private Map<Integer,FeatureType> featurStackMap= new HashMap<Integer, FeatureType>();
 	
 	private FilterUtil filterUtil= new FilterUtil();
 	private ImagePlus finalImage;
@@ -74,6 +76,7 @@ public class FilterManager implements IFilterManager {
 	public FilterManager(IDataManager dataManager, String path){
 		this.dataManager= dataManager;
 		try {
+			System.out.println("path"+path);
 			loadFilters(path);
 		} catch (InstantiationException | IllegalAccessException
 				| ClassNotFoundException | IOException e) {
@@ -92,6 +95,8 @@ public class FilterManager implements IFilterManager {
 		String[] plugins = f.list();
 		List<String> classes=new ArrayList<String>();
 		for(String plugin: plugins){
+			System.out.println(plugin);
+			System.out.println(installJarPlugins(home+plugin));
 			if(plugin.endsWith(Common.JAR))
 			{ 
 				classes.addAll(installJarPlugins(home+plugin));
@@ -99,13 +104,15 @@ public class FilterManager implements IFilterManager {
 			else if (plugin.endsWith(Common.DOTCLASS)){
 				classes.add(plugin);
 			}
-
+			break;
 		}
 		ClassLoader classLoader= FilterManager.class.getClassLoader();
-		for(String plugin: classes){		
+		for(String plugin: classes){
+			System.out.println(plugin);
 			Class<?>[] classesList=(classLoader.loadClass(plugin)).getInterfaces();
 			for(Class<?> cs:classesList){
 				if(cs.getSimpleName().equals(Common.IFILTER)){
+					System.out.println(cs.getSimpleName());
 					IFilter	thePlugIn =(IFilter) (classLoader.loadClass(plugin)).newInstance(); 
 					filterMap.put(thePlugIn.getKey(), thePlugIn);
 				}
@@ -116,46 +123,64 @@ public class FilterManager implements IFilterManager {
 
 	}
 
+	
 
 	public void applyFilters(ImagePlus image){
 		originalImage=image.duplicate();
 		System.out.println(originalImage.getImageStackSize());
-		for(int i=1; i<=originalImage.getImageStackSize(); i++){
-			List<ImageStack> tempStack= new ArrayList<ImageStack>();
-			for(IFilter filter: filterMap.values()){
-				if(filter.isEnabled()){
-					ImageStack featureStack= filter.applyFilter(originalImage.getImageStack().getProcessor(i));
-					tempStack.add(featureStack);
+		for(IFilter filter: filterMap.values()){
+			if(filter.isEnabled()){
+				if(filter.getName().equals("Zernike Moments")){
+					ArrayList<Pair<Integer,Complex>> arr=ApplyZernikeFilter.ComputeValues(originalImage, filter);
+					for(Pair<Integer, Complex> pr:arr){
+						FeatureType featureType;
+						if(!featurStackMap.containsKey(pr.first))
+							featureType = new FeatureType();
+						else
+							featureType = featurStackMap.get(pr.first);
+						featureType.add(pr.second);
+						featurStackMap.put(pr.first, featureType);
+					}
 				}
-
+				else{
+					/*
+					 * Pair class used for mapping image index number to 
+					 * imageStack(It is the stack of images generated after applying filter on particular image) 
+					 */
+					ArrayList<Pair<Integer, ImageStack>> arr=(ArrayList<Pair<Integer, ImageStack>>) ApplyFilter.ComputeFeatures(originalImage, filter);
+					System.out.println(arr.size());
+					for(Pair<Integer,ImageStack> pr:arr){
+						FeatureType featureType;
+						/*
+						 * @param pr.first is a image index and pr.second is a result after applying filter.
+						 */
+						if(!featurStackMap.containsKey(pr.first)){
+							featureType = new FeatureType();
+							featureType.combineStacks(pr.second);
+						}
+						else{
+							featureType = featurStackMap.get(pr.first);
+							featureType.combineStacks(pr.second);
+						}
+						featurStackMap.put(pr.first, featureType);
+					}
+				
+				}
+					
 			}
-			featurStackMap.put(i, combineStacks(tempStack));
+
 		}
-
-	}
-
-
-
-	private ImageStack combineStacks(List<ImageStack> imageStackList)
-	{
-		ImageStack finalStack=new ImageStack(imageStackList.get(0).getWidth(),imageStackList.get(0).getHeight());
-		for(ImageStack stack: imageStackList){
-			for(int i=1; i<=stack.getSize(); i++){
-				finalStack.addSlice(stack.getSliceLabel(i), stack.getProcessor(i));
-			}
-		}
-
-		return finalStack;
+	
 	}
 
 
 	private void generateFinalImage(){
 		ImageStack classified = new ImageStack(originalImage.getWidth(), originalImage.getHeight());
-		int numChannels=featurStackMap.get(1).getSize();
+		int numChannels=featurStackMap.get(1).getfinalStack().getSize();
 		for (int i = 1; i <= originalImage.getStackSize(); i++){
 			for (int c = 1; c <= numChannels; c++){
-				classified.addSlice(featurStackMap.get(i).getSliceLabel(c), 
-						featurStackMap.get(i).getProcessor(c));	
+				classified.addSlice(featurStackMap.get(i).getfinalStack().getSliceLabel(c), 
+						featurStackMap.get(i).getfinalStack().getProcessor(c));	
 			}
 		}
 		finalImage = new ImagePlus(Common.FILTERRESULT, classified);
@@ -185,12 +210,12 @@ public class FilterManager implements IFilterManager {
 
 		return filterMap.get(key).updateSettings(settingsMap);
 	}
-
-
 	
-	public int getNumOfFeatures() {
-
-		return featurStackMap.get(featurStackMap.size()).getSize();
+	public int getNumOfFeatures(String featureName) {
+		if(featureName.equals("classLevel"))
+			return filterMap.get("ZMC").getDegree();
+		else
+			return featurStackMap.get(featurStackMap.size()).getfinalStack().getSize();
 	}
 
 	/**
@@ -200,7 +225,7 @@ public class FilterManager implements IFilterManager {
 	 */
 	public String getLabel(int index)
 	{
-		return  featurStackMap.get(featurStackMap.size()).getSliceLabel(index);
+		return  featurStackMap.get(featurStackMap.size()).getfinalStack().getSliceLabel(index);
 	}
 
 
@@ -220,15 +245,23 @@ public class FilterManager implements IFilterManager {
 
 	public ImageStack getImageStack(int sliceNum)
 	{
-		return featurStackMap.get(sliceNum);
+		return featurStackMap.get(sliceNum).getfinalStack();
 	}
 
-	public Instance createInstance(int x, int y, int classIndex, int sliceNum) {
-
+	public Instance createInstance(String featureName, int x, int y, int classIndex, int sliceNum) {
 		return filterUtil.createInstance(x, y, classIndex,
-				featurStackMap.get(sliceNum), colorFeatures, oldColorFormat);
+				featurStackMap.get(sliceNum).getfinalStack(), colorFeatures, oldColorFormat);
 	}
-
+	
+	public Instance createInstance(String featureName, int classIndex, int sliceNum){
+		try {
+			return filterUtil.createInstance(featurStackMap.get(sliceNum).getzernikeMoments(), classIndex);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	@Override
 	public int getOriginalImageSize() {
@@ -328,7 +361,5 @@ public class FilterManager implements IFilterManager {
 	public ImagePlus getOriginalImage() {
 		return originalImage;
 	}
-
-	
 
 }
